@@ -83,7 +83,7 @@ const BackgroundImage = styled.img`
 
 
 const SurveyQuestionnaire = () => {
-  const [currentSection, setCurrentSection] = useState(0);
+  const [currentSection, setCurrentSection] = useState(1);
   const [currentPage, setCurrentPage] = useState(0);
   const [loadingPage, setLoadingPage] = useState(true);
   const [isAnswerValidated, setAnswerValidated] = useState(false);
@@ -109,7 +109,6 @@ const SurveyQuestionnaire = () => {
   useEffect(() => {
     if (currentSection < questionSections.length) {
       const currentQuestion = questionSections[currentSection].questions[currentPage];
-      console.log(state.data[currentQuestion.getQuestionNumber()]);
       
       if (state.data[currentQuestion.getQuestionNumber()]) {
         setAnswerValidated(true);
@@ -164,7 +163,7 @@ const SurveyQuestionnaire = () => {
       }
     }
 
-    setCurrentSection(currentSection);
+    setCurrentSection(newSection);
     setCurrentPage(newPage)
   }
 

@@ -49,14 +49,11 @@ const NumberQuestionSection = (props: {
   const defaultAnswer = {
     [question.getUnits()[0]]: question.getDefaultValue()
   }
-  const [answer, setAnswer] = useState<{
-    [key: string]: number
-  }>(defaultAnswer);
+  const [answer, setAnswer] = useState<{[key: string]: number}>(defaultAnswer);
 
   const unitTypes = question.getAttributes().scientific_unit ?
     question.getUnits()[Number(selectedUnit)].split("/") :
     [question.getUnits()[Number(selectedUnit)]];
-  console.log(selectedUnit, unitTypes);
 
   useEffect(() => {
     setAnswer(state.data[question.getQuestionNumber()] || defaultAnswer);
