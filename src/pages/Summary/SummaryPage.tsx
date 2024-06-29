@@ -1,4 +1,4 @@
-import { Button, Cell, Column, Flex, Provider, Row, TableBody, TableHeader, TableView, defaultTheme } from "@adobe/react-spectrum";
+import { Button, Cell, Column, Flex, Row, TableBody, TableHeader, TableView } from "@adobe/react-spectrum";
 import { useAnswerData } from "../../reducers/AnswerDataProvider";
 import styled from "styled-components";
 import QuestionSections from "../../resources/questions/QuestionObject";

@@ -10,8 +10,7 @@ import { AnswerDataProvider } from "./reducers/AnswerDataProvider";
 import DataCollection from "./pages/DataCollection";
 import 'bulma/css/bulma.min.css';
 import SummaryPage from "./pages/Summary/SummaryPage";
-import SummaryPDF from "./pages/SummaryPDF";
-import { defaultTheme as AdobeDefaultTheme, lightTheme, Provider } from "@adobe/react-spectrum";
+import { defaultTheme as AdobeDefaultTheme, Provider } from "@adobe/react-spectrum";
 
 const router = createBrowserRouter([
   {
@@ -29,10 +28,6 @@ const router = createBrowserRouter([
   {
     path: "/summary",
     element: <SummaryPage />,
-  },
-  {
-    path: "/summary-pdf",
-    element: <SummaryPDF />,
   },
   {
     path: "/*",

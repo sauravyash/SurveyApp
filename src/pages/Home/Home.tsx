@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import React from 'react';
 import styled from 'styled-components';
-import { defaultTheme, lightTheme, Provider } from '@adobe/react-spectrum';
 
 import termsAndConditions from '../../resources/termsAndConditions.ts';
 import { Divider } from '@adobe/react-spectrum';
