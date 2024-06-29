@@ -83,7 +83,7 @@ const BackgroundImage = styled.img`
 
 
 const SurveyQuestionnaire = () => {
-  const [currentSection, setCurrentSection] = useState(1);
+  const [currentSection, setCurrentSection] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [loadingPage, setLoadingPage] = useState(true);
   const [isAnswerValidated, setAnswerValidated] = useState(false);

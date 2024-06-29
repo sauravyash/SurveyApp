@@ -4,6 +4,7 @@ interface AnswerData {
   // Define the properties of the data object
   collect_data: boolean;
   data: any;
+  largeTextMode: boolean;
 }
 
 const storeInSessionStorage = (state: AnswerData) => {
@@ -22,35 +23,43 @@ const initialState = {
 const reducer = (state: AnswerData, action: any) => {
   switch (action.type) {
     case "set_data":
-      return { ...action.payload };
-    // Add your action handlers here
+      state = { ...action.payload };
+      break;
+      
     case 'set_collect_data':
-      return { ...state, collect_data: action.payload };
+      state = { ...state, collect_data: action.payload };
+      break;
 
     case 'add_answer':
-      return {
+      state = {
         ...state,
         data: {
           ...state.data,
           [action.payload.questionNumber]: action.payload.answer
         }
       };
+      break;
 
     case 'remove_answer':
-      return {
+      state = {
         ...state,
         data: {
           ...state.data,
           [action.payload.questionNumber]: null
         }
       };
+      break;
 
     case 'set_large_text_mode':
-      return { ...state, largeTextMode: action.payload };
+      state = { ...state, largeTextMode: action.payload };
+      break;
 
     default:
-      return state;
+      break;
   }
+  
+  storeInSessionStorage(state);
+  return state;
 };
 
 // Create the context
@@ -70,10 +79,6 @@ const AnswerDataProvider: React.FC<AnswerDataProviderProps> = ({ children }) => 
       dispatch({ type: 'set_data', payload: JSON.parse(storedData) });
     }
   }, []);
-
-  useEffect(() => {
-    storeInSessionStorage(state);
-  }, [state]);
 
   return (
     <AnswerDataContext.Provider value={{ state, dispatch }}>

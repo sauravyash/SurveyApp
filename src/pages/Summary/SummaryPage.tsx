@@ -15,10 +15,10 @@ const SummaryWrapper = styled.section`
     position: relative;
     background: #fff;
     border-radius: 1em;
-    min-width: 60%;
-    max-width: 80%;
+    width: 100%;
     margin: auto;
-    min-height: 80vh;
+    height: 100vh;
+    overflow: auto;
 `;
 
 type QuestionList = {
@@ -35,9 +35,9 @@ const SummaryPage = () => {
   }, {});
 
   const tableItems = Object.entries(state.data).map(arr => ({
-    question_number: arr[0],
+    question_number: Number(arr[0]),
     question: questionList[arr[0]],
-    answer: arr[1]
+    answer: JSON.stringify(arr[1])
   }));
 
   const handleResetSurvey = () => {
