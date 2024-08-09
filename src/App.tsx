@@ -3,6 +3,7 @@ import {
   createBrowserRouter,
   Navigate,
   RouterProvider,
+
 } from "react-router-dom";
 import Home from "./pages/Home";
 import SurveyQuestionnaire from "./pages/SurveyQuestionnaire";
@@ -11,6 +12,7 @@ import DataCollection from "./pages/DataCollection";
 import 'bulma/css/bulma.min.css';
 import SummaryPage from "./pages/Summary/SummaryPage";
 import { defaultTheme as AdobeDefaultTheme, Provider } from "@adobe/react-spectrum";
+import PatientParticipationStatement from "./pages/PatientParticipationStatement/PatientParticipationStatement";
 
 const router = createBrowserRouter([
   {
@@ -30,9 +32,13 @@ const router = createBrowserRouter([
     element: <SummaryPage />,
   },
   {
+    path: "/patient-information",
+    element: <PatientParticipationStatement />,
+  },
+  {
     path: "/*",
     element: <Navigate to="/" />,
-  },
+  }
 ]);
 
 const defaultTheme = AdobeDefaultTheme;
@@ -40,9 +46,10 @@ console.log(defaultTheme);
 
 
 function App() {
+
   return (
     <React.StrictMode>
-      <Provider theme={defaultTheme} colorScheme="light" height={"100%"} width={"100%"}>
+      <Provider theme={defaultTheme} colorScheme="light" height={"100%"} width={"100%"} data-theme="light">
         <AnswerDataProvider>
           <RouterProvider router={router} />
         </AnswerDataProvider>

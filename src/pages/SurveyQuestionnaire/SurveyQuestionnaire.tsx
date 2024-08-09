@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react"
-import { DateField, defaultTheme, Provider, Button as AdobeButton, TextField } from '@adobe/react-spectrum';
-import { parseDate } from '@internationalized/date';
+import { defaultTheme, Provider, Button as AdobeButton, TextField, ButtonGroup } from '@adobe/react-spectrum';
 
 import Loading from "../../components/Loading";
 import styled from "styled-components";
 import { ButtonWrapper } from "../../components/Button";
-import questionSections, { MultipleChoiceQuestion, NumberQuestion, RangeSelectionQuestion, WaistMeasurementQuestion } from "../../resources/questions/QuestionObject";
+import questionSections, { DateQuestion, MultipleChoiceQuestion, NumberQuestion, RangeSelectionQuestion, WaistMeasurementQuestion } from "../../resources/questions/QuestionObject";
 import { useAnswerData } from "../../reducers/AnswerDataProvider";
 import imageList from "../../resources/stockImageList";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +12,7 @@ import MultipleChoiceQuestionSection from "./MultipleChoiceQuestion";
 import WaistQuestionSection from "./WaistQuestionSection";
 import NumberQuestionSection from "./NumberQuestionSection";
 import RangeSelectionSection from "./RangeSelectionSection";
+import DateQuestionSection from "./DateQuestionSection";
 
 const SurveyPage = styled.section`
   display: flex;
@@ -40,7 +40,9 @@ const SurveyWrapper = styled.div`
   border: 1px solid #000;
   min-width: 60%;
   min-height: 60%;
+  max-height: 90%;
   max-width: 90%;
+  overflow: auto;
 `;
 
 const SurveyH1 = styled.h1`
@@ -230,25 +232,8 @@ const SurveyQuestionnaire = () => {
       )
       break;
     case "date":
-      const oldValue = state.data[currentQuestion.getQuestionNumber()] ?
-        state.data[currentQuestion.getQuestionNumber()] :
-        parseDate('1980-01-01')
       question = (
-        <div>
-          <SurveyH2>{currentQuestion.getQuestion()}</SurveyH2>
-          <DateField
-            label={"Date Picker: " + currentQuestion.getQuestion()}
-            defaultValue={oldValue}
-            onChange={(date) => {
-              dispatch({
-                type: "add_answer",
-                payload: {
-                  questionNumber: currentQuestion.getQuestionNumber(),
-                  answer: date
-                }
-              })
-            }} />
-        </div>
+       <DateQuestionSection question={currentQuestion as DateQuestion} />
       )
       break;
 
@@ -276,7 +261,7 @@ const SurveyQuestionnaire = () => {
           <AnswerColWrapper>
             {question}
           </AnswerColWrapper>
-          <ButtonWrapper>
+          <ButtonGroup>
             {
               currentPage === 0 && currentSection === 0 ? null :
                 <AdobeButton variant="primary" style="fill" onPress={handlePreviousQuestion}>
@@ -290,7 +275,7 @@ const SurveyQuestionnaire = () => {
             >
               Next Question
             </AdobeButton>
-          </ButtonWrapper>
+          </ButtonGroup>
         </SurveyWrapper>
       </SurveyPage>
     </Provider>
