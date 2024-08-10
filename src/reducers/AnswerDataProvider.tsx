@@ -5,6 +5,7 @@ interface AnswerData {
   collect_data: boolean;
   data: any;
   largeTextMode: boolean;
+  user: any;
 }
 
 const storeInSessionStorage = (state: AnswerData) => {
@@ -16,7 +17,8 @@ const initialState = {
   // Add your initial state properties here
   collect_data: true,
   data: {},
-  largeTextMode: false
+  largeTextMode: false,
+  user: {}
 };
 
 // Define the reducer function
@@ -52,6 +54,16 @@ const reducer = (state: AnswerData, action: any) => {
 
     case 'set_large_text_mode':
       state = { ...state, largeTextMode: action.payload };
+      break;
+
+    case 'set_user_data':
+      state = {
+        ...state,
+        data: {
+          ...state.data,
+          user: action.payload
+        }
+      };
       break;
 
     default:

@@ -253,7 +253,10 @@ const PersonalInformationQuestions = [
 ];
 
 const HealthQuestions = [
-    new NumberQuestion(17, "What is your total cholesterol level? (in last two years)", ["mmol/L"], false, 0, 20, 5.5, true, undefined, false, 0.1),
+    new NumberQuestion(17, 
+        "What is your total cholesterol level? (in last two years)", 
+        ["mmol/L"], 
+        false, 0, 20, 5.5, true, undefined, false, 0.1),
     new MultipleChoiceQuestion(18, 
         "Have you been told by a doctor or a health professional that you have high cholesterol levels in the past 2 years, or your cholesterol level is higher than 6.5mmol/L?", 
         ["Yes", "No", "Don’t know"]

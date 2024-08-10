@@ -11,18 +11,13 @@ const DateQuestionSection = ({ question }: {
   const { dispatch, state } = useAnswerData();
   
   let [selectedDate, setSelectedDate] = useState(parseDate('1980-01-01'));
-  console.log(selectedDate);
   
   useEffect(() => {
-    console.log(state.data);
-    
     if (state && state.data[question.getQuestionNumber()]) {
       try {
         const date = state.data[question.getQuestionNumber()];
         if (date) {
-          console.log(date);
-          
-          setSelectedDate(date);
+          setSelectedDate(parseDate(date));
         }
       } catch (error) {
         console.error(error);
@@ -35,7 +30,7 @@ const DateQuestionSection = ({ question }: {
       type: "add_answer",
       payload: {
         questionNumber: question.getQuestionNumber(),
-        answer: selectedDate
+        answer: selectedDate.toString()
       }
     })
   }, [selectedDate]);

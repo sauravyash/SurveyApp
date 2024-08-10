@@ -71,6 +71,7 @@ const AnswerColWrapper = styled.div`
   border-radius: 1em;
   margin: auto;
   padding: 0.5rem;
+  overflow-y: auto;
 `;
 
 const BackgroundImage = styled.img`
@@ -111,8 +112,9 @@ const SurveyQuestionnaire = () => {
   useEffect(() => {
     if (currentSection < questionSections.length) {
       const currentQuestion = questionSections[currentSection].questions[currentPage];
+      const questionData = state.data[currentQuestion.getQuestionNumber()];
       
-      if (state.data[currentQuestion.getQuestionNumber()]) {
+      if (questionData) {
         setAnswerValidated(true);
       } else {
         setAnswerValidated(false);

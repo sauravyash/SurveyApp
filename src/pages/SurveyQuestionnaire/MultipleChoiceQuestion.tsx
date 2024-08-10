@@ -44,6 +44,7 @@ const MultipleChoiceQuestionSection = (props: {
 
   useEffect(() => {
     if (state && state.data[question.getQuestionNumber()]) {
+      console.log(state.data[question.getQuestionNumber()]);
       setSelected(state.data[question.getQuestionNumber()]);
     } else {
       setSelected(undefined);
@@ -74,7 +75,7 @@ const MultipleChoiceQuestionSection = (props: {
           onSelectionChange={(keys: Selection) => setSelected(keys)}
         >
           {(item) => (
-            <Item key={item.index}>
+            <Item key={item.answer}>
               {item.answer}
             </Item>
           )}

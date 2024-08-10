@@ -1,4 +1,3 @@
-import React from 'react';
 import PageWrapper from '../../components/PageWrapper';
 import ContentWrapper from '../../components/ContentWrapper';
 import Markdown from 'react-markdown';
@@ -18,6 +17,8 @@ import QuestionMark from '@spectrum-icons/workflow/Question';
 import UserExclude from '@spectrum-icons/workflow/UserExclude';
 import Email from '@spectrum-icons/workflow/Email';
 import { Switch } from '@adobe/react-spectrum';
+import { useEffect, useState } from 'react';
+import { useAnswerData } from '../../reducers/AnswerDataProvider';
 
 const agree_statements: {
   icon: React.FC<any>,
@@ -62,10 +63,19 @@ interface Props {
 
 const PatientParticipationStatement: React.FC<Props> = () => {
   const navigate = useNavigate();
-  const [page, setPage] = React.useState(0);
-  const [reuseDataSelected, setReuseDataSelected] = React.useState(false);
-  const [detailsCorrectSelected, setDetailsCorrectSelected] = React.useState(false);
+  const { dispatch } = useAnswerData();
+  const [page, setPage] = useState(0);
+  const [data, setData] = useState({
+    name: "",
+    address: "",
+    email: "",
+    reuseData: false,
+    detailsCorrect: false
+  });
 
+  useEffect(() => {
+    dispatch({ type: 'set_user_data', payload: data});
+  }, [data]);
 
   const lastPage = 2;
   const handleNextPage = () => {
@@ -81,6 +91,8 @@ const PatientParticipationStatement: React.FC<Props> = () => {
     }
     setPage(page - 1);
   }
+
+
 
   return (
     <PageWrapper color='#002335'>
@@ -140,21 +152,41 @@ const PatientParticipationStatement: React.FC<Props> = () => {
               <div className="field">
                 <label className="label">Full Name*</label>
                 <div className="control">
-                  <input className="input" type="text" placeholder="Full Name" required />
+                  <input
+                    className="input"
+                    type="text"
+                    placeholder="Full Name"
+                    value={data.name}
+                    onChange={(e) => setData(prev => ({ ...prev, name: e.target.value }))}
+                    required
+                  />
                 </div>
               </div>
 
               <div className="field">
                 <label className="label">Address (optional)</label>
                 <div className="control">
-                  <input className="input" type="text" placeholder="Address" />
+                  <input
+                    className="input"
+                    type="text"
+                    placeholder="Address"
+                    value={data.address}
+                    onChange={(e) => setData(prev => ({ ...prev, address: e.target.value }))}
+                  />
                 </div>
               </div>
 
               <div className="field">
                 <label className="label">Email address*</label>
                 <div className="control">
-                  <input className="input" type="email" placeholder="Email address" required />
+                  <input
+                    className="input"
+                    type="email"
+                    placeholder="Email address"
+                    required
+                    value={data.email}
+                    onChange={(e) => setData(prev => ({ ...prev, email: e.target.value }))}
+                  />
                 </div>
               </div>
               <p className="help mt-4 mb-4">* is a required response</p>
@@ -163,8 +195,8 @@ const PatientParticipationStatement: React.FC<Props> = () => {
                 <label className="label">Optional Consent for reuse of data and future research:</label>
                 <div className="control">
                   <Switch
-                    isSelected={reuseDataSelected}
-                    onChange={setReuseDataSelected}>
+                    isSelected={data.reuseData}
+                    onChange={(e) => setData(prev => ({ ...prev, reuseData: e }))}>
                     {' I provide my consent for the information collected about me to be made available to other researchers as described at section 6 of this document.'}
                   </Switch>
                 </div>
@@ -174,8 +206,8 @@ const PatientParticipationStatement: React.FC<Props> = () => {
                 <label className="label">Acknowledgment of consent:</label>
                 <div className="control">
                   <Switch
-                    isSelected={detailsCorrectSelected}
-                    onChange={setDetailsCorrectSelected}>
+                    isSelected={data.detailsCorrect}
+                    onChange={(e) => setData(prev => ({ ...prev, detailsCorrect: e }))}>
                     {' I understand all the above details are correct and by signing this form electronically is equivalent to signing a physical document.'}
                   </Switch>
                 </div>
@@ -192,6 +224,7 @@ const PatientParticipationStatement: React.FC<Props> = () => {
               colour='accent'
               variant='fill'
               onClick={handleNextPage}
+              disabled={!data.detailsCorrect || !data.email || !data.name}
             >Proceed</Button>
           </ButtonWrapper>
         </ContentWrapper>

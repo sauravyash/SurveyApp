@@ -39,6 +39,22 @@ const TextUnit = styled.span`
   margin: 0 0.5em;
 `;
 
+function countDecimalPlaces(number: number) {
+  // Convert the number to a string
+  const numberString = number.toString();
+
+  // Split the number at the decimal point
+  const parts = numberString.split('.');
+
+  // If there's no decimal point, return 0
+  if (parts.length < 2) {
+      return 0;
+  }
+
+  // Return the length of the fractional part
+  return parts[1].length;
+}
+
 
 const NumberQuestionSection = (props: {
   question: NumberQuestion
@@ -90,8 +106,8 @@ const NumberQuestionSection = (props: {
             <NumberField
               aria-label={unit}
               formatOptions={{
-                minimumFractionDigits: 1,
-                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+                maximumFractionDigits: countDecimalPlaces(question.getAttributes().step) || 0,
               }}
               step={question.getAttributes().step || 1}
               label={unitTypes.length > 1 ? unit : null}
