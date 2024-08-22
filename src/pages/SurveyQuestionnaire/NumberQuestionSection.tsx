@@ -2,8 +2,8 @@ import styled from "styled-components";
 import { NumberQuestion } from "../../resources/questions/QuestionObject";
 import { useAnswerData } from "../../reducers/AnswerDataProvider";
 import { useEffect, useState } from "react";
-import { SurveyH2 } from "./SurveyComponenets";
-import { Item, NumberField, Picker } from "@adobe/react-spectrum";
+import { ContextSection, SurveyH2 } from "./SurveyComponents";
+import { Checkbox, Item, NumberField, Picker } from "@adobe/react-spectrum";
 
 
 const NumberUnitsWrapper = styled.div`
@@ -40,18 +40,13 @@ const TextUnit = styled.span`
 `;
 
 function countDecimalPlaces(number: number) {
-  // Convert the number to a string
   const numberString = number.toString();
-
-  // Split the number at the decimal point
   const parts = numberString.split('.');
 
-  // If there's no decimal point, return 0
   if (parts.length < 2) {
-      return 0;
+    return 0;
   }
 
-  // Return the length of the fractional part
   return parts[1].length;
 }
 
@@ -63,47 +58,85 @@ const NumberQuestionSection = (props: {
   const { state, dispatch } = useAnswerData();
   const [selectedUnit, setSelectedUnit] = useState("0");
   const defaultAnswer = {
-    [question.getUnits()[0]]: question.getDefaultValue()
+    [question.getUnits()[0]]: question.getDefaultValue() || -Infinity,
   }
-  const [answer, setAnswer] = useState<{[key: string]: number}>(defaultAnswer);
+  const [answer, setAnswer] = useState<{ [key: string]: number } | "unsure">(defaultAnswer);
 
   const unitTypes = question.getAttributes().scientific_unit ?
-    question.getUnits()[Number(selectedUnit)].split("/") :
+    question.getUnits()[Number(selectedUnit)].split(" / ") :
     [question.getUnits()[Number(selectedUnit)]];
 
   useEffect(() => {
-    setAnswer(state.data[question.getQuestionNumber()] || defaultAnswer);
+    setAnswer(state.data[question.getQuestionNumber()] || (
+      question.getAttributes().optional ? "unsure" : defaultAnswer
+    ));
   }, [question])
 
   useEffect(() => {
-    dispatch({
-      type: "add_answer",
-      payload: {
-        questionNumber: question.getQuestionNumber(),
-        answer
-      }
-    })
+    if (answer === "unsure") {
+      dispatch({
+        type: "add_answer",
+        payload: {
+          questionNumber: question.getQuestionNumber(),
+          answer: "unsure"
+        }
+      })
+    }
+    else if (answer !== defaultAnswer 
+      && Object.values(answer)[0] >= question.getMinValue() 
+      && Object.values(answer)[0] <= question.getMaxValue()) {
+      dispatch({
+        type: "add_answer",
+        payload: {
+          questionNumber: question.getQuestionNumber(),
+          answer
+        }
+      })
+    }
   }, [answer])
 
   useEffect(() => {
-    dispatch({
-      type: "add_answer",
-      payload: {
-        questionNumber: question.getQuestionNumber(),
-        answer: {
-          [unitTypes[Number(selectedUnit)]]: question.getDefaultValue()
+    if (!state.data[question.getQuestionNumber()]) return;
+    const currentAnswer: number = Object.entries(state.data[question.getQuestionNumber()])[0] as any;
+    if (currentAnswer <= question.getMaxValue() && currentAnswer >= question.getMinValue()) {
+      dispatch({
+        type: "add_answer",
+        payload: {
+          questionNumber: question.getQuestionNumber(),
+          answer: {
+            [unitTypes[Number(selectedUnit)]]: question.getDefaultValue()
+          }
         }
-      }
-    })
-  }, [selectedUnit])
+      })
+    } else {
+      dispatch({
+        type: "remove_answer",
+        payload: {
+          questionNumber: question.getQuestionNumber()
+        }
+      })
+    }
+  }, [selectedUnit]);
+  const currentAnswer = question.getAttributes().scientific_unit ?
+    1 : (
+      state.data[question.getQuestionNumber()] ?
+        Object.entries(state.data[question.getQuestionNumber()])[0] as any :
+        0
+    );
 
   return (
     <NumberUnitsWrapper>
+      {
+        question.getAttributes().context ? 
+        <ContextSection>{question.getAttributes().context}</ContextSection>
+         : null
+      }
       <SurveyH2>{question.getQuestion()}</SurveyH2>
       <AnswerRowWrapper>
         {
           unitTypes.map((unit, index) => (
             <NumberField
+              isDisabled={answer === "unsure"}
               aria-label={unit}
               formatOptions={{
                 minimumFractionDigits: 0,
@@ -112,15 +145,20 @@ const NumberQuestionSection = (props: {
               step={question.getAttributes().step || 1}
               label={unitTypes.length > 1 ? unit : null}
               key={index}
-              value={answer[unit] || 0}
+              value={answer !== "unsure" && answer[unit] ? answer[unit] : 0}
               minValue={question.getMinValue()}
               maxValue={question.getMaxValue()}
               margin={"0 1em"}
               onChange={(num) => {
-                setAnswer(curr => ({
-                  ...curr,
-                  [unit]: num
-                }))
+                setAnswer(curr => {
+                  if (curr !== "unsure") {
+                    return ({
+                      ...curr,
+                      [unit]: num
+                    })
+                  }
+                  return curr;
+                })
               }}
             />
           ))
@@ -132,6 +170,7 @@ const NumberQuestionSection = (props: {
               aria-label="Choose frequency"
               selectedKey={selectedUnit}
               margin={"0 1em"}
+              isDisabled={answer === "unsure"}
               onSelectionChange={(unit) => {
                 setSelectedUnit(unit as string);
               }}>
@@ -142,13 +181,19 @@ const NumberQuestionSection = (props: {
               }
             </Picker>
           ) : (
-            <TextUnit>{question.getUnits()[0]}{
-              state.data[question.getQuestionNumber()] === 1 || !question.getAttributes().scientific_unit ? "" : "s"
-            }</TextUnit>
+            <TextUnit>
+              {question.getUnits()[0]}
+              {currentAnswer == 1 ? "" : "s"}
+            </TextUnit>
           )
         }
 
       </AnswerRowWrapper>
+      {
+        question.getAttributes().optional ? (
+          <Checkbox isSelected={answer === "unsure"} onChange={val => setAnswer(val ? "unsure" : defaultAnswer)}>Unsure</Checkbox>
+        ) : null
+      }
     </NumberUnitsWrapper>
   )
 }

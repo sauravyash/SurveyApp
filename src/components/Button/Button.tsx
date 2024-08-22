@@ -9,9 +9,9 @@ const ButtonWrapper = styled.div`
   padding: 0 3em;
   flex-wrap: wrap;
   width: 100%;
-  &:has(button:only-child) {
-    justify-content: flex-end;
-  }
+  // &:has(button:only-child) {
+  //   justify-content: flex-end;
+  // }
 `;
 
 type ButtonVariant = 'fill' | 'outline';

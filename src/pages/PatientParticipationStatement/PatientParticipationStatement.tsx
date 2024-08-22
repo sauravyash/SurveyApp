@@ -72,6 +72,7 @@ const PatientParticipationStatement: React.FC<Props> = () => {
     reuseData: false,
     detailsCorrect: false
   });
+  const [isDataValid, setIsDataValid] = useState(false);
 
   useEffect(() => {
     dispatch({ type: 'set_user_data', payload: data});
@@ -92,7 +93,27 @@ const PatientParticipationStatement: React.FC<Props> = () => {
     setPage(page - 1);
   }
 
+  const validateEmail = (email: any) => {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+  };
 
+  const validateName = (name: any) => {
+    return String(name).match(/^[a-zA-Z\s]*$/);
+  }
+
+  useEffect(() => {
+    if (data.name && data.email && data.detailsCorrect) {
+      if (validateEmail(data.email) && validateName(data.name)) {
+        setIsDataValid(true);
+        return;
+      }
+    }
+    setIsDataValid(false);
+  }, [data]);
 
   return (
     <PageWrapper color='#002335'>
@@ -148,7 +169,7 @@ const PatientParticipationStatement: React.FC<Props> = () => {
           <Title>My Details</Title>
           <Divider borderColor='#999' />
           <div className="container" style={{ "textAlign": "left", maxWidth: "800px", overflowY: "auto" }}>
-            <form>
+            <form id="consent-data">
               <div className="field">
                 <label className="label">Full Name*</label>
                 <div className="control">
@@ -224,7 +245,7 @@ const PatientParticipationStatement: React.FC<Props> = () => {
               colour='accent'
               variant='fill'
               onClick={handleNextPage}
-              disabled={!data.detailsCorrect || !data.email || !data.name}
+              disabled={!isDataValid}
             >Proceed</Button>
           </ButtonWrapper>
         </ContentWrapper>

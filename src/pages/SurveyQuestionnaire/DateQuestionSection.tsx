@@ -1,16 +1,17 @@
 import { DateField } from "@adobe/react-spectrum";
-import { SurveyH2 } from "./SurveyComponenets";
+import { SurveyH2 } from "./SurveyComponents";
 import { DateQuestion } from "../../resources/questions/QuestionObject";
 import { useAnswerData } from "../../reducers/AnswerDataProvider";
 import { useEffect, useState } from "react";
-import { parseDate } from '@internationalized/date';
+import { parseDate, today, getLocalTimeZone, CalendarDate } from '@internationalized/date';
 
 const DateQuestionSection = ({ question }: {
   question: DateQuestion
 }) => {
   const { dispatch, state } = useAnswerData();
-  
-  let [selectedDate, setSelectedDate] = useState(parseDate('1980-01-01'));
+  const minDate = parseDate("1899-01-01");
+  const maxDate = today(getLocalTimeZone()).subtract({ years: 18 });
+  let [selectedDate, setSelectedDate] = useState<CalendarDate | undefined>(undefined);
   
   useEffect(() => {
     if (state && state.data[question.getQuestionNumber()]) {
@@ -25,23 +26,38 @@ const DateQuestionSection = ({ question }: {
     }
   }, [question]);
 
-  useEffect(() => {
-    dispatch({
-      type: "add_answer",
-      payload: {
-        questionNumber: question.getQuestionNumber(),
-        answer: selectedDate.toString()
+  const setDate = (value: CalendarDate) => {
+    if (value) {
+      setSelectedDate(value);
+      if (value.compare(minDate) > 0 && value.compare(maxDate) <= 0) {
+        dispatch({
+          type: "add_answer",
+          payload: {
+            questionNumber: question.getQuestionNumber(),
+            answer: value.toString()
+          }
+        })
+      } else {
+        dispatch({
+          type: "remove_answer",
+          payload: {
+            questionNumber: question.getQuestionNumber()
+          }
+        })
       }
-    })
-  }, [selectedDate]);
+    }
+  }  
 
   return (
     <div>
       <SurveyH2>{question.getQuestion()}</SurveyH2>
       <DateField
         label={"Date Picker: " + question.getQuestion()}
+        defaultValue={selectedDate}
         value={selectedDate}
-        onChange={setSelectedDate} 
+        onChange={setDate}
+        minValue={minDate}
+        maxValue={maxDate}
       />
     </div>
   );

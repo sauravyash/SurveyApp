@@ -6,6 +6,7 @@ interface AnswerData {
   data: any;
   largeTextMode: boolean;
   user: any;
+  current_question: number;
 }
 
 const storeInSessionStorage = (state: AnswerData) => {
@@ -18,7 +19,8 @@ const initialState = {
   collect_data: true,
   data: {},
   largeTextMode: false,
-  user: {}
+  user: {},
+  current_question: 0
 };
 
 // Define the reducer function
@@ -27,7 +29,7 @@ const reducer = (state: AnswerData, action: any) => {
     case "set_data":
       state = { ...action.payload };
       break;
-      
+
     case 'set_collect_data':
       state = { ...state, collect_data: action.payload };
       break;
@@ -59,17 +61,18 @@ const reducer = (state: AnswerData, action: any) => {
     case 'set_user_data':
       state = {
         ...state,
-        data: {
-          ...state.data,
-          user: action.payload
-        }
+        user: action.payload
       };
+      break;
+
+    case 'set_current_question':
+      state = { ...state, current_question: action.payload };
       break;
 
     default:
       break;
   }
-  
+
   storeInSessionStorage(state);
   return state;
 };
@@ -88,7 +91,10 @@ const AnswerDataProvider: React.FC<AnswerDataProviderProps> = ({ children }) => 
   useEffect(() => {
     const storedData = sessionStorage.getItem('answerData');
     if (storedData) {
-      dispatch({ type: 'set_data', payload: JSON.parse(storedData) });
+      const parsedData = JSON.parse(storedData);
+      if (parsedData && parsedData["data"]) {
+        dispatch({ type: 'set_data', payload: parsedData });
+      }
     }
   }, []);
 

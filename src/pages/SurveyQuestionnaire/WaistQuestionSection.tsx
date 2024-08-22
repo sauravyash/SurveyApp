@@ -14,10 +14,10 @@ const WaistQuestionSection = (props: {
   const { state } = useAnswerData();
   // default on males for extra gender options
   const gender = state.data[SpecialAnswerData.gender] === "Female" ? "female" : "male";
-  console.log(state.data[SpecialAnswerData.gender]);
-  
+
 
   const options: string[] = [];
+  const conditions: {question: number, answer: string}[] = [];
 
   question.getOptions().forEach((optionSet) => {
     if (options.length > 0) {
@@ -29,31 +29,35 @@ const WaistQuestionSection = (props: {
       return;
     }
     const passedAllConditions = optionSet.conditions.some((condition) => {
-
+      conditions.push({question: condition.question, answer: state.data[condition.question]});
       // console.log(condition, condition.modifier, state.data, state.data[condition.question], condition.answer);
       if (condition.modifier && condition.modifier === "not") {
         return (state.data[condition.question] !== condition.answer)
       }
       return (state.data[condition.question] === condition.answer)
     })
-
-
+    
     if (passedAllConditions) {
       options.push(...optionSet[gender])
     }
   })
 
   return (
-    <MultipleChoiceQuestionSection
-      question={
-        new MultipleChoiceQuestion(
-          question.getQuestionNumber(),
-          question.getQuestion(),
-          options
-        )
-      }
-      action={(): void => { }}
-    />
+    <>
+      <h3></h3>
+      
+      <MultipleChoiceQuestionSection
+        question={
+          new MultipleChoiceQuestion(
+            question.getQuestionNumber(),
+            question.getQuestion(),
+            options
+          )
+        }
+        conditions={conditions}
+        action={(): void => { }}
+      />
+    </>
   )
 }
 

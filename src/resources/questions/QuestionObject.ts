@@ -4,10 +4,12 @@ class BaseQuestionObject {
     private type: string;
     private optional: boolean = false;
     private scoring: boolean = false;
-    private conditions: { question: number, answer: string }[];
+    private conditions: { question: number, answer: any, modifier?: string }[];
+    private context?: string;
 
     constructor(id: number, question: string, type: string, scoring: boolean = false, optional: boolean = false,
-        conditions: { question: number, answer: string }[] = []
+        conditions: { question: number, answer: string }[] = [],
+        context: (string | undefined) = undefined
     ) {
         this.question_number = id;
         this.question_text = question;
@@ -15,6 +17,7 @@ class BaseQuestionObject {
         this.scoring = scoring;
         this.optional = optional;
         this.conditions = conditions;
+        this.context = context;
     }
 
     public getAttributes() {
@@ -23,7 +26,8 @@ class BaseQuestionObject {
             question: this.question_text,
             type: this.type,
             optional: this.optional,
-            scoring: this.scoring
+            scoring: this.scoring,
+            context: this.context
         }
     }
 
@@ -54,8 +58,8 @@ class MultipleChoiceQuestion extends BaseQuestionObject {
 
 
     constructor(id: number, question: string, options: string[], scoring: boolean = false,
-        conditions: { question: number, answer: string }[] = []) {
-        super(id, question, 'multiple-choice', scoring, true, conditions);
+        conditions: { question: number, answer: string }[] = [], context: (string | undefined) = undefined) {
+        super(id, question, 'multiple-choice', scoring, true, conditions, context);
         this.options = options;
     }
 
@@ -95,11 +99,12 @@ class NumberQuestion extends BaseQuestionObject {
         maxValue: number = 1000,
         defaultValue: any = 0,
         scoring: boolean = true,
-        conditions: { question: number, answer: string }[] = [],
+        conditions: { question: number, answer: any, modifier?: string }[] = [],
         optional: boolean = false,
-        step: number = 1
+        step: number = 1,
+        context: (string | undefined) = undefined
     ) {
-        super(id, question, 'number', scoring, optional, conditions);
+        super(id, question, 'number', scoring, optional, conditions, context);
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.defaultValue = defaultValue;
@@ -176,40 +181,63 @@ class WaistMeasurementQuestion extends BaseQuestionObject {
     }
 }
 
-class RangeSelectionQuestion extends BaseQuestionObject {
+class LikertScaleQuestion extends BaseQuestionObject {
     private options: {
         [key: number]: string
     } = {};
+    private questions: string[];
 
     constructor(
-        id: number, 
-        question: string, 
-        options: { [key: number]: string }, 
-        scoring: boolean = true, 
+        id: number,
+        question: string,
+        options: { [key: number]: string },
+        questions: string[] = [],
+        scoring: boolean = true,
         optional: boolean = false
     ) {
-        super(id, question, 'range-selection', scoring, optional);
+        super(id, question, 'likert-scale', scoring, optional);
         this.options = options;
+        this.questions = questions;
     }
 
     public getOptions() {
         return this.options;
     }
+
+    public getQuestionList() {
+        return this.questions;
+    }
+}
+
+class SectionIntroScreen extends BaseQuestionObject {
+    constructor(id: number, content: string) {
+        super(id, content, 'section-intro', false);
+    }
+
+    public getContent() {
+        return this.getQuestion();
+    }
+
 }
 
 
+
+const asia_category_name = "Asia (including the Indian sub-continent), Middle East, North Africa, Southern Europe";
+
 const PersonalInformationQuestions = [
-    new NumberQuestion(1, "What is your age?", ["year"], false, 0, 130, 50),
+    new SectionIntroScreen(1.1,
+        `In this section, we will ask you for some general information about yourself.`),
+    new NumberQuestion(1, "What is your age?", ["year"], false, 18, 130, 50),
     new DateQuestion(2, "What is your date of birth? (dd/mm/yyyy)"),
     new MultipleChoiceQuestion(3, "What is your gender?", ["Male", "Female", "Non-Binary", "Other identity", "Prefer not to say"], true),
-    new MultipleChoiceQuestion(4, "Where were you born?", ["Australia", "Asia", "Middle East", "North Africa", "Southern Europe", "Other"], true),
+    new MultipleChoiceQuestion(4, "Where were you born?", ["Australia", asia_category_name, "Other"], true),
     new MultipleChoiceQuestion(5, "Are you of Aboriginal, Torres Strait Islander origin, Pacific Islander or Māori descendent?", ["No", "Yes, Aboriginal", "Yes, Torres Strait Islander", "Both Aboriginal and Torres Strait Islander", "Pacific Islander or Māori descendent", "Other", "Prefer not to say"], true),
-    new MultipleChoiceQuestion(6, "Do you speak a language other than English at home?", ["No, English only", "Yes, Mandarin", "Yes, Italian", "Yes, Arabic", "Yes, Cantonese", "Yes, Greek", "Yes, Vietnamese", "Yes, other- please specify ________"]),
-    new NumberQuestion(7, "How many languages are you fluent in?", ["language"]),
+    new MultipleChoiceQuestion(6, "Do you speak a language other than English at home?", ["No, English only", "Yes, Mandarin", "Yes, Italian", "Yes, Arabic", "Yes, Cantonese", "Yes, Greek", "Yes, Vietnamese", "Yes, other"]),
+    new NumberQuestion(7, "How many languages are you fluent in?", ["language(s)"], true, 1, 10, 1, true),
     new MultipleChoiceQuestion(8, "What was the highest qualification that you completed?", ["Partially completed primary/elementary school (or equivalent)", "Completed primary/elementary school (or equivalent)", "School certificate (Year 10) (or equivalent)", "Higher school certificate (Year 12) (or equivalent)", "Trade certificate/apprenticeship", "Technician’s certificate/advanced certificate", "Certificate other than above", "Associate diploma", "Undergraduate diploma", "Bachelor’s degree", "Post graduate diploma/certificate", "Higher degree"], true),
     new MultipleChoiceQuestion(9, "Are you currently in a relationship with someone?", ["Yes, living with the person you are married to", "Yes, living with a partner (but not married to them)", "Yes, in a relationship with someone but not living with them", "Yes, married or have a partner but NOT living together as one is in a hostel/nursing home/hospital or for other reasons", "No, not in a relationship with anyone"]),
     new NumberQuestion(10, "Enter your height in either cm or feet/inches",
-        ["cm", "feet/inches"],
+        ["cm", "feet / inches"],
         true,
         0,
         300,
@@ -218,7 +246,7 @@ const PersonalInformationQuestions = [
     new NumberQuestion(
         11,
         "Enter your weight in kgs or stones/pounds",
-        ["kg", "stone/pounds", "lb"],
+        ["kg", "stone / pounds", "lb"],
         true,
         0,
         500,
@@ -227,10 +255,12 @@ const PersonalInformationQuestions = [
     new WaistMeasurementQuestion(12, "Your waist measurement taken below the ribs (usually at the level of the navel, and while standing)", [
         {
             conditions: [
+                // asian
                 {
                     question: 4,
-                    answer: "Asia"
+                    answer: asia_category_name
                 },
+                // aboriginal
                 {
                     question: 5,
                     answer: "No",
@@ -246,50 +276,82 @@ const PersonalInformationQuestions = [
             female: ["Less than 88 cm", "88 – 100 cm", "More than 100 cm"]
         }
     ]),
-    new MultipleChoiceQuestion(13, "Have either of your parents, or any of your brothers or sisters been diagnosed with diabetes (type 1 or type 2)?", ["No", "Yes (Type 1)", "Yes (Type 2)", "Don’t know"]),
-    new MultipleChoiceQuestion(14, "Have either of your parents, or any of your brothers or sisters been diagnosed with stroke?", ["No", "Yes", "Don’t know"]),
-    new MultipleChoiceQuestion(15, "Have either of your parents, or any of your brothers or sisters been diagnosed with dementia or cognitive impairment?", ["No", "Yes", "Don’t know"]),
-    new MultipleChoiceQuestion(16, "Have either of your parents, or any of your brothers or sisters been diagnosed with premature cardiovascular disease or myocardial infarction?", ["No", "Yes", "Don’t know"]),
+    new MultipleChoiceQuestion(13, "Have either of your parents, or any of your brothers or sisters been diagnosed with diabetes (Type 1 or Type 2)?", ["Yes (Type 1)", "Yes (Type 2)", "No", "Don’t know"]),
+    new MultipleChoiceQuestion(14, "Have either of your parents, or any of your brothers or sisters been diagnosed with stroke?", ["Yes", "No", "Don’t know"]),
+    new MultipleChoiceQuestion(15, "Have either of your parents, or any of your brothers or sisters been diagnosed with dementia or cognitive impairment?", ["Yes", "No", "Don’t know"]),
+    new MultipleChoiceQuestion(16, "Have either of your parents, or any of your brothers or sisters been diagnosed with premature cardiovascular disease or myocardial infarction?", ["Yes", "No", "Don’t know"]),
 ];
 
 const HealthQuestions = [
-    new NumberQuestion(17, 
-        "What is your total cholesterol level? (in last two years)", 
-        ["mmol/L"], 
-        false, 0, 20, 5.5, true, undefined, false, 0.1),
-    new MultipleChoiceQuestion(18, 
-        "Have you been told by a doctor or a health professional that you have high cholesterol levels in the past 2 years, or your cholesterol level is higher than 6.5mmol/L?", 
+    new SectionIntroScreen(17.1,
+        `The next few questions will be related to your health.`),
+    new NumberQuestion(17,
+        "What is your total cholesterol level? (in last two years)",
+        ["mmol/L"],
+        true, 0, 20, 5.5, true, undefined, true, 0.1),
+    new MultipleChoiceQuestion(18,
+        "Have you been told by a doctor or a health professional that you have high cholesterol levels in the past 2 years, or your cholesterol level is higher than 6.5mmol/L?",
         ["Yes", "No", "Don’t know"]
     ),
-    new NumberQuestion(19, "What is your HDL cholesterol level?", ["mmol/L"], false, 0, 20, 1.5, true, undefined, false, 0.1),
-    new NumberQuestion(20, "What is your LDL cholesterol level?", ["mmol/L"], false, 0, 20, 3.5, true, undefined, false, 0.1),
-    new NumberQuestion(21, "What are your triglyceride levels?", ["mmol/L"], false, 0, 20, 1.7, true, undefined, false, 0.1),
+    new NumberQuestion(19, "What is your HDL cholesterol level?", ["mmol/L"], true, 0, 20, 1.5, true, undefined, true, 0.1),
+    new NumberQuestion(20, "What is your LDL cholesterol level?", ["mmol/L"], true, 0, 20, 3.5, true, undefined, true, 0.1),
+    new NumberQuestion(21, "What are your triglyceride levels?", ["mmol/L"], true, 0, 20, 1.7, true, undefined, true, 0.1),
     new MultipleChoiceQuestion(22, "Have you ever been told by a doctor or other health professional that you have diabetes?", ["Yes", "No", "Don’t know"]),
     new MultipleChoiceQuestion(23, "Have you been found to have high blood glucose (sugar) (for example, in a health examination, during an illness, during pregnancy) or fasting glucose above 7 mmol/L?", ["Yes", "No", "Don’t know"]),
-    new MultipleChoiceQuestion(24, "Have you ever had a head injury or blow to the head that caused you to be dazed, confused, disoriented, or be knocked out?", ["Yes, I lost consciousness (knocked out)", "Yes, I was dazed, confused, or disoriented but did not lose consciousness", "No", "Don’t know"]),
-    new MultipleChoiceQuestion(25, "For how long were you unconscious because of your head injury?", ["Less than 30mins", "Between 30mins to 24 hours", "More than 24 hours"]),
-    new NumberQuestion(26, "What is your systolic BP?", ["mmHg"], false, 0, 300, 120, true),
+    new MultipleChoiceQuestion(24,
+        "Have you ever had a head injury or blow to the head that caused you to be dazed, confused, disoriented, or be knocked out?",
+        ["Yes, I lost consciousness (knocked out)", "Yes, I was dazed, confused, or disoriented but did not lose consciousness", "No", "Don’t know"],
+        true,
+    ),
+    new MultipleChoiceQuestion(25,
+        "For how long were you unconscious because of your head injury?",
+        ["Less than 30mins", "Between 30mins to 24 hours", "More than 24 hours"],
+        true,
+        [{
+            question: 24,
+            answer: "Yes, I lost consciousness (knocked out)",
+        }, {
+            question: 24,
+            answer: "Yes, I was dazed, confused, or disoriented but did not lose consciousness",
+        }]
+    ),
+    new NumberQuestion(26, "What is your systolic BP?", ["mmHg"], true, 0, 300, 120, true, undefined, true, 1),
     new MultipleChoiceQuestion(27, "Has your doctor ever told you that you had high blood pressure?",
         ["Yes", "No", "Don’t know"]
     ),
-    new NumberQuestion(28, "Could you please specify at what age were you first told that you had high blood pressure?", ["year"], false, 0, 130, 50, true,
+    new NumberQuestion(28,
+        "Could you please specify at what age were you first told that you had high blood pressure?",
+        ["year"], false, 0, 130, 50, true,
+        [{
+            question: 27,
+            answer: "Yes"
+        }],
+        true
+    ),
+    new MultipleChoiceQuestion(29, "Are you currently taking medications for controlling your high blood pressure?",
+        ["Yes", "No"], true,
         [{
             question: 27,
             answer: "Yes"
         }]
     ),
-    new MultipleChoiceQuestion(29, "Are you currently taking medications for controlling your high blood pressure?", ["Yes", "No"], true, [{
-        question: 27,
-        answer: "Yes"
-    }]),
-    new NumberQuestion(30, "Could you please specify at what age you started taking medications for high blood pressure?", ["year"], false, 0, 130, 50, true),
+    new NumberQuestion(30,
+        "Could you please specify at what age you started taking medications for high blood pressure?",
+        ["year"], false, 0, 130, 50, true,
+        [{
+            question: 29,
+            answer: "Yes"
+        }],
+        true
+    ),
     new MultipleChoiceQuestion(31, "Have you ever been told by a doctor that you had a stroke or TIA (transient ischemic attack)?", ["Yes", "No", "Don’t know"]),
     new MultipleChoiceQuestion(32, "Have you ever been told by your doctor that you have a heart condition like atrial fibrillation/arrhythmias (irregular heartbeats) with/without stroke?", ["Atrial fibrillation with stroke", "Atrial fibrillation without stroke", "No atrial fibrillation", "Don’t know"]),
     new MultipleChoiceQuestion(33, "Have you ever been told by your doctor that you have a condition called Left Ventricular Hypertrophy detected by ECG?", ["Yes", "No", "Don’t know"]),
     new MultipleChoiceQuestion(34, "Have you ever been told by your doctor that you had a cardiovascular disease?", ["Yes", "No", "Don’t know"]),
     new MultipleChoiceQuestion(35, "Have you ever been told by your doctor that you had a heart attack or a myocardial infarction?", ["Yes", "No", "Don’t know"]),
     new MultipleChoiceQuestion(36, "Have you been told by a doctor or health professional that you have hearing problems?",
-        ["Yes, I was prescribed hearing aids/implant and wear them",
+        [
+            "Yes, I was prescribed hearing aids/implant and wear them",
             "Yes, I was prescribed hearing aids but do not wear them",
             "No",
             "Don’t know"
@@ -299,10 +361,11 @@ const HealthQuestions = [
         true,
         [{
             question: 36,
-            answer: "No"
-        }, {
+            answer: "Yes, I was prescribed hearing aids/implant and wear them"
+        },
+        {
             question: 36,
-            answer: "Don’t know"
+            answer: "Yes, I was prescribed hearing aids but do not wear them"
         }]
     ),
     new MultipleChoiceQuestion(38, "Have you ever been told by a doctor that you have had kidney disease?", ["Yes", "No", "Don’t know"]),
@@ -317,16 +380,22 @@ const sleepQuestionOptions = {
 }
 
 const SleepQuestions = [
-    new RangeSelectionQuestion(39, "Difficulty falling asleep", sleepQuestionOptions),
-    new RangeSelectionQuestion(40, "Difficulty staying asleep", sleepQuestionOptions),
-    new RangeSelectionQuestion(41, "Problems waking up too early", sleepQuestionOptions),
+    new SectionIntroScreen(39.1,
+        `The next group of questions ask about your sleep habits and any problems you may have with sleep.\n
+For each question, please select the option that best describes your answer.\n
+Please rate the **current (i.e. last 2 weeks)** severity of your insomnia problem(s).`),
+    new LikertScaleQuestion(39, "Difficulty falling asleep", sleepQuestionOptions, [
+        "Difficulty falling asleep",
+        "Difficulty staying asleep",
+        "Problems waking up too early"
+    ]),
     new MultipleChoiceQuestion(42, "How satisfied/dissatisfied are you with your current sleep pattern?",
         ["Very satisfied", "Satisfied", "Moderately Satisfied", "Dissatisfied", "Very Dissatisfied"], true),
     new MultipleChoiceQuestion(43, "How noticeable to others do you think your sleep problem is in terms of impairing the quality of your life?",
         ["Not at all Noticeable", "A Little", "Somewhat", "Much", "Very Much Noticeable"], true),
     new MultipleChoiceQuestion(44, "How worried/distressed are you about your current sleep problem?",
         ["Not at all Worried", "A Little", "Somewhat", "Much", "Very Much Worried"], true),
-    new MultipleChoiceQuestion(45, "To what extent do you consider your sleep problem to interfere with your daily functioning (e.g., daytime fatigue, mood, ability to function at work/daily chores, concentration, memory, mood, etc.) currently?",
+    new MultipleChoiceQuestion(45, "To what extent do you consider your sleep problem to interfere with your daily functioning (e.g., daytime fatigue, mood, ability to function at work/daily chores, concentration, memory, mood etc.) currently?",
         ["Not at all Interfering", "A Little", "Somewhat", "Much", "Very Much Interfering"], true),
 ];
 
@@ -337,30 +406,57 @@ const commonOptions = {
     3: "Most or all of the time (5-7 days)"
 };
 
-const FeelingsQuestions: RangeSelectionQuestion[] = [
-    new RangeSelectionQuestion(46, "I was bothered by things that usually don't bother me.", commonOptions),
-    new RangeSelectionQuestion(47, "I had trouble keeping my mind on what I was doing.", commonOptions),
-    new RangeSelectionQuestion(48, "I felt depressed.", commonOptions),
-    new RangeSelectionQuestion(49, "I felt that everything I did was an effort.", commonOptions),
-    new RangeSelectionQuestion(50, "I felt hopeful about the future.", commonOptions),
-    new RangeSelectionQuestion(51, "I felt fearful.", commonOptions),
-    new RangeSelectionQuestion(52, "My sleep was restless.", commonOptions),
-    new RangeSelectionQuestion(53, "I was happy.", commonOptions),
-    new RangeSelectionQuestion(54, "I felt lonely.", commonOptions),
-    new RangeSelectionQuestion(55, "I could not \"get going\"", commonOptions)
+const FeelingsQuestions = [
+    new SectionIntroScreen(46.1,
+        `The next section asks you about your **feelings**. For each of the following statements, please say if you felt that way **during the past week.**`),
+    new LikertScaleQuestion(46, "Feeling", commonOptions, [
+        "I was bothered by things that usually don't bother me.",
+        "I had trouble keeping my mind on what I was doing.",
+        "I felt depressed.",
+        "I felt that everything I did was an effort.",
+        "I felt hopeful about the future.",
+        "I felt fearful.",
+        "My sleep was restless.",
+        "I was happy.",
+        "I felt lonely.",
+        "I could not \"get going\""
+    ])
 ];
 
 
 const PhysicalActivityQuestions = [
-    new NumberQuestion(56, "During the last 7 days, on how many days did you do vigorous physical activities like heavy lifting, digging, aerobics, or fast bicycling?", ["days per week"], false, 0, 7, 0, true),
-    new NumberQuestion(57, "How much time did you usually spend doing vigorous physical activities on one of those days?", ["hours per day", "minutes per day"], false, 0, 24, 0, true),
-    new NumberQuestion(58, "During the last 7 days, on how many days did you do moderate physical activities like carrying light loads, bicycling at a regular pace, or doubles tennis? Do not include walking.", ["days per week"], false, 0, 7, 0, true),
-    new NumberQuestion(59, "How much time did you usually spend doing moderate physical activities on one of those days?", ["hours per day", "minutes per day"], false, 0, 24, 0, true),
-    new NumberQuestion(60, "During the last 7 days, on how many days did you walk for at least 10 minutes at a time?", ["days per week"], false, 0, 7, 0, true),
-    new NumberQuestion(61, "How much time did you usually spend walking on one of those days?", ["hours per day", "minutes per day"], false, 0, 24, 0, true),
+    new SectionIntroScreen(56.1,
+        `These following questions will ask you about the time you spent being physically active in the **last 7 days.** Please answer each question even if you do not consider yourself to be an active person. Please think about the activities you do at work, as a part of your house and yard work, to get from place to place, and in your spare time for recreation, exercise or sport.`),
+    new NumberQuestion(56,
+        "During the last 7 days, on how many days did you do vigorous physical activities like heavy lifting, digging, aerobics, or fast bicycling?",
+        ["days per week"], false, 0, 7, -Infinity, true, undefined, true, 1,
+        `Think about all the vigorous activities that you did in the last 7 days. Vigorous physical activities refer to activities that take hard physical effort and make you breathe much harder than normal. Think only about those activities that you did for at least 10 minutes at a time.`),
+    new NumberQuestion(57,
+        "How much time did you usually spend doing vigorous physical activities on one of those days?",
+        ["hours per day", "minutes per day"], false, 0, 24, -Infinity, true,
+        [{
+            question: 56,
+            answer: 0,
+            modifier: "not"
+        }], true, 0.1),
+    new NumberQuestion(58, "During the last 7 days, on how many days did you do moderate physical activities like carrying light loads, bicycling at a regular pace, or doubles tennis? Do not include walking.",
+        ["days per week"], false, 0, 7, 0, true, undefined, true, 1, "Think about all the moderate activities that you did in the last 7 days. Moderate activities refer to activities that take moderate physical effort and make you breathe somewhat harder than normal. Think only about those physical activities that you did for at least 10 minutes at a time."),
+    new NumberQuestion(59, "How much time did you usually spend doing moderate physical activities on one of those days?",
+        ["hours per day", "minutes per day"], false, 0, 24, -Infinity, true,
+        [{
+            question: 59,
+            answer: 0,
+            modifier: "not"
+        }], true, 0.1),
+    new NumberQuestion(60, "During the last 7 days, on how many days did you walk for at least 10 minutes at a time?",
+        ["days per week"], false, 0, 7, -Infinity, true, undefined, true, 1, " Think about the time you spent walking in the last 7 days. This includes at work and at home, walking to travel from place to place, and any other walking that you have done solely for recreation, sport, exercise, or leisure."),
+    new NumberQuestion(61, "How much time did you usually spend walking on one of those days?",
+        ["hours per day", "minutes per day"], false, 0, 24, -Infinity, true, undefined, true, 0.1),
 ];
 
 const LeisureActivityQuestions = [
+    new SectionIntroScreen(62.1,
+        `The next section will ask you questions about activities during leisure time.`),
     new MultipleChoiceQuestion(62, "About how much time do you spend reading each day, including online reading?",
         ["None", "Less than one hour", "One to less than 2 hours", "Two to less than 3 hours", "Three or more hours", "Don't know"], true),
     new MultipleChoiceQuestion(63, "Thinking of the last year, how often do you read newspapers, including online?",
@@ -375,11 +471,11 @@ const LeisureActivityQuestions = [
         ["Every day or almost everyday", "Several times a week", "Several times a month", "Several times a year", "Once a year or less", "Don't know"], true),
     new MultipleChoiceQuestion(68, "During the past year, how often did you write letters or emails?",
         ["Every day or almost everyday", "Several times a week", "Several times a month", "Several times a year", "Once a year or less", "Don't know"], true),
-    new MultipleChoiceQuestion(69, "During the past year, how often did you use online social network activities like Facebook/ Twitter?",
+    new MultipleChoiceQuestion(69, "During the past year, how often did you use online social network activities like Facebook/X (previously known as Twitter)?",
         ["Every day or almost everyday", "Several times a week", "Several times a month", "Several times a year", "Once a year or less", "Don't know"], true),
-    new MultipleChoiceQuestion(70, "During the past year, how often in your paid or unpaid job/work did you participate in intellectually stimulating activities like problem solving, balancing budgets/accounts, any quantitative/ numerical activities, computer coding, or formulating correspondence?",
+    new MultipleChoiceQuestion(70, "During the past year, how often in your paid or unpaid job/work did you participate in intellectually stimulating activities like problem solving, balancing budgets/accounts, any quantitative/numerical activities, computer coding, or formulating correspondence?",
         ["Every day or almost everyday", "Several times a week", "Several times a month", "Several times a year", "Once a year or less", "Don't know"], true),
-    new TextQuestion(71, "Apart from the above questions, did you participate in other intellectual and cognitively stimulating activities?"),
+    new TextQuestion(71, "Apart from the previous questions, which other intellectual and cognitively stimulating activities did you participate in?"),
     new MultipleChoiceQuestion(72, "If yes, how often did you participate in the above activities?",
         ["Every day or almost everyday", "Several times a week", "Several times a month", "Several times a year", "Once a year or less", "Don't know"], true),
     new MultipleChoiceQuestion(73, "In the past year, how many times did you visit a museum?",
@@ -391,6 +487,8 @@ const LeisureActivityQuestions = [
 ];
 
 const CompanionshipQuestions = [
+    new SectionIntroScreen(76.1,
+        `The following questions will ask you about companionship and your feelings. `),
     new MultipleChoiceQuestion(76, "Do you live alone or with other people?",
         ["Live alone or with spouse only", "Live with extended family (children and grandchildren)"], true),
     new MultipleChoiceQuestion(77, "How often do you feel that you lack companionship?",
@@ -402,37 +500,47 @@ const CompanionshipQuestions = [
 ];
 
 const FoodAndHabitsQuestions = [
+    new SectionIntroScreen(80.1,
+        `In this section, we will ask you questions regarding your diet and habits.`),
     new MultipleChoiceQuestion(80, "How often do you eat vegetables?", ["Every day", "Not every day"], true),
     new MultipleChoiceQuestion(81, "How many serves of vegetables do you usually eat each day?",
-        ["1 serve or less", "2 serves", "3 serves", "4 serves", "5 serves", "6 serves or more", "Don't eat vegetables"], true),
+        ["1 serve or less", "2 serves", "3 serves", "4 serves", "5 serves", "6 serves or more", "Don't eat vegetables"], true, [
+        { question: 80, answer: "Every day" }
+    ]),
     new MultipleChoiceQuestion(82, "How often do you eat fruits?", ["Every day", "Not every day"], true),
     new MultipleChoiceQuestion(83, "How many serves of fruits do you usually eat each day?",
-        ["1 serve or less", "2 serves", "3 serves", "4 serves", "5 serves", "6 serves or more", "Don't eat fruits"], true),
-    new NumberQuestion(84, "How often do you drink fruit juices such as orange, grapefruit or tomato?", ["per day", "per week", "per month", "rarely or never"], false, 0, 100, 0, true),
-    new NumberQuestion(85, "How often do you eat chips, French fries, wedges, fried potatoes or crisps?", ["per day", "per week", "per month", "rarely or never"], false, 0, 100, 0, true),
-    new NumberQuestion(86, "How often do you eat potatoes?", ["per day", "per week", "per month", "rarely or never"], false, 0, 100, 0, true),
-    new NumberQuestion(87, "How often do you eat salad?", ["per day", "per week", "per month", "rarely or never"], false, 0, 100, 0, true),
-    new MultipleChoiceQuestion(88, "How often do you eat green leafy vegetables (spinach, lettuce, kale)?",
+        ["1 serve or less", "2 serves", "3 serves", "4 serves", "5 serves", "6 serves or more", "Don't eat fruits"], true, [
+        { question: 82, answer: "Every day" }
+    ]),
+    new NumberQuestion(84, "How often do you drink fruit juices such as orange, grapefruit or tomato?",
+        ["per day", "per week", "per month", "rarely or never"], false, 0, 100, 0, true, undefined, true),
+    new NumberQuestion(85, "How often do you eat chips, French fries, wedges, fried potatoes or crisps?",
+        ["per day", "per week", "per month", "rarely or never"], false, 0, 100, 0, true, undefined, true),
+    new NumberQuestion(86, "How often do you eat potatoes?",
+        ["per day", "per week", "per month", "rarely or never"], false, 0, 100, 0, true, undefined, true),
+    new NumberQuestion(87, "How often do you eat salad?",
+        ["per day", "per week", "per month", "rarely or never"], false, 0, 100, 0, true, undefined, true),
+    new MultipleChoiceQuestion(88, "How often do you eat green leafy vegetables (e.g. spinach, lettuce, kale)?",
         ["Less than 2 servings per week", "2-5 servings per week", "6 or more servings per week"], true),
-    new MultipleChoiceQuestion(89, "How often do you eat other vegetables?",
+    new MultipleChoiceQuestion(89, "How often do you eat other vegetables (e.g. pumpkin, okra, mushroom, eggplant)?",
         ["Less than 5 servings per week", "5-6 servings per week", "7 or more servings per week"], true),
     new MultipleChoiceQuestion(90, "How often do you eat berries (e.g. blueberries, strawberries)?",
         ["Less than 1 serving per week", "Less than 2 serving per week", "More than 2 servings per week"], true),
     new MultipleChoiceQuestion(91, "How often do you eat nuts?",
-        ["Less than 1 serving per month", "Less than 5 serving per week", "More than 5 servings per week"], true),
+        ["Less than 1 serving per month", "Less than 5 serving per week", "More than 5 servings per week"], true, undefined, "A standard serve is 30g (approx. 20 almonds, 10 Brazil nuts or 15 cashews)"),
     new MultipleChoiceQuestion(92, "What is the primary cooking oil that you use?",
         ["Olive oil", "Vegetable oil", "Coconut oil", "Other"], true),
     new MultipleChoiceQuestion(93, "How much butter or margarine do you use?",
         ["Less than 1 tablespoon per day", "1 to 2 tablespoon per day", "More than 2 tablespoons per day"], true),
-    new MultipleChoiceQuestion(94, "How many servings of cheese you eat per week?",
+    new MultipleChoiceQuestion(94, "How many servings of cheese do you eat per week?",
         ["Less than 1 serving per week", "1 to 6 servings per week", "7 or more servings per week"], true),
-    new MultipleChoiceQuestion(95, "How many servings of whole grains do you eat per week?",
+    new MultipleChoiceQuestion(95, "How many servings of whole grains (e.g. brown rice, multigrain bread, wholegrain pasta, barely, quinoa etc.) do you eat per week? For example, 1 slice of bread, approx. ½ cup of cooked rice/quinoa or pasta is one serve",
         ["Less than 1 serving per day", "1 to 2 servings per day", "3 or more servings per day"], true),
     new MultipleChoiceQuestion(96, "How often do you eat a serving of fish or seafood that is not deep-fried?",
         ["Rarely", "1-3 times per month", "Once a week", "2-3 times per week", "4 or more times per week"], true),
     new MultipleChoiceQuestion(97, "How often do you eat beans?",
         ["Less than 1 meal per week", "1 to 3 meals per week", "More than 3 meals per week"], true),
-    new MultipleChoiceQuestion(98, "How often do you eat poultry (not fried)?",
+    new MultipleChoiceQuestion(98, "How often do you eat poultry (not deep fried)?",
         ["Less than 1 meal per week", "Less than 2 meals per week", "More than 2 meals per week"], true),
     new MultipleChoiceQuestion(99, "How often do you eat red meat and meat products?",
         ["Less than 4 meals per week", "4 to 6 meals per week", "More than 6 meals per week"], true),
@@ -442,14 +550,16 @@ const FoodAndHabitsQuestions = [
         ["Less than 5 servings per week", "5 to 6 servings per week", "7 or more servings per week"], true),
     new MultipleChoiceQuestion(102, "How many glasses of wine (red or white) do you drink?",
         ["I never drink wine", "Less than 1 glass per day", "One glass per day", "More than one glass per day"], true),
-    new NumberQuestion(103, "Not counting potatoes and salad, how often do you eat cooked vegetables?", ["per day", "per week", "per month", "rarely or never"], false, 0, 100, 0, true),
+    new NumberQuestion(103, "Not counting potatoes and salad, how often do you eat cooked vegetables?", ["per day", "per week", "per month", "rarely or never"], false, 0, 100, 0, true, undefined, true, 1),
     new MultipleChoiceQuestion(104, "How much coffee do you drink each day?",
         ["I never drink coffee", "< 1 cup", "1 cup", "2 cups", "3 cups", "4 cups", "More than 4 cups per day"], true),
     new MultipleChoiceQuestion(105, "How many caffeinated tea (e.g., black tea, green tea) do you drink each day?",
         ["I never drink tea", "< 1 cup", "1 cup", "2 cups", "3 cups", "4 cups", "More than 4 cups per day"], true),
+    new SectionIntroScreen(106.1,
+        `The next questions are about your alcohol consumption and smoking habits.`),
     new MultipleChoiceQuestion(106, "How often do you have a drink containing alcohol?",
         ["Never", "Monthly or less", "2-4 times a month", "2-3 times a week", "4 or more times a week"], true),
-    new NumberQuestion(107, "How many standard drinks do you have on a typical day when you are drinking?", ["drinks"], false, 1, 20, 1, true),
+    new NumberQuestion(107, "How many standard drinks do you have on a typical day when you are drinking?", ["drink"], false, 1, 30, 1, true, undefined, true, 0.1, "link://images/drink-standards.png"),
     new MultipleChoiceQuestion(108, "Do you, or have you ever, smoked cigarettes, cigars, pipes or any other tobacco products?",
         ["Yes, currently", "Yes, not currently", "Never"], true),
 ];
@@ -498,6 +608,18 @@ const QuestionSections = [
     }
 ]
 
+const AllQuestions: BaseQuestionObject[] = [
+    ...PersonalInformationQuestions,
+    ...HealthQuestions,
+    ...SleepQuestions,
+    ...FeelingsQuestions,
+    ...PhysicalActivityQuestions,
+    ...LeisureActivityQuestions,
+    ...CompanionshipQuestions,
+    ...FoodAndHabitsQuestions,
+    ...EnvironmentalExposuresQuestions
+]
+
 export default QuestionSections;
 export {
     BaseQuestionObject,
@@ -506,7 +628,8 @@ export {
     TextQuestion,
     NumberQuestion,
     WaistMeasurementQuestion,
-    RangeSelectionQuestion
+    LikertScaleQuestion,
+    AllQuestions
 };
 
 

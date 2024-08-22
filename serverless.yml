@@ -1,0 +1,89 @@
+service: lead-survey-frontend
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-southeast-2
+  stage: ${opt:stage, 'dev'}
+  environment:
+    S3_BUCKET_NAME: ${self:custom.s3BucketName}
+    SURVEY_BACKEND_URL: ${self:custom.serverURL}
+
+plugins:
+  - serverless-s3-sync
+  - serverless-cloudfront-invalidate
+
+custom:
+  s3BucketName: lead-survey-frontend-${self:provider.stage}
+  distributionFolder: dist
+  serverURL: opeb42p2uf.execute-api.ap-southeast-2.amazonaws.com/dev
+  cloudFrontDistributionId:
+    dev: E1C7U722TMF1NR
+    prod: YOUR_PROD_DISTRIBUTION_ID_SET_ME
+  s3Sync:
+    - bucketName: ${self:custom.s3BucketName}
+      localDir: ${self:custom.distributionFolder}
+  cloudfrontInvalidate:
+    - distributionId: ${self:custom.cloudFrontDistributionId.${self:provider.stage}}
+      items:
+        - "/*"
+
+
+resources:
+  Resources:
+    WebsiteBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.s3BucketName}
+        WebsiteConfiguration:
+          IndexDocument: index.html
+          ErrorDocument: index.html
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          BlockPublicPolicy: false
+          IgnorePublicAcls: false
+          RestrictPublicBuckets: false
+
+    WebsiteBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref WebsiteBucket
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal: "*"
+              Action:
+                - s3:GetObject
+              Resource: arn:aws:s3:::${self:custom.s3BucketName}/*
+
+    CloudFrontDistribution:
+      Type: AWS::CloudFront::Distribution
+      Properties:
+        DistributionConfig:
+          Origins:
+            - DomainName: ${self:custom.s3BucketName}.s3.${self:provider.region}.amazonaws.com
+              Id: S3Origin
+              S3OriginConfig: {}
+          Enabled: true
+          DefaultRootObject: index.html
+          DefaultCacheBehavior:
+            Compress: true
+            AllowedMethods:
+              - GET
+              - HEAD
+            TargetOriginId: S3Origin
+            ForwardedValues:
+              QueryString: false
+              Cookies:
+                Forward: none
+            ViewerProtocolPolicy: redirect-to-https
+          ViewerCertificate:
+            CloudFrontDefaultCertificate: true
+          CustomErrorResponses:
+            - ErrorCode: 403
+              ResponseCode: 200
+              ResponsePagePath: /index.html
+            - ErrorCode: 404
+              ResponseCode: 200
+              ResponsePagePath: /index.html
