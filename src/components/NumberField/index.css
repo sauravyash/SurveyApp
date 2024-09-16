@@ -1,0 +1,10 @@
+#number-input-control:has(input:focus) .number-control-button {
+  border-right-color: #007bff;
+}
+
+#number-input-control:has(input:focus) .number-control-button-top {
+  border-top-color: #007bff;
+}
+#number-input-control:has(input:focus) .number-control-button-bottom {
+  border-bottom-color: #007bff;
+}

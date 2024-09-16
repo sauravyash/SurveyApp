@@ -69,7 +69,8 @@ const LikertComponent = (props: {
             >
               <TableCell component="th" scope="row"
                 style={{
-                  fontSize: '1.1rem'
+                  fontSize: '1.1rem',
+                  textAlign: 'left',
                 }}
               >
                 {row}

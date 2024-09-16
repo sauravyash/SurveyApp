@@ -3,7 +3,8 @@ import { useAnswerData } from "../../reducers/AnswerDataProvider";
 import styled from "styled-components";
 import { AllQuestions, LikertScaleQuestion, NumberQuestion } from "../../resources/questions/QuestionObject";
 import { ButtonWrapper } from "../../components/Button";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
+import { generateReport, GenerateReportRequestBody } from "../../actions/generate";
 
 const SummaryWrapper = styled.section`
     // display: flex;
@@ -32,9 +33,14 @@ const parseAnswerData: (arr: [string, any]) => string = (arr) => {
 
   if (arr[1] === "unsure") return "Unsure";
 
+  if (typeof arr[1] === "string") {
+    if (arr[1].includes(": ")) {
+      return arr[1].split(": ")[1];
+    }
+    return arr[1];
+  }
+
   if (typeof arr[1] === "object") {
-    console.log(arr[1]);
-    
     if (arr[1].currentKey) {
       let val = arr[1].currentKey;
       if (val && val.includes(arr[0] + ": ")) {
@@ -42,16 +48,24 @@ const parseAnswerData: (arr: [string, any]) => string = (arr) => {
       }
       return val;
     }
-    const [unit, amount] = Object.entries(arr[1])[0];
-    const questionData = AllQuestions.find(q => q.getQuestionNumber() === Number(arr[0])) as NumberQuestion;
-    return `${amount} ${unit}${amount !== 1 && !questionData.getAttributes().scientific_unit ? 's' : ''}`;
+    const a = Object.entries(arr[1]);
+    if (a.length === 0) {
+      return "No answer provided";
+    }
+    const [unit, amount] = a[0];
+    const questionData = AllQuestions.find(q => q.getQuestionNumber() === Number(arr[0]));
+    console.log(questionData);
+    
+    if (questionData && questionData.getType() === "number") {
+      return `${amount} ${unit}${amount !== 1 && !(questionData as NumberQuestion).getAttributes().scientific_unit ? 's' : ''}`;
+    }
+    return `${amount} ${unit}`;
   }
   return arr[1].toString();
 }
 
 const SummaryPage = () => {
   const { state } = useAnswerData();
-  const navigate = useNavigate();
 
   const questionList: QuestionList = AllQuestions.reduce((obj, question) => {
     if (question.getType() === "likert-scale") {
@@ -69,95 +83,110 @@ const SummaryPage = () => {
     question: questionList[arr[0]],
     answer: parseAnswerData(arr),
   }));
-  console.log(tableItems);
-  
 
-  const handleResetSurvey = () => {
-    if (window.confirm("Are you sure you want to reset the survey?")) {
-      localStorage.removeItem('answerData');
-      navigate("/");
+  // const navigate = useNavigate();
+
+  // const handleResetSurvey = () => {
+  //   if (window.confirm("Are you sure you want to reset the survey?")) {
+  //     localStorage.removeItem('answerData');
+  //     navigate("/");
+  //   }
+  // }
+
+
+  const handleGenerateReport = async () => {
+    const data: GenerateReportRequestBody = {
+      cogDriskScore: 0,
+      dateOfAssessment: new Date().toISOString(),
+      demographicFactors: [],
+      medicalRiskFactors: [],
+      lifestyleHabits: [],
+      recommendations: []
+    };
+
+    const res = await generateReport(data);
+    console.log(res);
+    if (res.data?.url) {
+      window.open(res.data.url, '_blank');
     }
   }
 
-  console.log(tableItems);
-  
-
-  const handlePrintPDF = () => {
-    print();
-  }
-
-  return (
-    <SummaryWrapper>
-        <Flex
-          direction="column"
-          gap="size-100"
-          width="100%"
-          margin={"size-100"}
-          alignItems={"center"}
-        >
-          <h1
-            className={[
-              "is-size-1",
-            ].join(" ")}
-            style={{ padding: "0.5em 0 0" }}
-          >Summary</h1>
-          <TableView
-            aria-label="Summary Table of answers"
-            width={'95%'}
-          >
-            <TableHeader columns={[
-              {
-                name: '#',
-                uid: 'question_number',
-                width: 10
-              },
-              {
-                name: 'Question',
-                uid: 'question'
-              }, {
-                name: 'Answer',
-                uid: 'answer'
-              }
-            ]}>
-              {column => (
-                <Column
-                  key={column.uid}
-                  align={column.uid === 'date' ? 'end' : 'start'}
-                  width={column.width || null}
-                >
-                  {column.name}
-                </Column>
-              )}
-            </TableHeader>
-            <TableBody
-              items={tableItems}
-            >
-              {(item: any) => {
-                return (
-                  <Row key={JSON.stringify(item)}>
-                    {columnKey => <Cell>{item[columnKey]}</Cell>}
-                  </Row>
-                )
-              }}
-            </TableBody>
-          </TableView>
-          <ButtonWrapper>
-            <Button
+  const ActionButtons = (
+    <ButtonWrapper>
+      {/* <Button
               variant="accent"
               onPress={handleResetSurvey}
             >
               Reset The Survey
-            </Button>
-            <Button
-              variant="accent"
-              onPress={handlePrintPDF}
-            >
-              Print PDF
-            </Button>
-          </ButtonWrapper>
-        </Flex>
-    </SummaryWrapper>
+            </Button> */}
+      <Button
+        variant="accent"
+        onPress={handleGenerateReport}
+      >
+        Generate Report
+      </Button>
+    </ButtonWrapper>
+  )
 
+  return (
+    <SummaryWrapper>
+      <Flex
+        direction="column"
+        gap="size-100"
+        width="100%"
+        margin={"size-100"}
+        alignItems={"center"}
+      >
+        <h1
+          className={[
+            "is-size-1",
+          ].join(" ")}
+          style={{ padding: "0.5em 0 0" }}
+        >Summary</h1>
+        {ActionButtons}
+        <TableView
+          aria-label="Summary Table of answers"
+          width={'95%'}
+        >
+          <TableHeader columns={[
+            {
+              name: '#',
+              uid: 'question_number',
+              width: 10
+            },
+            {
+              name: 'Question',
+              uid: 'question'
+            }, {
+              name: 'Answer',
+              uid: 'answer'
+            }
+          ]}>
+            {column => (
+              <Column
+                key={column.uid}
+                align={column.uid === 'date' ? 'end' : 'start'}
+                width={column.width || null}
+              >
+                {column.name}
+              </Column>
+            )}
+          </TableHeader>
+          <TableBody
+            items={tableItems}
+          >
+            {(item: any) => {
+              return (
+                <Row key={JSON.stringify(item)}>
+                  {columnKey => <Cell>{item[columnKey]}</Cell>}
+                </Row>
+              )
+            }}
+          </TableBody>
+        </TableView>
+        {ActionButtons}
+      </Flex>
+    </SummaryWrapper>
   )
 }
 

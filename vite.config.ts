@@ -1,9 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-// import { ViteFaviconsPlugin } from "vite-plugin-favicon";
+import 'dotenv/config';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  define: {
+    'env': process.env,
+    'ENV_VAR_BACKEND_URL': new String(process.env.SURVEY_BACKEND_URL),
+  },
   plugins: [
     react(),
     // markdown loader

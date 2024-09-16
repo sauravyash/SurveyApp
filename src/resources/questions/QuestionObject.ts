@@ -8,7 +8,7 @@ class BaseQuestionObject {
     private context?: string;
 
     constructor(id: number, question: string, type: string, scoring: boolean = false, optional: boolean = false,
-        conditions: { question: number, answer: string }[] = [],
+        conditions: { question: number, answer: string, modifier?: string }[] = [],
         context: (string | undefined) = undefined
     ) {
         this.question_number = id;
@@ -58,7 +58,7 @@ class MultipleChoiceQuestion extends BaseQuestionObject {
 
 
     constructor(id: number, question: string, options: string[], scoring: boolean = false,
-        conditions: { question: number, answer: string }[] = [], context: (string | undefined) = undefined) {
+        conditions: { question: number, answer: string, modifier?: string }[] = [], context: (string | undefined) = undefined) {
         super(id, question, 'multiple-choice', scoring, true, conditions, context);
         this.options = options;
     }
@@ -77,8 +77,18 @@ class MultipleChoiceQuestion extends BaseQuestionObject {
 }
 
 class TextQuestion extends BaseQuestionObject {
+    private showNoneCheckbox: boolean | string = false;
     constructor(id: number, question: string, scoring: boolean = false) {
         super(id, question, 'text', scoring);
+    }
+
+
+    public setDisplayNoneCheckbox(value: boolean | string) {
+        this.showNoneCheckbox = value;
+    }
+
+    public getDisplayNoneCheckbox() {
+        return this.showNoneCheckbox;
     }
 }
 
@@ -89,6 +99,7 @@ class NumberQuestion extends BaseQuestionObject {
     private units: string[];
     private scientific_unit: boolean;
     private step: number = 1;
+    private showNoneCheckbox: boolean | string = false;
 
     constructor(
         id: number,
@@ -136,6 +147,14 @@ class NumberQuestion extends BaseQuestionObject {
 
     public getUnits() {
         return this.units;
+    }
+
+    public setDisplayNoneCheckbox(value: boolean | string) {
+        this.showNoneCheckbox = value;
+    }
+
+    public getDisplayNoneCheckbox() {
+        return this.showNoneCheckbox;
     }
 }
 
@@ -361,11 +380,11 @@ const HealthQuestions = [
         true,
         [{
             question: 36,
-            answer: "Yes, I was prescribed hearing aids/implant and wear them"
+            answer: "No"
         },
         {
             question: 36,
-            answer: "Yes, I was prescribed hearing aids but do not wear them"
+            answer: "Don’t know"
         }]
     ),
     new MultipleChoiceQuestion(38, "Have you ever been told by a doctor that you have had kidney disease?", ["Yes", "No", "Don’t know"]),
@@ -429,30 +448,34 @@ const PhysicalActivityQuestions = [
         `These following questions will ask you about the time you spent being physically active in the **last 7 days.** Please answer each question even if you do not consider yourself to be an active person. Please think about the activities you do at work, as a part of your house and yard work, to get from place to place, and in your spare time for recreation, exercise or sport.`),
     new NumberQuestion(56,
         "During the last 7 days, on how many days did you do vigorous physical activities like heavy lifting, digging, aerobics, or fast bicycling?",
-        ["days per week"], false, 0, 7, -Infinity, true, undefined, true, 1,
+        ["days per week"], false, 0, 7, -Infinity, true, undefined, false, 1,
         `Think about all the vigorous activities that you did in the last 7 days. Vigorous physical activities refer to activities that take hard physical effort and make you breathe much harder than normal. Think only about those activities that you did for at least 10 minutes at a time.`),
     new NumberQuestion(57,
         "How much time did you usually spend doing vigorous physical activities on one of those days?",
-        ["hours per day", "minutes per day"], false, 0, 24, -Infinity, true,
+        ["hours / minutes"], true, 0, 59, -Infinity, true,
         [{
             question: 56,
             answer: 0,
             modifier: "not"
-        }], true, 0.1),
+        }], true, 1),
     new NumberQuestion(58, "During the last 7 days, on how many days did you do moderate physical activities like carrying light loads, bicycling at a regular pace, or doubles tennis? Do not include walking.",
-        ["days per week"], false, 0, 7, 0, true, undefined, true, 1, "Think about all the moderate activities that you did in the last 7 days. Moderate activities refer to activities that take moderate physical effort and make you breathe somewhat harder than normal. Think only about those physical activities that you did for at least 10 minutes at a time."),
+        ["days per week"], false, 0, 7, 0, true, undefined, false, 1, "Think about all the moderate activities that you did in the last 7 days. Moderate activities refer to activities that take moderate physical effort and make you breathe somewhat harder than normal. Think only about those physical activities that you did for at least 10 minutes at a time."),
     new NumberQuestion(59, "How much time did you usually spend doing moderate physical activities on one of those days?",
-        ["hours per day", "minutes per day"], false, 0, 24, -Infinity, true,
+        ["hours / minutes"], true, 0, 24, -Infinity, true,
         [{
             question: 59,
             answer: 0,
             modifier: "not"
-        }], true, 0.1),
+        }], true, 1),
     new NumberQuestion(60, "During the last 7 days, on how many days did you walk for at least 10 minutes at a time?",
-        ["days per week"], false, 0, 7, -Infinity, true, undefined, true, 1, " Think about the time you spent walking in the last 7 days. This includes at work and at home, walking to travel from place to place, and any other walking that you have done solely for recreation, sport, exercise, or leisure."),
+        ["days per week"], true, 0, 7, -Infinity, true, undefined, false, 1, " Think about the time you spent walking in the last 7 days. This includes at work and at home, walking to travel from place to place, and any other walking that you have done solely for recreation, sport, exercise, or leisure."),
     new NumberQuestion(61, "How much time did you usually spend walking on one of those days?",
-        ["hours per day", "minutes per day"], false, 0, 24, -Infinity, true, undefined, true, 0.1),
+        ["hours / minutes"], true, 0, 24, -Infinity, true, undefined, true, 1),
 ];
+
+(PhysicalActivityQuestions[1] as NumberQuestion).setDisplayNoneCheckbox(true);
+(PhysicalActivityQuestions[3] as NumberQuestion).setDisplayNoneCheckbox(true);
+(PhysicalActivityQuestions[5] as NumberQuestion).setDisplayNoneCheckbox(true);
 
 const LeisureActivityQuestions = [
     new SectionIntroScreen(62.1,
@@ -477,7 +500,20 @@ const LeisureActivityQuestions = [
         ["Every day or almost everyday", "Several times a week", "Several times a month", "Several times a year", "Once a year or less", "Don't know"], true),
     new TextQuestion(71, "Apart from the previous questions, which other intellectual and cognitively stimulating activities did you participate in?"),
     new MultipleChoiceQuestion(72, "If yes, how often did you participate in the above activities?",
-        ["Every day or almost everyday", "Several times a week", "Several times a month", "Several times a year", "Once a year or less", "Don't know"], true),
+        ["Every day or almost everyday", "Several times a week", "Several times a month",
+            "Several times a year", "Once a year or less", "Don't know"
+        ], true, [
+            {
+                question: 71,
+                answer: "",
+                modifier: "not"
+            },
+            {
+                question: 71,
+                answer: "Not Applicable",
+                modifier: "not"
+            }
+        ]),
     new MultipleChoiceQuestion(73, "In the past year, how many times did you visit a museum?",
         ["Every day or almost everyday", "Several times a week", "Several times a month", "Several times a year", "Once a year or less", "Don't know"], true),
     new MultipleChoiceQuestion(74, "In the past year, how many times did you attend a concert, play, or musical?",
@@ -486,17 +522,24 @@ const LeisureActivityQuestions = [
         ["Every day or almost everyday", "Several times a week", "Several times a month", "Several times a year", "Once a year or less", "Don't know"], true),
 ];
 
+(LeisureActivityQuestions[10] as TextQuestion).setDisplayNoneCheckbox("Not Applicable");
+
+const companionshipOptions = {
+    0: "Hardly ever",
+    1: "Some of the time",
+    2: "Often"
+};
+
 const CompanionshipQuestions = [
     new SectionIntroScreen(76.1,
         `The following questions will ask you about companionship and your feelings. `),
     new MultipleChoiceQuestion(76, "Do you live alone or with other people?",
         ["Live alone or with spouse only", "Live with extended family (children and grandchildren)"], true),
-    new MultipleChoiceQuestion(77, "How often do you feel that you lack companionship?",
-        ["Hardly ever", "Some of the time", "Often"], true),
-    new MultipleChoiceQuestion(78, "How often do you feel left out?",
-        ["Hardly ever", "Some of the time", "Often"], true),
-    new MultipleChoiceQuestion(79, "How often do you feel isolated from others?",
-        ["Hardly ever", "Some of the time", "Often"], true),
+    new LikertScaleQuestion(77, "Companionship", companionshipOptions, [
+        "How often do you feel that you lack companionship?",
+        "How often do you feel left out?",
+        "How often do you feel isolated from others?",
+    ]),
 ];
 
 const FoodAndHabitsQuestions = [
@@ -506,20 +549,20 @@ const FoodAndHabitsQuestions = [
     new MultipleChoiceQuestion(81, "How many serves of vegetables do you usually eat each day?",
         ["1 serve or less", "2 serves", "3 serves", "4 serves", "5 serves", "6 serves or more", "Don't eat vegetables"], true, [
         { question: 80, answer: "Every day" }
-    ]),
+    ], "A standard serve is approximately half a cup of cooked vegetables or 1 cup of leafy greens or raw salad"),
     new MultipleChoiceQuestion(82, "How often do you eat fruits?", ["Every day", "Not every day"], true),
     new MultipleChoiceQuestion(83, "How many serves of fruits do you usually eat each day?",
         ["1 serve or less", "2 serves", "3 serves", "4 serves", "5 serves", "6 serves or more", "Don't eat fruits"], true, [
         { question: 82, answer: "Every day" }
-    ]),
+    ], "A standard serve is approximately 1 medium piece of fruit or 2 small pieces of fruit or 1 cup of diced fruit or ½ cup of fruit juice"),
     new NumberQuestion(84, "How often do you drink fruit juices such as orange, grapefruit or tomato?",
-        ["per day", "per week", "per month", "rarely or never"], false, 0, 100, 0, true, undefined, true),
+        ["per day", "per week", "per month"], false, 0, 100, 0, true, undefined, false),
     new NumberQuestion(85, "How often do you eat chips, French fries, wedges, fried potatoes or crisps?",
-        ["per day", "per week", "per month", "rarely or never"], false, 0, 100, 0, true, undefined, true),
+        ["per day", "per week", "per month"], false, 0, 100, 0, true, undefined, false),
     new NumberQuestion(86, "How often do you eat potatoes?",
-        ["per day", "per week", "per month", "rarely or never"], false, 0, 100, 0, true, undefined, true),
+        ["per day", "per week", "per month"], false, 0, 100, 0, true, undefined, false, 1, "A standard service is ½ a medium potato or other starchy vegetable (sweet potato, taro or cassava)"),
     new NumberQuestion(87, "How often do you eat salad?",
-        ["per day", "per week", "per month", "rarely or never"], false, 0, 100, 0, true, undefined, true),
+        ["per day", "per week", "per month"], false, 0, 100, 0, true, undefined, false, 1, "Salad includes mixed green salad and other mixtures of raw vegetables"),
     new MultipleChoiceQuestion(88, "How often do you eat green leafy vegetables (e.g. spinach, lettuce, kale)?",
         ["Less than 2 servings per week", "2-5 servings per week", "6 or more servings per week"], true),
     new MultipleChoiceQuestion(89, "How often do you eat other vegetables (e.g. pumpkin, okra, mushroom, eggplant)?",
@@ -527,17 +570,17 @@ const FoodAndHabitsQuestions = [
     new MultipleChoiceQuestion(90, "How often do you eat berries (e.g. blueberries, strawberries)?",
         ["Less than 1 serving per week", "Less than 2 serving per week", "More than 2 servings per week"], true),
     new MultipleChoiceQuestion(91, "How often do you eat nuts?",
-        ["Less than 1 serving per month", "Less than 5 serving per week", "More than 5 servings per week"], true, undefined, "A standard serve is 30g (approx. 20 almonds, 10 Brazil nuts or 15 cashews)"),
+        ["Less than 1 serving per month", "Less than 5 serving per week", "More than 5 servings per week"], true, undefined, "A standard serve is 30g (approx. 20 almonds, 10 brazil nuts or 15 cashews)"),
     new MultipleChoiceQuestion(92, "What is the primary cooking oil that you use?",
         ["Olive oil", "Vegetable oil", "Coconut oil", "Other"], true),
     new MultipleChoiceQuestion(93, "How much butter or margarine do you use?",
         ["Less than 1 tablespoon per day", "1 to 2 tablespoon per day", "More than 2 tablespoons per day"], true),
     new MultipleChoiceQuestion(94, "How many servings of cheese do you eat per week?",
-        ["Less than 1 serving per week", "1 to 6 servings per week", "7 or more servings per week"], true),
-    new MultipleChoiceQuestion(95, "How many servings of whole grains (e.g. brown rice, multigrain bread, wholegrain pasta, barely, quinoa etc.) do you eat per week? For example, 1 slice of bread, approx. ½ cup of cooked rice/quinoa or pasta is one serve",
-        ["Less than 1 serving per day", "1 to 2 servings per day", "3 or more servings per day"], true),
+        ["Less than 1 serving per week", "1 to 6 servings per week", "7 or more servings per week"], true, undefined, "For example, 2 slices of hard cheese or ½ cup of ricotta cheese is one serve"),
+    new MultipleChoiceQuestion(95, "How many servings of whole grains (e.g. brown rice, multigrain bread, wholegrain pasta, barely, quinoa etc.) do you eat per week?",
+        ["Less than 1 serving per day", "1 to 2 servings per day", "3 or more servings per day"], true, undefined, "For example, 1 slice of bread, approx. ½ cup of cooked rice/quinoa or pasta is one serve"),
     new MultipleChoiceQuestion(96, "How often do you eat a serving of fish or seafood that is not deep-fried?",
-        ["Rarely", "1-3 times per month", "Once a week", "2-3 times per week", "4 or more times per week"], true),
+        ["Rarely", "1-3 times per month", "Once a week", "2-3 times per week", "4 or more times per week"], true, undefined, "For example, a 100g fish fillet or one small can of fish is one serve."),
     new MultipleChoiceQuestion(97, "How often do you eat beans?",
         ["Less than 1 meal per week", "1 to 3 meals per week", "More than 3 meals per week"], true),
     new MultipleChoiceQuestion(98, "How often do you eat poultry (not deep fried)?",
@@ -550,7 +593,8 @@ const FoodAndHabitsQuestions = [
         ["Less than 5 servings per week", "5 to 6 servings per week", "7 or more servings per week"], true),
     new MultipleChoiceQuestion(102, "How many glasses of wine (red or white) do you drink?",
         ["I never drink wine", "Less than 1 glass per day", "One glass per day", "More than one glass per day"], true),
-    new NumberQuestion(103, "Not counting potatoes and salad, how often do you eat cooked vegetables?", ["per day", "per week", "per month", "rarely or never"], false, 0, 100, 0, true, undefined, true, 1),
+    new NumberQuestion(103, "Not counting potatoes and salad, how often do you eat cooked vegetables?", ["per day", "per week", "per month", "rarely or never"],
+        false, 0, 100, 0, true, undefined, false, 1),
     new MultipleChoiceQuestion(104, "How much coffee do you drink each day?",
         ["I never drink coffee", "< 1 cup", "1 cup", "2 cups", "3 cups", "4 cups", "More than 4 cups per day"], true),
     new MultipleChoiceQuestion(105, "How many caffeinated tea (e.g., black tea, green tea) do you drink each day?",
@@ -559,54 +603,61 @@ const FoodAndHabitsQuestions = [
         `The next questions are about your alcohol consumption and smoking habits.`),
     new MultipleChoiceQuestion(106, "How often do you have a drink containing alcohol?",
         ["Never", "Monthly or less", "2-4 times a month", "2-3 times a week", "4 or more times a week"], true),
-    new NumberQuestion(107, "How many standard drinks do you have on a typical day when you are drinking?", ["drink"], false, 1, 30, 1, true, undefined, true, 0.1, "link://images/drink-standards.png"),
+    new MultipleChoiceQuestion(107, "How many standard drinks do you have on a typical day when you are drinking?",
+        ["0,", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "More than 20"], true, undefined, "link://images/drink-standards.png"),
     new MultipleChoiceQuestion(108, "Do you, or have you ever, smoked cigarettes, cigars, pipes or any other tobacco products?",
         ["Yes, currently", "Yes, not currently", "Never"], true),
 ];
 
+FoodAndHabitsQuestions.filter(q => (q.getQuestionNumber() >= 84 && q.getQuestionNumber() <= 87) || q.getQuestionNumber() === 103).forEach(q => (q as NumberQuestion).setDisplayNoneCheckbox("Rarely/Never"));
 const EnvironmentalExposuresQuestions = [
+    new SectionIntroScreen(109.1,
+        `This last question is on your exposure to pesticides`),
     new MultipleChoiceQuestion(109, "Have you ever been involved with mixing, applying or loading any pesticide, herbicide, weed killers, fumigants or fungicides?",
         ["Yes", "No", "Don't know"], true),
 ];
 
-const QuestionSections = [
-    {
-        title: "Personal Information",
-        questions: PersonalInformationQuestions
-    },
-    {
-        title: "Health Questions",
-        questions: HealthQuestions
-    },
-    {
-        title: "Sleep Questions",
-        questions: SleepQuestions
-    },
-    {
-        title: "Feelings Questions",
-        questions: FeelingsQuestions
-    },
-    {
-        title: "Physical Activity Questions",
-        questions: PhysicalActivityQuestions
-    },
-    {
-        title: "Leisure Activity Questions",
-        questions: LeisureActivityQuestions
-    },
-    {
-        title: "Companionship Questions",
-        questions: CompanionshipQuestions
-    },
-    {
-        title: "Food and Habits Questions",
-        questions: FoodAndHabitsQuestions
-    },
-    {
-        title: "Environmental Exposures Questions",
-        questions: EnvironmentalExposuresQuestions
-    }
-]
+const QuestionSections: {
+    title: string,
+    questions: BaseQuestionObject[]
+}[] = [
+        {
+            title: "Personal Information",
+            questions: PersonalInformationQuestions
+        },
+        {
+            title: "Health Questions",
+            questions: HealthQuestions
+        },
+        {
+            title: "Sleep Questions",
+            questions: SleepQuestions
+        },
+        {
+            title: "Feelings Questions",
+            questions: FeelingsQuestions
+        },
+        {
+            title: "Physical Activity Questions",
+            questions: PhysicalActivityQuestions
+        },
+        {
+            title: "Leisure Activity Questions",
+            questions: LeisureActivityQuestions
+        },
+        {
+            title: "Companionship Questions",
+            questions: CompanionshipQuestions
+        },
+        {
+            title: "Food and Habits Questions",
+            questions: FoodAndHabitsQuestions
+        },
+        {
+            title: "Environmental Exposures Questions",
+            questions: EnvironmentalExposuresQuestions
+        }
+    ]
 
 const AllQuestions: BaseQuestionObject[] = [
     ...PersonalInformationQuestions,

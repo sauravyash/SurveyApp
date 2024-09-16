@@ -10,7 +10,7 @@ const TermsAndCondtitionsWrapper = styled.section`
   height: 100%;
 `;
 
-const TermsAndCondtitions = styled.p`
+const TermsAndCondtitions = styled.div`
   font-size: 1em;
   text-align: left;
   color: #000;

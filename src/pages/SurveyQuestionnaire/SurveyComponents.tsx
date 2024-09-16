@@ -18,13 +18,13 @@ const ContextSection = (props: any) => {
         width: "50%",
         height: "auto",
         objectFit: "contain",
-        margin: "4rem 0 2rem",
+        margin: "0",
 
       }} src={link} alt="context" className="" />
     )
   }
   return (
-    <span className="is-size-5 p-6 my-4">{props.children}</span>
+    <span className="is-size-5 my-4">{props.children}</span>
   )
 }
 

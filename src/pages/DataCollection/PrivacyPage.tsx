@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import CheckMark from '@spectrum-icons/workflow/CheckmarkCircle';
 import { useAnswerData } from '../../reducers/AnswerDataProvider.tsx';
+import imageListWebP from '../../resources/stockImageList.ts';
 
 const PageWrapper = styled.section`
   display: flex;
@@ -94,27 +95,27 @@ const ButtonLikeBox = styled.span.attrs(({ className }) => ({ className: `button
   }
 `
 
-const ContinueButton = styled.button.attrs(({ className }) => ({ className: `button is-large ${className}` }))`
+const ContinueButton = styled.span.attrs(({ className }) => ({ className: `button is-large ${className}` }))`
   margin-top: 1.5rem;
 `
 
 const PrivacyPage: React.FC = () => {
   let navigate = useNavigate();
-  let [collectData, setCollectData] = React.useState<boolean>(false);
+  let [collectData, setCollectData] = React.useState<"yes" | "no" | null>(null);
 
   const { state, dispatch } = useAnswerData();
 
   useEffect(() => {
-    if (state && state.collectData) {
-      setCollectData(state.collectData);
+    if (state && state.collect_data) {
+      setCollectData(state.collect_data);
     }
   }, [state]);
 
 
-  const handleDataCollection = (collectData: boolean) => {
+  const handleDataCollection = (collectData: "yes" | "no") => {
     setCollectData(collectData);
     dispatch({ type: 'set_collect_data', payload: collectData });
-    if (collectData) {
+    if (collectData === "yes") {
       navigate('/patient-information')
     } else {
       navigate('/survey')
@@ -125,30 +126,30 @@ const PrivacyPage: React.FC = () => {
     <PageWrapper>
       <Wrapper id="privacy-page">
         <ButtonSection>
-          <BackgroundImage src="images/stock/iStock-855246888.jpg" />
-          <BoxButton onClick={() => handleDataCollection(true)}>
+          <BackgroundImage src={imageListWebP.find(url => url.includes("iStock-855246888"))} />
+          <BoxButton onClick={() => handleDataCollection("yes")}>
             <Subtitle>I wish to</Subtitle>
             <Title>TAKE THE ASSESSMENT AND</Title>
             <ButtonLikeBox className="is-success">Participate</ButtonLikeBox>
             <Title>IN RESEARCH</Title>
             <ContinueButton className='is-success'>
               <span>Continue</span>
-              <span className={'icon ' + (collectData || 'is-hidden')}>
+              <span className={'icon ' + (collectData !== "yes" && 'is-hidden')}>
                 <CheckMark aria-label='Not participated is Selected' />
               </span>
             </ContinueButton>
           </BoxButton>
         </ButtonSection>
         <ButtonSection>
-          <BackgroundImage src="images/stock/iStock-162666975.jpg" />
-          <BoxButton onClick={() => handleDataCollection(false)}>
+          <BackgroundImage src={imageListWebP.find(url => url.includes("iStock-162666975"))} />
+          <BoxButton onClick={() => handleDataCollection("no")}>
             <Subtitle>I wish to</Subtitle>
             <Title>TAKE THE ASSESSMENT AND</Title>
             <ButtonLikeBox className="is-dark">Not Participate</ButtonLikeBox>
             <Title>IN RESEARCH</Title>
             <ContinueButton className='is-dark'>
               <span>Continue</span>
-              <span className={'icon ' + (collectData && 'is-hidden')}>
+              <span className={'icon ' + (collectData !== "no" && 'is-hidden')}>
                 <CheckMark aria-label='Not participated is Selected' />
               </span>
             </ContinueButton>

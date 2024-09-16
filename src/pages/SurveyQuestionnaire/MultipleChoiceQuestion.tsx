@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { AllQuestions, MultipleChoiceQuestion } from "../../resources/questions/QuestionObject";
+import { MultipleChoiceQuestion } from "../../resources/questions/QuestionObject";
 import { useEffect, useState } from "react";
 import { useAnswerData } from "../../reducers/AnswerDataProvider";
 import { ContextSection, SurveyH2 } from "./SurveyComponents";
@@ -34,54 +34,122 @@ const MultipleChoiceQuestionWrapper = styled.div`
   padding: 2rem;
 `;
 
-const MultipleChoiceQuestionSection = (props: {
-  question: MultipleChoiceQuestion,
-  action: (answer: string) => void,
-  conditions?: {
-    question: number;
-    answer: string;
-  }[]
-}) => {
-  const { question, conditions } = props;
-  const [selected, setSelected] = useState<Selection>();
+interface MCPickerProps {
+  question: MultipleChoiceQuestion;
+}
+
+const MCPicker = (props: MCPickerProps) => {
+  const { question } = props;
   const [selectedKey, setSelectedKey] = useState<string | number>();
   const [otherText, setOtherText] = useState("");
+
   const { state, dispatch } = useAnswerData();
-
-  if (selected === "all") { return; }
-  let isAnswerOther: boolean = false;
-
-  if (selectedKey === "Yes, other") {
-    isAnswerOther = true;
-  } else if (selected && (selected as any)?.currentKey) {
-    isAnswerOther = (selected as any)?.currentKey?.includes("Yes, other");
-  } 
+  // const [otherText, setOtherText] = useState("");
 
   useEffect(() => {
-    try {
-      if (state && state.data[question.getQuestionNumber()]) {
-        
-        if (typeof state.data[question.getQuestionNumber()] === "string") {
-          console.log(state.data[question.getQuestionNumber()]);
-          setSelectedKey(state.data[question.getQuestionNumber()]);
-          // const set = new Set<string | number>();
-          // set.add(question.getOptions().reverse()[0]);
-          // setSelected(set);
-          setOtherText(state.data[question.getQuestionNumber()] as string);
-        } else {
-          setSelected(state.data[question.getQuestionNumber()]);
-        }
+    if (state.data[question.getQuestionNumber()]) {
+      const keyList = question.getOptions().map((answer) => `${question.getQuestionNumber()}: ${answer}`);
+      if (keyList.includes(state.data[question.getQuestionNumber()]) || !keyList.includes(`${question.getQuestionNumber()}: Yes, other`)) {
+        setSelectedKey(state.data[question.getQuestionNumber()]);
       } else {
-        setSelected(state.data[question.getQuestionNumber()]);
+        setSelectedKey(`${question.getQuestionNumber()}: Yes, other`);
+        setOtherText(state.data[question.getQuestionNumber()]);
       }
-    } catch (error) {
-      console.error("Multiple Choice Component Data Error:", error);
     }
-
   }, [question]);
 
   useEffect(() => {
-    if (selected && selected.size > 0 && !isAnswerOther) {
+    let isAnswerOther: boolean = (selectedKey as string)?.includes("Yes, other");
+    if (selectedKey && !isAnswerOther) {
+      dispatch({
+        type: "add_answer",
+        payload: {
+          questionNumber: question.getQuestionNumber(),
+          answer: selectedKey
+        }
+      })
+    } else if (isAnswerOther && otherText.length > 1 && otherText.match(/[a-zA-Z]+/)) {
+      dispatch({
+        type: "add_answer",
+        payload: {
+          questionNumber: question.getQuestionNumber(),
+          answer: otherText
+        }
+      })
+    } else {
+      dispatch({
+        type: "remove_answer",
+        payload: {
+          questionNumber: question.getQuestionNumber()
+        }
+      })
+    }
+  }, [selectedKey, otherText]);
+
+
+  let isAnswerOther: boolean = (selectedKey as string)?.includes("Yes, other");
+
+  return (
+    <>
+      <Picker
+        items={question.getOptions().map((answer, index) => ({ answer, index }))}
+        onSelectionChange={setSelectedKey}
+        selectedKey={selectedKey}
+        aria-label={question.getQuestion() + " options"}
+      >
+        {
+          (item) => <Item key={`${question.getQuestionNumber()}: ${item.answer}`}>
+            {item.answer}
+          </Item>
+        }
+      </Picker>
+      {
+        isAnswerOther ? (
+          <TextField label="Other"
+            value={otherText}
+            onChange={setOtherText}
+            inputMode={"text"}
+          />
+        ) : null
+      }
+    </>
+  )
+}
+
+interface MCSelectorProps {
+  question: MultipleChoiceQuestion;
+}
+
+const MCSelector = (props: MCSelectorProps) => {
+  const { question } = props;
+  const [selected, setSelected] = useState<Selection>();
+  const [otherText, setOtherText] = useState("");
+  const { state, dispatch } = useAnswerData();
+
+  useEffect(() => {
+    const answer = state.data[question.getQuestionNumber()];
+    try {
+      if (answer) {
+        if (typeof answer === "string") {
+          const newSet = new Set<string>();
+          newSet.add(`${question.getQuestionNumber()}: ${question.getOptions().reverse()[0]}`);
+          setSelected(newSet);
+        }
+        else {
+          setSelected(state.data[question.getQuestionNumber()]);
+        }
+      }
+      // else {
+      //   setSelected(undefined);
+      // }
+    } catch (error) {
+      console.error(error);
+    }
+  }, [question]);
+
+  useEffect(() => {
+    let isAnswerOther: boolean = (selected as any)?.currentKey?.includes("Yes, other");
+    if (selected && !isAnswerOther) {
       dispatch({
         type: "add_answer",
         payload: {
@@ -109,85 +177,74 @@ const MultipleChoiceQuestionSection = (props: {
 
   }, [selected, otherText]);
 
-  useEffect(() => {
-    if (selectedKey !== undefined) {
-      dispatch({
-        type: "add_answer",
-        payload: {
-          questionNumber: question.getQuestionNumber(),
-          answer: selectedKey
-        }
-      })
-    } else {
-      dispatch({
-        type: "remove_answer",
-        payload: {
-          questionNumber: question.getQuestionNumber()
-        }
-      })
-    }
-  }, [selectedKey]);
+  if (question.getOptions().length > 6) return;
+
+  if (selected === "all") { return; }
+  let isAnswerOther: boolean = (selected as any)?.currentKey?.includes("Yes, other");
+
+  return (
+    <>
+      <ListView
+        minWidth="size-6000"
+        density={question.getOptions().length > 4 ? "compact" : "spacious"}
+        overflowMode="wrap"
+        aria-label={question.getQuestion() + " options"}
+        selectionMode="single"
+        selectionStyle="checkbox"
+        items={question.getOptions().map((answer, index) => ({ answer, index }))}
+        selectedKeys={selected}
+        onSelectionChange={(keys: Selection) => setSelected(keys)}
+      >
+        {(item) => (
+          <Item key={`${question.getQuestionNumber()}: ${item.answer}`}>
+            {item.answer}
+          </Item>
+        )}
+      </ListView>
+      {
+        isAnswerOther ? (
+          <TextField label="Other"
+            value={otherText}
+            onChange={setOtherText}
+            inputMode={"text"}
+          />
+        ) : null
+      }
+    </>
+  )
+}
+
+const MultipleChoiceQuestionSection = (props: {
+  question: MultipleChoiceQuestion,
+  action: (answer: string) => void
+}) => {
+  const { question } = props;
+  const usePicker = question.getOptions().length > 6;
 
   return (
     <QuestionWrapper>
+      {/* {
+        question.getAttributes().context ? (
+          <ContextSection>{question.getAttributes().context}</ContextSection>
+        ) : null
+      } */}
+      <SurveyH2>{question.getQuestion()}</SurveyH2>
       {
         question.getAttributes().context ? (
           <ContextSection>{question.getAttributes().context}</ContextSection>
         ) : null
       }
-      <SurveyH2>{question.getQuestion()}</SurveyH2>
-      {
-        conditions?.map((condition) => {
-          console.log(condition);
-          return (
-            <span key={condition.question}>
-              {AllQuestions.find(q => q.getQuestionNumber() === condition.question)?.getQuestion()} {(condition?.answer as any).currentKey.split(": ").reverse()[0]}
-            </span>
-          )
-        })
-      }
       <MultipleChoiceQuestionWrapper className="buttons">
         {
-          question.getOptions().length > 6 ? (
-            <Picker
-              items={question.getOptions().map((answer, index) => ({ answer, index }))}
-              onSelectionChange={setSelectedKey}
-              selectedKey={selectedKey}
-            >
-              {
-                (item) => <Item key={`${question.getQuestionNumber()}: ${item.answer}`}>
-                  {item.answer}
-                </Item>
-              }
-            </Picker>
-          ) : (
-            <ListView
-              minWidth="size-6000"
-              density={question.getOptions().length > 4 ? "compact" : "spacious"}
-              overflowMode="wrap"
-              aria-label={question.getQuestion() + " options"}
-              selectionMode="single"
-              selectionStyle="checkbox"
-              items={question.getOptions().map((answer, index) => ({ answer, index }))}
-              selectedKeys={selected}
-              onSelectionChange={(keys: Selection) => setSelected(keys)}
-            >
-              {(item) => (
-                <Item key={`${question.getQuestionNumber()}: ${item.answer}`}>
-                  {item.answer}
-                </Item>
-              )}
-            </ListView>
-          )
-        }
-        {
-          isAnswerOther ? (
-            <TextField label="Other"
-              value={otherText}
-              onChange={setOtherText}
-              inputMode={"text"}
+          usePicker ? (
+            <MCPicker
+              question={question}
             />
-          ) : null
+          ) : (
+            <MCSelector
+              question={question}
+            />
+          )
         }
       </MultipleChoiceQuestionWrapper>
     </QuestionWrapper>

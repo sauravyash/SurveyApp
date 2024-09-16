@@ -11,7 +11,7 @@
       "stage": "dev",
       "environment": {
         "S3_BUCKET_NAME": "lead-survey-frontend-dev",
-        "SURVEY_BACKEND_URL": "opeb42p2uf.execute-api.ap-southeast-2.amazonaws.com/dev"
+        "SURVEY_BACKEND_URL": "1fd28tgtc6.execute-api.ap-southeast-2.amazonaws.com/dev"
       },
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
@@ -268,7 +268,7 @@
     "custom": {
       "s3BucketName": "lead-survey-frontend-dev",
       "distributionFolder": "dist",
-      "serverURL": "opeb42p2uf.execute-api.ap-southeast-2.amazonaws.com/dev",
+      "serverURL": "1fd28tgtc6.execute-api.ap-southeast-2.amazonaws.com/dev",
       "cloudFrontDistributionId": {
         "dev": "E1C7U722TMF1NR",
         "prod": "YOUR_PROD_DISTRIBUTION_ID_SET_ME"
@@ -389,6 +389,11 @@
       "provider": {
         "$ref": "$[\"service\"][\"provider\"]"
       },
+      "params": {
+        "dev": {
+          "SURVEY_BACKEND_URL": "1fd28tgtc6.execute-api.ap-southeast-2.amazonaws.com/dev"
+        }
+      },
       "plugins": {
         "$ref": "$[\"service\"][\"plugins\"]"
       },
@@ -404,7 +409,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/lead-survey-frontend/dev/1724311924377-2024-08-22T07:32:04.377Z",
+    "artifactDirectoryName": "serverless/lead-survey-frontend/dev/1724645153316-2024-08-26T04:05:53.316Z",
     "artifact": ""
   }
 }

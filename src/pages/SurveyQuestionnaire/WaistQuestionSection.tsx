@@ -1,5 +1,5 @@
 import { useAnswerData } from "../../reducers/AnswerDataProvider";
-import { MultipleChoiceQuestion, WaistMeasurementQuestion } from "../../resources/questions/QuestionObject";
+import { AllQuestions, MultipleChoiceQuestion, WaistMeasurementQuestion } from "../../resources/questions/QuestionObject";
 import MultipleChoiceQuestionSection from "./MultipleChoiceQuestion";
 
 const SpecialAnswerData = {
@@ -29,13 +29,25 @@ const WaistQuestionSection = (props: {
       return;
     }
     const passedAllConditions = optionSet.conditions.some((condition) => {
-      conditions.push({question: condition.question, answer: state.data[condition.question]});
-      // console.log(condition, condition.modifier, state.data, state.data[condition.question], condition.answer);
-      if (condition.modifier && condition.modifier === "not") {
-        return (state.data[condition.question] !== condition.answer)
+      let currentAnswer = state.data[condition.question];
+      if (typeof currentAnswer === "string" && currentAnswer.includes(": ")) {
+        currentAnswer = currentAnswer.split(": ")[1];
       }
-      return (state.data[condition.question] === condition.answer)
+      if (currentAnswer instanceof Set && (currentAnswer as any).currentKey.includes(": ")) {
+        currentAnswer = (currentAnswer as any).currentKey.split(": ")[1];
+      }
+      console.log("currentAnswer", currentAnswer);
+      conditions.push({question: condition.question, answer: currentAnswer});
+      // console.log(JSON.stringify(condition), condition.modifier, currentAnswer, condition.answer);
+      if (condition.modifier && condition.modifier === "not") {
+        console.log("checking not", currentAnswer, condition.answer);
+        
+        return (currentAnswer !== condition.answer)
+      }
+      return (currentAnswer === condition.answer)
     })
+    console.log("passedAllConditions", passedAllConditions);
+    
     
     if (passedAllConditions) {
       options.push(...optionSet[gender])
@@ -44,8 +56,15 @@ const WaistQuestionSection = (props: {
 
   return (
     <>
-      <h3></h3>
-      
+      {
+        conditions.map((condition) => {
+          return (
+            <div key={condition.question}>
+              <p>{AllQuestions.find(q => q.getQuestionNumber() === condition.question)?.getQuestion()} {condition.answer}</p>
+            </div>
+          )
+        })
+      }
       <MultipleChoiceQuestionSection
         question={
           new MultipleChoiceQuestion(
@@ -54,7 +73,6 @@ const WaistQuestionSection = (props: {
             options
           )
         }
-        conditions={conditions}
         action={(): void => { }}
       />
     </>

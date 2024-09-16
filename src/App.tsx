@@ -13,36 +13,43 @@ import 'bulma/css/bulma.min.css';
 import SummaryPage from "./pages/Summary/SummaryPage";
 import { defaultTheme as AdobeDefaultTheme, Provider } from "@adobe/react-spectrum";
 import PatientParticipationStatement from "./pages/PatientParticipationStatement/PatientParticipationStatement";
+import { ErrorBoundary } from "./pages/ErrorBoundary";
+
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+    errorElement: <ErrorBoundary />
   },
   {
     path: "/privacy",
     element: <DataCollection />,
+    errorElement: <ErrorBoundary />
   },
   {
     path: "/survey",
     element: <SurveyQuestionnaire />,
+    errorElement: <ErrorBoundary />
   },
   {
     path: "/summary",
     element: <SummaryPage />,
+    errorElement: <ErrorBoundary />
   },
   {
     path: "/patient-information",
     element: <PatientParticipationStatement />,
+    errorElement: <ErrorBoundary />
   },
   {
     path: "/*",
-    element: <Navigate to="/" />,
+    element: <Navigate to="/" />
   }
 ]);
 
 const defaultTheme = AdobeDefaultTheme;
-console.log(defaultTheme);
+// console.log(defaultTheme);
 
 
 function App() {

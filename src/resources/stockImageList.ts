@@ -90,4 +90,7 @@ const imagePaths = [
   "iStock-958332892"
 ];
 
-export default imagePaths;
+const imageListWebP = imagePaths.map((img) => `/images/stock_new/${img}.webp`);
+export const imageListJPG = imagePaths.map((img) => `/images/stock_new/${img}.jpg`);
+
+export default imageListWebP;

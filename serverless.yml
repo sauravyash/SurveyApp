@@ -9,6 +9,10 @@ provider:
     S3_BUCKET_NAME: ${self:custom.s3BucketName}
     SURVEY_BACKEND_URL: ${self:custom.serverURL}
 
+params:
+  dev:
+    SURVEY_BACKEND_URL: ${self:custom.serverURL}
+
 plugins:
   - serverless-s3-sync
   - serverless-cloudfront-invalidate
@@ -16,7 +20,7 @@ plugins:
 custom:
   s3BucketName: lead-survey-frontend-${self:provider.stage}
   distributionFolder: dist
-  serverURL: opeb42p2uf.execute-api.ap-southeast-2.amazonaws.com/dev
+  serverURL: 1fd28tgtc6.execute-api.ap-southeast-2.amazonaws.com/${self:provider.stage}
   cloudFrontDistributionId:
     dev: E1C7U722TMF1NR
     prod: YOUR_PROD_DISTRIBUTION_ID_SET_ME

@@ -19,7 +19,8 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  width: 100%;
+  width: 100vw;
+  overflow-x: hidden;
   padding: 0;
   background-color: aliceblue;
   position: relative;

@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react"
-import { defaultTheme, Provider, Button as AdobeButton, TextField, ButtonGroup, ProgressBar } from '@adobe/react-spectrum';
+import { Provider, Button as AdobeButton, TextField, ButtonGroup, ProgressBar } from '@adobe/react-spectrum';
 
 import Loading from "../../components/Loading";
 import styled from "styled-components";
-import { ButtonWrapper } from "../../components/Button";
-import questionSections, { DateQuestion, MultipleChoiceQuestion, NumberQuestion, LikertScaleQuestion, WaistMeasurementQuestion, AllQuestions } from "../../resources/questions/QuestionObject";
+// import { ButtonWrapper } from "../../components/Button";
+import questionSections, { DateQuestion, MultipleChoiceQuestion, NumberQuestion, LikertScaleQuestion, WaistMeasurementQuestion, AllQuestions, TextQuestion } from "../../resources/questions/QuestionObject";
 import { useAnswerData } from "../../reducers/AnswerDataProvider";
-import rawImageList from "../../resources/stockImageList";
 import { useNavigate } from "react-router-dom";
 import MultipleChoiceQuestionSection from "./MultipleChoiceQuestion";
 import WaistQuestionSection from "./WaistQuestionSection";
@@ -14,8 +13,9 @@ import NumberQuestionSection from "./NumberQuestionSection";
 import LikertScaleSection from "./LikertScaleSection";
 import DateQuestionSection from "./DateQuestionSection";
 import Markdown from "react-markdown";
-
-const imageList = rawImageList.map((img) => `/images/stock_new/${img}.webp`);
+import RestoreProgressModal from "../../components/RestoreProgressModal";
+import imageListWebP from "../../resources/stockImageList";
+import TextQuestionSection from "./TextQuestionSection";
 
 const SurveyPage = styled.section`
   display: flex;
@@ -71,7 +71,7 @@ const AnswerColWrapper = styled.div`
   border-radius: 1em;
   margin: auto;
   padding: 0.5rem;
-  overflow-y: hidden;
+  overflow-y: auto;
   height: 90%;
 `;
 
@@ -98,17 +98,63 @@ const SurveyQuestionnaire = () => {
   const [currentSection, setCurrentSection] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [loadingPage, setLoadingPage] = useState(true);
+  const [isRestoreChanged, setRestoreChanged] = useState(false);
   const [isAnswerValidated, setAnswerValidated] = useState(false);
-  const [bgImage, setBgImage] = useState(imageList[0]);
+  const [bgImage, setBgImage] = useState(imageListWebP[0]);
   const { state, dispatch } = useAnswerData();
   const navigate = useNavigate();
 
   const sectiontitle = questionSections[currentSection]?.title;
 
+  const findQuestionPosition: (qn: number) => [section: number, page: number] = (qn: number) => {
+    qn = AllQuestions.map(q => q.getQuestionNumber()).reduce((prev, curr) => {
+      return (qn >= curr ? curr : prev);
+    }, 1);
+    const question = AllQuestions.find(q => q.getQuestionNumber() === qn);
+    if (!question) {
+      return [0, 0];
+    }
+    // console.log("finding question position", qn, question);
+
+    const section = questionSections.findIndex(section => section.questions.includes(question));
+    const page = questionSections[section].questions.findIndex(q => q === question);
+    return [section, page];
+  }
+
+  useEffect(() => {
+    try {
+      // const hash = window.location.hash;
+      // if (hash.includes("question")) {
+      //   const questionNumber = parseInt(hash.split("-")[1]);
+      //   if (isFinite(questionNumber)) {
+      //     console.log("Attempting to load question number", questionNumber);
+      //     const [section, page] = findQuestionPosition(questionNumber);
+      //     setCurrentSection(section);
+      //     setCurrentPage(page);
+      //   }
+      // } else {
+      if (!state.data) return;
+      const qs = Object.keys(state.data).map(n => parseInt(n)).filter(n => isFinite(n));
+      if (qs.length === 0) return;
+      const lastQ = Math.max(...qs);
+
+      if (isFinite(lastQ)) {
+        const [section, page] = findQuestionPosition(lastQ);
+        // console.log("restoring question", lastQ, "position: ", section, page);
+        setCurrentSection(section);
+        setCurrentPage(page);
+      }
+      // }
+    } catch (error) {
+      console.log("restore survey question position error", error);
+    }
+
+  }, [isRestoreChanged]);
+
   useEffect(() => {
     const currentQuestion = questionSections[currentSection].questions[currentPage];
     setLoadingPage(true);
-    setBgImage(imageList[currentPage % imageList.length]);
+    setBgImage(imageListWebP[currentPage % imageListWebP.length]);
     // random: 
     // setBgImage(imageList[Math.floor(Math.random() * imageList.length)]);
     setLoadingPage(false);
@@ -124,6 +170,7 @@ const SurveyQuestionnaire = () => {
     if (currentSection < questionSections.length) {
       const currentQuestion = questionSections[currentSection].questions[currentPage];
       const questionData = state.data[currentQuestion.getQuestionNumber()];
+
       if (currentQuestion.getType() === "section-intro") {
         setAnswerValidated(true);
       } else if (currentQuestion.getType() === "likert-scale") {
@@ -146,26 +193,27 @@ const SurveyQuestionnaire = () => {
   }, [state, currentSection, currentPage])
 
   if (currentSection >= questionSections.length) {
-    return (
-      <Provider theme={defaultTheme} colorScheme="light">
-        <SurveyPage>
-          <SurveyWrapper>
-            <SurveyH1>Thank you for completing the survey!</SurveyH1>
-            <ButtonWrapper>
-              <AdobeButton
-                variant="accent"
-                onPress={() => {
-                  navigate("/summary")
-                }}
+    navigate("/summary");
+    // return (
+    //   <Provider theme={defaultTheme} colorScheme="light">
+    //     <SurveyPage>
+    //       <SurveyWrapper>
+    //         <SurveyH1>Thank you for completing the survey!</SurveyH1>
+    //         <ButtonWrapper>
+    //           <AdobeButton
+    //             variant="accent"
+    //             onPress={() => {
+    //               navigate("/summary")
+    //             }}
 
-              >
-                Submit Your Answers
-              </AdobeButton>
-            </ButtonWrapper>
-          </SurveyWrapper>
-        </SurveyPage>
-      </Provider>
-    )
+    //           >
+    //             Submit Your Answers
+    //           </AdobeButton>
+    //         </ButtonWrapper>
+    //       </SurveyWrapper>
+    //     </SurveyPage>
+    //   </Provider>
+    // )
   }
   const currentQuestion = questionSections[currentSection].questions[currentPage];
 
@@ -269,18 +317,10 @@ const SurveyQuestionnaire = () => {
 
     case "text":
       question = (
-        <div>
-          <SurveyH2>{currentQuestion.getQuestion()}</SurveyH2>
-          <TextField onChange={(value: string) => {
-            dispatch({
-              type: "add_answer",
-              payload: {
-                questionNumber: currentQuestion.getQuestionNumber(),
-                answer: value
-              }
-            })
-          }} />
-        </div>
+        <TextQuestionSection
+          currentQuestion={currentQuestion as TextQuestion} 
+          dispatch={dispatch} 
+        />
       )
       break;
     case "number":
@@ -326,6 +366,13 @@ const SurveyQuestionnaire = () => {
       <SurveyPage>
         <BackgroundImage src={bgImage} />
         <SurveyWrapper>
+          <ProgressBar
+            label="Progress"
+            labelPosition="side"
+            marginTop={"1rem"}
+            marginBottom={"1rem"}
+            value={100 * (currentQuestion.getQuestionNumber() / (AllQuestions.length + 3))}
+          />
           {
             currentQuestion.getType() === "section-intro" ? (
               <SurveyH1>{sectiontitle}</SurveyH1>
@@ -336,15 +383,6 @@ const SurveyQuestionnaire = () => {
           <AnswerColWrapper>
             {question}
           </AnswerColWrapper>
-          
-          <ProgressBar 
-            label="Progress" 
-            labelPosition="side"
-            marginTop={"1rem"}
-            marginBottom={"1rem"}
-            value={100 * (currentQuestion.getQuestionNumber() / AllQuestions.length)} 
-          />
-
           <ButtonGroup>
             {
               currentPage === 0 && currentSection === 0 ? null :
@@ -361,6 +399,9 @@ const SurveyQuestionnaire = () => {
             </AdobeButton>
           </ButtonGroup>
         </SurveyWrapper>
+        <RestoreProgressModal
+          onChange={value => setRestoreChanged(value)}
+        />
       </SurveyPage>
     </Provider>
   )

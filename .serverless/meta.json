@@ -1,7 +1,7 @@
 {
   "/Users/yashagasti/Documents/Arludo/repos/LEAD_survey_app": {
     "versionSfCore": null,
-    "versionFramework": "4.2.1",
+    "versionFramework": "4.2.3",
     "isWithinCompose": false,
     "isCompose": false,
     "composeOrgName": null,
@@ -19,7 +19,7 @@
               "stage": "dev",
               "environment": {
                 "S3_BUCKET_NAME": "lead-survey-frontend-dev",
-                "SURVEY_BACKEND_URL": "opeb42p2uf.execute-api.ap-southeast-2.amazonaws.com/dev"
+                "SURVEY_BACKEND_URL": "1fd28tgtc6.execute-api.ap-southeast-2.amazonaws.com/dev"
               },
               "versionFunctions": true,
               "compiledCloudFormationTemplate": {
@@ -273,6 +273,11 @@
                 }
               }
             },
+            "params": {
+              "dev": {
+                "SURVEY_BACKEND_URL": "1fd28tgtc6.execute-api.ap-southeast-2.amazonaws.com/dev"
+              }
+            },
             "plugins": [
               "serverless-s3-sync",
               "serverless-cloudfront-invalidate"
@@ -280,7 +285,7 @@
             "custom": {
               "s3BucketName": "lead-survey-frontend-dev",
               "distributionFolder": "dist",
-              "serverURL": "opeb42p2uf.execute-api.ap-southeast-2.amazonaws.com/dev",
+              "serverURL": "1fd28tgtc6.execute-api.ap-southeast-2.amazonaws.com/dev",
               "cloudFrontDistributionId": {
                 "dev": "E1C7U722TMF1NR",
                 "prod": "YOUR_PROD_DISTRIBUTION_ID_SET_ME"
@@ -414,7 +419,7 @@
               "stage": "dev",
               "environment": {
                 "S3_BUCKET_NAME": "lead-survey-frontend-dev",
-                "SURVEY_BACKEND_URL": "opeb42p2uf.execute-api.ap-southeast-2.amazonaws.com/dev"
+                "SURVEY_BACKEND_URL": "1fd28tgtc6.execute-api.ap-southeast-2.amazonaws.com/dev"
               },
               "versionFunctions": true,
               "compiledCloudFormationTemplate": {
@@ -668,6 +673,11 @@
                 }
               }
             },
+            "params": {
+              "dev": {
+                "SURVEY_BACKEND_URL": "1fd28tgtc6.execute-api.ap-southeast-2.amazonaws.com/dev"
+              }
+            },
             "plugins": [
               "serverless-s3-sync",
               "serverless-cloudfront-invalidate"
@@ -675,7 +685,7 @@
             "custom": {
               "s3BucketName": "lead-survey-frontend-dev",
               "distributionFolder": "dist",
-              "serverURL": "opeb42p2uf.execute-api.ap-southeast-2.amazonaws.com/dev",
+              "serverURL": "1fd28tgtc6.execute-api.ap-southeast-2.amazonaws.com/dev",
               "cloudFrontDistributionId": {
                 "dev": "E1C7U722TMF1NR",
                 "prod": "YOUR_PROD_DISTRIBUTION_ID_SET_ME"
@@ -810,7 +820,7 @@
         "stage": "dev",
         "environment": {
           "S3_BUCKET_NAME": "lead-survey-frontend-dev",
-          "SURVEY_BACKEND_URL": "opeb42p2uf.execute-api.ap-southeast-2.amazonaws.com/dev"
+          "SURVEY_BACKEND_URL": "1fd28tgtc6.execute-api.ap-southeast-2.amazonaws.com/dev"
         },
         "versionFunctions": true,
         "compiledCloudFormationTemplate": {
@@ -1064,6 +1074,11 @@
           }
         }
       },
+      "params": {
+        "dev": {
+          "SURVEY_BACKEND_URL": "1fd28tgtc6.execute-api.ap-southeast-2.amazonaws.com/dev"
+        }
+      },
       "plugins": [
         "serverless-s3-sync",
         "serverless-cloudfront-invalidate"
@@ -1071,7 +1086,7 @@
       "custom": {
         "s3BucketName": "lead-survey-frontend-dev",
         "distributionFolder": "dist",
-        "serverURL": "opeb42p2uf.execute-api.ap-southeast-2.amazonaws.com/dev",
+        "serverURL": "1fd28tgtc6.execute-api.ap-southeast-2.amazonaws.com/dev",
         "cloudFrontDistributionId": {
           "dev": "E1C7U722TMF1NR",
           "prod": "YOUR_PROD_DISTRIBUTION_ID_SET_ME"
@@ -1180,7 +1195,7 @@
         "Outputs": {}
       }
     },
-    "serviceRawFile": "service: lead-survey-frontend\n\nprovider:\n  name: aws\n  runtime: nodejs20.x\n  region: ap-southeast-2\n  stage: ${opt:stage, 'dev'}\n  environment:\n    S3_BUCKET_NAME: ${self:custom.s3BucketName}\n    SURVEY_BACKEND_URL: ${self:custom.serverURL}\n\nplugins:\n  - serverless-s3-sync\n  - serverless-cloudfront-invalidate\n\ncustom:\n  s3BucketName: lead-survey-frontend-${self:provider.stage}\n  distributionFolder: dist\n  serverURL: opeb42p2uf.execute-api.ap-southeast-2.amazonaws.com/dev\n  cloudFrontDistributionId:\n    dev: E1C7U722TMF1NR\n    prod: YOUR_PROD_DISTRIBUTION_ID_SET_ME\n  s3Sync:\n    - bucketName: ${self:custom.s3BucketName}\n      localDir: ${self:custom.distributionFolder}\n  cloudfrontInvalidate:\n    - distributionId: ${self:custom.cloudFrontDistributionId.${self:provider.stage}}\n      items:\n        - \"/*\"\n\n\nresources:\n  Resources:\n    WebsiteBucket:\n      Type: AWS::S3::Bucket\n      Properties:\n        BucketName: ${self:custom.s3BucketName}\n        WebsiteConfiguration:\n          IndexDocument: index.html\n          ErrorDocument: index.html\n        PublicAccessBlockConfiguration:\n          BlockPublicAcls: false\n          BlockPublicPolicy: false\n          IgnorePublicAcls: false\n          RestrictPublicBuckets: false\n\n    WebsiteBucketPolicy:\n      Type: AWS::S3::BucketPolicy\n      Properties:\n        Bucket: !Ref WebsiteBucket\n        PolicyDocument:\n          Version: \"2012-10-17\"\n          Statement:\n            - Effect: Allow\n              Principal: \"*\"\n              Action:\n                - s3:GetObject\n              Resource: arn:aws:s3:::${self:custom.s3BucketName}/*\n\n    CloudFrontDistribution:\n      Type: AWS::CloudFront::Distribution\n      Properties:\n        DistributionConfig:\n          Origins:\n            - DomainName: ${self:custom.s3BucketName}.s3.${self:provider.region}.amazonaws.com\n              Id: S3Origin\n              S3OriginConfig: {}\n          Enabled: true\n          DefaultRootObject: index.html\n          DefaultCacheBehavior:\n            Compress: true\n            AllowedMethods:\n              - GET\n              - HEAD\n            TargetOriginId: S3Origin\n            ForwardedValues:\n              QueryString: false\n              Cookies:\n                Forward: none\n            ViewerProtocolPolicy: redirect-to-https\n          ViewerCertificate:\n            CloudFrontDefaultCertificate: true\n          CustomErrorResponses:\n            - ErrorCode: 403\n              ResponseCode: 200\n              ResponsePagePath: /index.html\n            - ErrorCode: 404\n              ResponseCode: 200\n              ResponsePagePath: /index.html\n",
+    "serviceRawFile": "service: lead-survey-frontend\n\nprovider:\n  name: aws\n  runtime: nodejs20.x\n  region: ap-southeast-2\n  stage: ${opt:stage, 'dev'}\n  environment:\n    S3_BUCKET_NAME: ${self:custom.s3BucketName}\n    SURVEY_BACKEND_URL: ${self:custom.serverURL}\n\nparams:\n  dev:\n    SURVEY_BACKEND_URL: ${self:custom.serverURL}\n\nplugins:\n  - serverless-s3-sync\n  - serverless-cloudfront-invalidate\n\ncustom:\n  s3BucketName: lead-survey-frontend-${self:provider.stage}\n  distributionFolder: dist\n  serverURL: 1fd28tgtc6.execute-api.ap-southeast-2.amazonaws.com/${self:provider.stage}\n  cloudFrontDistributionId:\n    dev: E1C7U722TMF1NR\n    prod: YOUR_PROD_DISTRIBUTION_ID_SET_ME\n  s3Sync:\n    - bucketName: ${self:custom.s3BucketName}\n      localDir: ${self:custom.distributionFolder}\n  cloudfrontInvalidate:\n    - distributionId: ${self:custom.cloudFrontDistributionId.${self:provider.stage}}\n      items:\n        - \"/*\"\n\n\nresources:\n  Resources:\n    WebsiteBucket:\n      Type: AWS::S3::Bucket\n      Properties:\n        BucketName: ${self:custom.s3BucketName}\n        WebsiteConfiguration:\n          IndexDocument: index.html\n          ErrorDocument: index.html\n        PublicAccessBlockConfiguration:\n          BlockPublicAcls: false\n          BlockPublicPolicy: false\n          IgnorePublicAcls: false\n          RestrictPublicBuckets: false\n\n    WebsiteBucketPolicy:\n      Type: AWS::S3::BucketPolicy\n      Properties:\n        Bucket: !Ref WebsiteBucket\n        PolicyDocument:\n          Version: \"2012-10-17\"\n          Statement:\n            - Effect: Allow\n              Principal: \"*\"\n              Action:\n                - s3:GetObject\n              Resource: arn:aws:s3:::${self:custom.s3BucketName}/*\n\n    CloudFrontDistribution:\n      Type: AWS::CloudFront::Distribution\n      Properties:\n        DistributionConfig:\n          Origins:\n            - DomainName: ${self:custom.s3BucketName}.s3.${self:provider.region}.amazonaws.com\n              Id: S3Origin\n              S3OriginConfig: {}\n          Enabled: true\n          DefaultRootObject: index.html\n          DefaultCacheBehavior:\n            Compress: true\n            AllowedMethods:\n              - GET\n              - HEAD\n            TargetOriginId: S3Origin\n            ForwardedValues:\n              QueryString: false\n              Cookies:\n                Forward: none\n            ViewerProtocolPolicy: redirect-to-https\n          ViewerCertificate:\n            CloudFrontDefaultCertificate: true\n          CustomErrorResponses:\n            - ErrorCode: 403\n              ResponseCode: 200\n              ResponsePagePath: /index.html\n            - ErrorCode: 404\n              ResponseCode: 200\n              ResponsePagePath: /index.html\n",
     "command": [
       "deploy"
     ],
@@ -1189,7 +1204,7 @@
     },
     "error": null,
     "params": {},
-    "machineId": "ad3da3ad20a9d5f0f0982b5ae11f8443",
+    "machineId": "dc5e879e6561bcd578aa07e052f54e97",
     "accessKeyV2": "<REDACTED>",
     "accessKeyV1": "<REDACTED>",
     "orgId": "6af66278-9b4b-4403-a944-3f4ce0d471f4",
@@ -1210,7 +1225,7 @@
     "serviceProviderAwsCredentials": "<REDACTED>",
     "serviceProviderAwsAccountId": "590183926143",
     "projectType": "framework",
-    "versionSf": "4.2.1",
+    "versionSf": "4.2.3",
     "serviceProviderAwsCfStackName": "lead-survey-frontend-dev",
     "integrations": {},
     "serviceProviderAwsCfStackId": "arn:aws:cloudformation:ap-southeast-2:590183926143:stack/lead-survey-frontend-dev/6378ecd0-570f-11ef-8828-02dd6fa8b0d3",

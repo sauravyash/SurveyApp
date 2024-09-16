@@ -12,6 +12,7 @@ import PageWrapper from '../../components/PageWrapper';
 import ContentWrapper from '../../components/ContentWrapper';
 import { TermsAndCondtitions, TermsAndCondtitionsWrapper } from '../../components/TermsAndCondtitionsWrapper';
 import { Subtitle, Title } from '../../components/Headings';
+import RestoreProgressModal from '../../components/RestoreProgressModal';
 
 const BackgroundImage = styled.img`
   position: absolute;
@@ -45,6 +46,7 @@ const HomePage: React.FC = () => {
           >Continue</Button>
         </ButtonWrapper>
       </ContentWrapper>
+      <RestoreProgressModal />
     </PageWrapper>
   );
 };
