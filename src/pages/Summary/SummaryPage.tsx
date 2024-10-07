@@ -3,8 +3,8 @@ import { useAnswerData } from "../../reducers/AnswerDataProvider";
 import styled from "styled-components";
 import { AllQuestions, LikertScaleQuestion, NumberQuestion } from "../../resources/questions/QuestionObject";
 import { ButtonWrapper } from "../../components/Button";
-// import { useNavigate } from "react-router-dom";
-import { generateReport, GenerateReportRequestBody } from "../../actions/generate";
+import processSurveyResponse from "../../algorithm/calculateScores";
+import { generateReport } from "../../actions/generate";
 
 const SummaryWrapper = styled.section`
     // display: flex;
@@ -54,7 +54,7 @@ const parseAnswerData: (arr: [string, any]) => string = (arr) => {
     }
     const [unit, amount] = a[0];
     const questionData = AllQuestions.find(q => q.getQuestionNumber() === Number(arr[0]));
-    console.log(questionData);
+    // console.log(questionData);
     
     if (questionData && questionData.getType() === "number") {
       return `${amount} ${unit}${amount !== 1 && !(questionData as NumberQuestion).getAttributes().scientific_unit ? 's' : ''}`;
@@ -95,16 +95,19 @@ const SummaryPage = () => {
 
 
   const handleGenerateReport = async () => {
-    const data: GenerateReportRequestBody = {
-      cogDriskScore: 0,
-      dateOfAssessment: new Date().toISOString(),
-      demographicFactors: [],
-      medicalRiskFactors: [],
-      lifestyleHabits: [],
-      recommendations: []
-    };
+    const data = Object.entries(state.data)
+    .reduce((obj, item: [string, any]) => {
+      if (typeof item[1] === "string" && item[1].startsWith(item[0] + ": ")) {
+        item[1] = item[1].split(item[0] + ": ")[1];
+      }
+      obj[item[0]] = item[1];
+      return obj;
+    }, {} as { [key: string]: any });
 
-    const res = await generateReport(data);
+    const calculationData = processSurveyResponse(data);
+    console.log(calculationData);
+
+    const res = await generateReport(calculationData);
     console.log(res);
     if (res.data?.url) {
       window.open(res.data.url, '_blank');

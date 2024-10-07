@@ -1,7 +1,7 @@
 {
   "/Users/yashagasti/Documents/Arludo/repos/LEAD_survey_app": {
     "versionSfCore": null,
-    "versionFramework": "4.2.3",
+    "versionFramework": "4.3.3",
     "isWithinCompose": false,
     "isCompose": false,
     "composeOrgName": null,
@@ -403,6 +403,11 @@
           },
           "stage": "dev",
           "dashboard": null,
+          "logger": {
+            "namespace": "s:core:resolver:self",
+            "prefix": null,
+            "prefixColor": null
+          },
           "_credentialsPromise": "<REDACTED>"
         },
         "resolvers": {}
@@ -803,6 +808,11 @@
           },
           "stage": "dev",
           "dashboard": null,
+          "logger": {
+            "namespace": "s:core:resolver:opt",
+            "prefix": null,
+            "prefixColor": null
+          },
           "_credentialsPromise": "<REDACTED>"
         },
         "resolvers": {}
@@ -1203,8 +1213,11 @@
       "stage": "dev"
     },
     "error": null,
-    "params": {},
-    "machineId": "dc5e879e6561bcd578aa07e052f54e97",
+    "params": {
+      "SURVEY_BACKEND_URL": "1fd28tgtc6.execute-api.ap-southeast-2.amazonaws.com/dev"
+    },
+    "machineId": "77e0d08c04ddb93902827c9e5f2c3301",
+    "stage": "dev",
     "accessKeyV2": "<REDACTED>",
     "accessKeyV1": "<REDACTED>",
     "orgId": "6af66278-9b4b-4403-a944-3f4ce0d471f4",
@@ -1222,12 +1235,14 @@
     "userName": "yaash",
     "subscription": null,
     "userEmail": "yAgasti@gmail.com",
+    "serviceProviderAwsRegion": "ap-southeast-2",
     "serviceProviderAwsCredentials": "<REDACTED>",
     "serviceProviderAwsAccountId": "590183926143",
-    "projectType": "framework",
-    "versionSf": "4.2.3",
+    "projectType": "traditional",
+    "versionSf": "4.3.3",
     "serviceProviderAwsCfStackName": "lead-survey-frontend-dev",
     "integrations": {},
+    "serviceUniqueId": "arn:aws:cloudformation:ap-southeast-2:590183926143:stack/lead-survey-frontend-dev/6378ecd0-570f-11ef-8828-02dd6fa8b0d3",
     "serviceProviderAwsCfStackId": "arn:aws:cloudformation:ap-southeast-2:590183926143:stack/lead-survey-frontend-dev/6378ecd0-570f-11ef-8828-02dd6fa8b0d3",
     "serviceProviderAwsCfStackCreated": "2024-08-10T11:55:07.728Z",
     "serviceProviderAwsCfStackUpdated": "2024-08-22T00:26:11.844Z",

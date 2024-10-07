@@ -1,25 +1,68 @@
-export interface PersonData {
-  sex: 'Male' | 'Female';
-  age: number;
-  education: 'less than secondary' | 'upper secondary' | 'Tertiary';
-  obesity: 'underweight' | 'Normal weight' | 'Overweight' | 'Obese';
-  alcoholConsumption: 'Low' | 'Moderate' | 'High';
-  smokingStatus: 'Non-smoker' | 'current smoker' | 'former smoker';
-  hypertension: boolean;
-  cholesterol: number;
-  depression: boolean;
-  traumaticBrainInjury: boolean;
-  loneliness: boolean;
-  physicalActivity: 'sufficient' | 'Less than sufficient';
-  cognitiveActivity: 'Low' | 'Moderate' | 'High';
-  atrialFibrillation: boolean;
-  sleepProblem: boolean;
-  hearingLoss: boolean;
-  diabetes: boolean;
-  stroke: boolean;
-  myocardialInfarction: boolean;
-  hdl: number;
-  ldl: number;
-  fruitsAndVegetables: 'less than 5 servings of vegetables or 3 servings of vegetables and 2 fruits daily' | 'at least 5 servings of vegetables or 3 servings of vegetables and 2 fruits daily';
-  fishServing: 'Less than 2 serving per week' | 'at least 2 serving per week';
+
+// Define types for input and output structures
+export interface Inputs {
+  gender: 'male' | 'female' | 'other';
+  age_cat: string;
+  edu_cat: string;
+  bmi: string;
+  cholesterol: 'high' | 'normal';
+  low_hdl: 'yes' | 'no';
+  high_ldl: 'yes' | 'no';
+  diabetes: 'yes' | 'no';
+  hbp: 'yes' | 'no';
+  tbi: 'yes' | 'no';
+  stroke: 'yes' | 'no';
+  afib: 'yes' | 'no';
+  heartattack: 'yes' | 'no';
+  hearing_loss: 'yes' | 'no';
+  falling_asleep: number;
+  staying_asleep: number;
+  waking_early: number;
+  dissatisfaction: number;
+  noticeable: number;
+  worried: number;
+  interfere: number;
+  bothered: number;
+  mind: number;
+  depressed: number;
+  effort: number;
+  future: number;
+  fearful: number;
+  sleep: number;
+  happy: number;
+  lonely: number;
+  going: number;
+  vigorous: number;
+  moderate: number;
+  walk: number;
+  newspaper: number;
+  magazines: number;
+  books: number;
+  games: number;
+  brain_training: number;
+  emails: number;
+  social_media: number;
+  stimulating: number;
+  other_freq: number;
+  museum: number;
+  concert: number;
+  library: number;
+  companion: number;
+  left_out: number;
+  isolated: number;
+  fruitveg: number;
+  fish_intake: number;
+  alcohol: number;
+  smoking: 'current' | 'non-smoker' | 'former';
+}
+
+export interface Scores {
+  dementia_score: number;
+  stroke_score: number;
+  mi_score: number;
+  diabetes_score: number;
+}
+
+export interface UnitData {
+  [key: string]: number | string;
 }

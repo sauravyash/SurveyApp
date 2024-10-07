@@ -14,6 +14,7 @@ import SummaryPage from "./pages/Summary/SummaryPage";
 import { defaultTheme as AdobeDefaultTheme, Provider } from "@adobe/react-spectrum";
 import PatientParticipationStatement from "./pages/PatientParticipationStatement/PatientParticipationStatement";
 import { ErrorBoundary } from "./pages/ErrorBoundary";
+import { I18nProvider } from 'react-aria';
 
 
 const router = createBrowserRouter([
@@ -58,7 +59,9 @@ function App() {
     <React.StrictMode>
       <Provider theme={defaultTheme} colorScheme="light" height={"100%"} width={"100%"} data-theme="light">
         <AnswerDataProvider>
-          <RouterProvider router={router} />
+          <I18nProvider locale="en-AU">
+            <RouterProvider router={router} />
+          </I18nProvider>
         </AnswerDataProvider>
       </Provider>
     </React.StrictMode>

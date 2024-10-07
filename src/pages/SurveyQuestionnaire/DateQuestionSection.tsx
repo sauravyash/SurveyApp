@@ -52,7 +52,7 @@ const DateQuestionSection = ({ question }: {
     <div>
       <SurveyH2>{question.getQuestion()}</SurveyH2>
       <DateField
-        label={"Date Picker: " + question.getQuestion()}
+        label={"Date Picker"}
         defaultValue={selectedDate}
         value={selectedDate}
         onChange={setDate}

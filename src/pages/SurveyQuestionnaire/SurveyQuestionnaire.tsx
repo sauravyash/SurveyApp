@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Provider, Button as AdobeButton, TextField, ButtonGroup, ProgressBar } from '@adobe/react-spectrum';
+import { Provider, Button as AdobeButton, ButtonGroup, ProgressBar } from '@adobe/react-spectrum';
 
 import Loading from "../../components/Loading";
 import styled from "styled-components";
@@ -52,13 +52,6 @@ const SurveyH1 = styled.h1`
   font-size: 3em;
   text-align: center;
   margin: 1rem 0 0;
-  color: #000;
-`;
-
-const SurveyH2 = styled.h2`
-  font-size: 2em;
-  text-align: center;
-  margin: 0.5rem auto;
   color: #000;
 `;
 
@@ -319,7 +312,6 @@ const SurveyQuestionnaire = () => {
       question = (
         <TextQuestionSection
           currentQuestion={currentQuestion as TextQuestion} 
-          dispatch={dispatch} 
         />
       )
       break;
