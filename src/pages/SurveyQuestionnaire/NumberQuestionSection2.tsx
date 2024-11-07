@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ContextSection, SurveyH2 } from "./SurveyComponents";
 import { Checkbox, Item, Picker } from "@adobe/react-spectrum";
 import NumberField from "../../components/NumberField/NumberField";
-import { NumberQuestion } from "../../resources/questions/QuestionTypes";
+import { NumberQuestionV2 } from "../../resources/questions/QuestionTypes/NumberQuestion";
 
 
 const NumberUnitsWrapper = styled.div`
@@ -54,36 +54,84 @@ function countDecimalPlaces(number: number) {
 
 type NumberQuestionKey = { [key: string]: number | undefined } | "unsure";
 
-const NumberQuestionSection = (props: {
-  question: NumberQuestion
+const NumberQuestionSection2 = (props: {
+  question: NumberQuestionV2
 }) => {
   const { question } = props;
   const { state, dispatch } = useAnswerData();
-  const [selectedUnit, setSelectedUnit] = useState("0");
-  const unitTypes = question.getAttributes().scientific_unit ?
-    question.getUnits()[Number(selectedUnit)].split(" / ") :
-    [question.getUnits()[Number(selectedUnit)]];
 
-  const defaultAnswer = unitTypes.length <= 1 ? {
+  const [selectedUnitIndex, setSelectedUnitIndex] = useState("0");
+  const selectedUnitInt = Number(selectedUnitIndex);
+  const [currentUnitTypes, setCurrentUnitTypes] = useState<string[]>([]);
+
+  const unit = currentUnitTypes[selectedUnitInt] || "default";
+
+  const defaultAnswer = currentUnitTypes.length <= 1 ? {
     [question.getUnits()[0]]: undefined,
   } : {
-    [unitTypes[0]]: undefined,
+    [currentUnitTypes[0]]: undefined,
   }
+
   const [answer, setAnswer] = useState<NumberQuestionKey>(defaultAnswer);
 
-
-
   useEffect(() => {
-    const ans = state.data[question.getQuestionNumber()] || defaultAnswer;
-    if (question.getUnits().length > 1 && Object.entries(ans)[0][1] === -Infinity) {
-      setAnswer(defaultAnswer);
-    } else {
-      setAnswer(ans);
+    const storedData = state.data[question.getQuestionNumber()];
+    console.log("storedData", storedData);
+    
+    if (storedData) {
+      const storedAnswer: number = Object.values(storedData)[0] as number;
+      const storedFullUnit = Object.keys(storedData).join(" / ");
+      const index = question.getUnits().findIndex(unit => unit === storedFullUnit);
+      if (index > -1) {
+        setSelectedUnitIndex(index.toString());
+        if (storedAnswer <= question.getMaxValue(unit)
+          && storedAnswer >= question.getMinValue(unit)) {
+          setAnswer(storedData);
+          return;
+        }
+        setAnswer({ [unit]: undefined });
+        return;
+      }
     }
+    setSelectedUnitIndex("0");
+
+    const unitTypes = question.getAttributes().scientific_unit ?
+    question.getUnits()["0"].split(" / ") :
+    [question.getUnits()["0"]];
+    setCurrentUnitTypes(unitTypes);
+
+    setAnswer(defaultAnswer);
+    dispatch({
+      type: "add_answer",
+      payload: {
+        questionNumber: question.getQuestionNumber(),
+        answer: defaultAnswer
+      }
+    })
   }, [question]);
 
   useEffect(() => {
+    const unitTypes = question.getAttributes().scientific_unit ?
+    question.getUnits()[selectedUnitInt].split(" / ") :
+    [question.getUnits()[selectedUnitInt]];
+    setCurrentUnitTypes(unitTypes);
+
+    // const storedData = state.data[question.getQuestionNumber()];
+    // const storedUnits = Object.keys(storedData).join(" / ");
+    // console.log(storedUnits, unitTypes[selectedUnitInt], currentUnitTypes );
+    
+    // if (storedUnits !== unitTypes[selectedUnitInt]) {
+    //   setAnswer(answer => {
+    //     delete answer[storedUnits];
+    //     return answer;
+    //   })
+    // }
+
+  }, [selectedUnitIndex]);
+
+  useEffect(() => {
     const answ = Object.values(answer)[0];
+    const defaultAns = Object.values(defaultAnswer)[0];
     if (answer === "unsure") {
       dispatch({
         type: "add_answer",
@@ -94,9 +142,9 @@ const NumberQuestionSection = (props: {
       })
     }
     else if (answ !== undefined
-      && answ !== Object.values(defaultAnswer)[0]
-      && answ >= question.getMinValue()
-      && answ <= question.getMaxValue()) {
+      && answ !== defaultAns
+      && answ >= question.getMinValue(unit)
+      && answ <= question.getMaxValue(unit)) {
       dispatch({
         type: "add_answer",
         payload: {
@@ -112,30 +160,7 @@ const NumberQuestionSection = (props: {
         }
       })
     }
-  }, [answer])
-
-  useEffect(() => {
-    if (!state.data[question.getQuestionNumber()]) return;
-    const currentAnswer: number = Object.entries(state.data[question.getQuestionNumber()])[0] as any;
-    if (currentAnswer <= question.getMaxValue() && currentAnswer >= question.getMinValue()) {
-      dispatch({
-        type: "add_answer",
-        payload: {
-          questionNumber: question.getQuestionNumber(),
-          answer: {
-            [unitTypes[Number(selectedUnit)]]: question.getDefaultValue()
-          }
-        }
-      })
-    } else {
-      dispatch({
-        type: "remove_answer",
-        payload: {
-          questionNumber: question.getQuestionNumber()
-        }
-      })
-    }
-  }, [selectedUnit]);
+  }, [answer]);
 
   const currentAnswer = question.getAttributes().scientific_unit ?
     1 : (
@@ -144,33 +169,32 @@ const NumberQuestionSection = (props: {
         0
     ) || 1;
 
-  const unit = unitTypes[Number(selectedUnit)];
 
 
   return (
     <NumberUnitsWrapper>
       {
-        question.getAttributes().context && question.getAttributes().contextLocation === "above" ?
+        question.getAttributes().context ?
           <ContextSection>{question.getAttributes().context}</ContextSection>
           : null
       }
       <SurveyH2>{question.getQuestion()}</SurveyH2>
       <AnswerRowWrapper>
         {
-          unitTypes.map((unit, index) => (
+          currentUnitTypes.map((unit, index) => (
             <NumberField
               key={index}
               isDisabled={answer === "unsure"}
               aria-label={unit}
               formatOptions={{
                 minimumFractionDigits: 0,
-                maximumFractionDigits: countDecimalPlaces(question.getAttributes().step) || 0,
+                maximumFractionDigits: countDecimalPlaces(question.getStepValue(unit) || 0),
               }}
-              step={question.getAttributes().step || 1}
-              label={unitTypes.length > 1 ? unit : null}
+              step={question.getStepValue(unit) || 1}
+              label={currentUnitTypes.length > 1 ? unit : null}
               defaultValue={answer === "unsure" ? undefined : answer[unit]}
-              minValue={question.getMinValue()}
-              maxValue={question.getMaxValue()}
+              minValue={question.getMinValue(unit)}
+              maxValue={question.getMaxValue(unit)}
               margin={"0 1em"}
               onChange={(num) => {
                 setAnswer(curr => {
@@ -191,12 +215,20 @@ const NumberQuestionSection = (props: {
           question.getUnits().length > 1 ? (
             <Picker
               aria-label="Choose frequency"
-              selectedKey={selectedUnit}
+              selectedKey={selectedUnitIndex}
               margin={"0 1em"}
               isDisabled={answer === "unsure"}
               onSelectionChange={(unit) => {
-                setSelectedUnit(unit as string);
-              }}>
+                dispatch({
+                  type: "remove_answer",
+                  payload: {
+                    questionNumber: question.getQuestionNumber()
+                  }
+                })
+                setSelectedUnitIndex(unit.toString());
+                setAnswer({});
+              }}
+            >
               {
                 question.getUnits().map((unit, index) => (
                   <Item key={index}>{unit}</Item>
@@ -204,7 +236,7 @@ const NumberQuestionSection = (props: {
               }
             </Picker>
           ) : (
-            unitTypes.length > 1 ? null : (
+            currentUnitTypes.length > 1 ? null : (
               <TextUnit>
                 {question.getUnits()[0]}
                 {currentAnswer == 1 ? "" : "s"}
@@ -230,13 +262,8 @@ const NumberQuestionSection = (props: {
           </Checkbox>
         ) : null
       }
-      {
-        question.getAttributes().context && question.getAttributes().contextLocation === "below" ?
-          <ContextSection>{question.getAttributes().context}</ContextSection>
-          : null
-      }
     </NumberUnitsWrapper>
   )
 }
 
-export default NumberQuestionSection;
+export default NumberQuestionSection2;

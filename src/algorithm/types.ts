@@ -66,3 +66,8 @@ export interface Scores {
 export interface UnitData {
   [key: string]: number | string;
 }
+
+export interface OutputResult {
+  scores: Scores,
+  inputs: Inputs
+}

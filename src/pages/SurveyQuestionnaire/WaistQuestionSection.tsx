@@ -1,5 +1,6 @@
 import { useAnswerData } from "../../reducers/AnswerDataProvider";
-import { AllQuestions, MultipleChoiceQuestion, WaistMeasurementQuestion } from "../../resources/questions/QuestionObject";
+import { AllQuestions } from "../../resources/questions/QuestionBanks/Public";
+import { MultipleChoiceQuestion, WaistMeasurementQuestion } from "../../resources/questions/QuestionTypes";
 import MultipleChoiceQuestionSection from "./MultipleChoiceQuestion";
 
 const SpecialAnswerData = {
@@ -13,7 +14,12 @@ const WaistQuestionSection = (props: {
   const { question } = props;
   const { state } = useAnswerData();
   // default on males for extra gender options
-  const gender = state.data[SpecialAnswerData.gender] === "Female" ? "female" : "male";
+  const genderText: () => string = () => {
+    let gender = state.data[SpecialAnswerData.gender];
+    if (typeof gender === "string") return gender;
+    return gender.currentKey || "";
+  };
+  const gender = genderText().split(" ")[1] === "Female" ? "female" : "male";
 
 
   const options: string[] = [];
@@ -36,18 +42,12 @@ const WaistQuestionSection = (props: {
       if (currentAnswer instanceof Set && (currentAnswer as any).currentKey.includes(": ")) {
         currentAnswer = (currentAnswer as any).currentKey.split(": ")[1];
       }
-      console.log("currentAnswer", currentAnswer);
       conditions.push({question: condition.question, answer: currentAnswer});
-      // console.log(JSON.stringify(condition), condition.modifier, currentAnswer, condition.answer);
       if (condition.modifier && condition.modifier === "not") {
-        console.log("checking not", currentAnswer, condition.answer);
-        
         return (currentAnswer !== condition.answer)
       }
       return (currentAnswer === condition.answer)
-    })
-    console.log("passedAllConditions", passedAllConditions);
-    
+    })   
     
     if (passedAllConditions) {
       options.push(...optionSet[gender])
@@ -56,6 +56,7 @@ const WaistQuestionSection = (props: {
 
   return (
     <>
+      <p>Gender: {gender}</p>
       {
         conditions.map((condition) => {
           return (

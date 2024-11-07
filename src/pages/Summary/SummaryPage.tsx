@@ -1,10 +1,13 @@
-import { Button, Cell, Column, Flex, Row, TableBody, TableHeader, TableView } from "@adobe/react-spectrum";
+import { Button, Cell, Column, Flex, ProgressBar, Row, TableBody, TableHeader, TableView } from "@adobe/react-spectrum";
 import { useAnswerData } from "../../reducers/AnswerDataProvider";
 import styled from "styled-components";
-import { AllQuestions, LikertScaleQuestion, NumberQuestion } from "../../resources/questions/QuestionObject";
 import { ButtonWrapper } from "../../components/Button";
 import processSurveyResponse from "../../algorithm/calculateScores";
 import { generateReport } from "../../actions/generate";
+import { useState } from "react";
+import { Box } from "@mui/material";
+import { AllQuestions } from "../../resources/questions/QuestionBanks/Public";
+import { NumberQuestion, LikertScaleQuestion } from "../../resources/questions/QuestionTypes";
 
 const SummaryWrapper = styled.section`
     // display: flex;
@@ -16,7 +19,7 @@ const SummaryWrapper = styled.section`
     position: relative;
     background: #fff;
     border-radius: 1em;
-    width: 100%;
+    width: 80%;
     margin: auto;
     height: 100vh;
     overflow: auto;
@@ -34,10 +37,14 @@ const parseAnswerData: (arr: [string, any]) => string = (arr) => {
   if (arr[1] === "unsure") return "Unsure";
 
   if (typeof arr[1] === "string") {
-    if (arr[1].includes(": ")) {
-      return arr[1].split(": ")[1];
+    let val = arr[1];
+    if (val.includes(": ")) {
+      val = val.split(": ")[1];
     }
-    return arr[1];
+    if (val.startsWith("Other::")) {
+      val = val.split("::")[1];
+    }
+    return val;
   }
 
   if (typeof arr[1] === "object") {
@@ -54,8 +61,7 @@ const parseAnswerData: (arr: [string, any]) => string = (arr) => {
     }
     const [unit, amount] = a[0];
     const questionData = AllQuestions.find(q => q.getQuestionNumber() === Number(arr[0]));
-    // console.log(questionData);
-    
+
     if (questionData && questionData.getType() === "number") {
       return `${amount} ${unit}${amount !== 1 && !(questionData as NumberQuestion).getAttributes().scientific_unit ? 's' : ''}`;
     }
@@ -66,6 +72,7 @@ const parseAnswerData: (arr: [string, any]) => string = (arr) => {
 
 const SummaryPage = () => {
   const { state } = useAnswerData();
+  const [loadingPDF, setLoadingPDF] = useState(false);
 
   const questionList: QuestionList = AllQuestions.reduce((obj, question) => {
     if (question.getType() === "likert-scale") {
@@ -84,44 +91,33 @@ const SummaryPage = () => {
     answer: parseAnswerData(arr),
   }));
 
-  // const navigate = useNavigate();
-
-  // const handleResetSurvey = () => {
-  //   if (window.confirm("Are you sure you want to reset the survey?")) {
-  //     localStorage.removeItem('answerData');
-  //     navigate("/");
-  //   }
-  // }
-
-
   const handleGenerateReport = async () => {
+    setLoadingPDF(true);
     const data = Object.entries(state.data)
-    .reduce((obj, item: [string, any]) => {
-      if (typeof item[1] === "string" && item[1].startsWith(item[0] + ": ")) {
-        item[1] = item[1].split(item[0] + ": ")[1];
-      }
-      obj[item[0]] = item[1];
-      return obj;
-    }, {} as { [key: string]: any });
+      .reduce((obj, item: [string, any]) => {
+        if (typeof item[1] === "string" && item[1].startsWith(item[0] + ": ")) {
+          item[1] = item[1].split(item[0] + ": ")[1];
+        }
+        obj[item[0]] = item[1];
+        return obj;
+      }, {} as { [key: string]: any });
 
     const calculationData = processSurveyResponse(data);
-    console.log(calculationData);
 
-    const res = await generateReport(calculationData);
-    console.log(res);
-    if (res.data?.url) {
-      window.open(res.data.url, '_blank');
+    const res = await generateReport(state.user, calculationData);
+    console.log(res.data);
+    if (res.data?.URL) {
+      var newWindow = window.open(res.data.URL, '_blank');
+      if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+        //POPUP BLOCKED
+        window.location.href = res.data.URL;
+      }
     }
+    setLoadingPDF(false);
   }
 
   const ActionButtons = (
     <ButtonWrapper>
-      {/* <Button
-              variant="accent"
-              onPress={handleResetSurvey}
-            >
-              Reset The Survey
-            </Button> */}
       <Button
         variant="accent"
         onPress={handleGenerateReport}
@@ -129,7 +125,7 @@ const SummaryPage = () => {
         Generate Report
       </Button>
     </ButtonWrapper>
-  )
+  );
 
   return (
     <SummaryWrapper>
@@ -189,6 +185,29 @@ const SummaryPage = () => {
         </TableView>
         {ActionButtons}
       </Flex>
+      <div className={`modal ${loadingPDF ? 'is-active' : ""}`}>
+        <div className="modal-background"></div>
+        <div className="modal-content">
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
+            <Box sx={{
+              padding: '1em',
+              background: 'rgba(255, 255, 255, 1)',
+              width: '400px',
+              borderRadius: '0.25em'
+            }}>
+              <ProgressBar label="Loading…" isIndeterminate />
+              <span style={{
+                paddingTop: '2em',
+                display: 'block',
+              }}>Please wait as we create your personalised PDF document.</span>
+            </Box>
+          </Box>
+        </div>
+      </div>
     </SummaryWrapper>
   )
 }

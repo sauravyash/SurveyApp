@@ -199,7 +199,22 @@ export function categorizeAlcohol(alco_freq: string, alco_quant: number): number
   return 2;
 }
 
-export function calculateExercise(days: number, hours: number, minutes: number): number {
+export function calculateExercise(daysData: {"days per week": number} | "unsure", time: {"hours": number, "minutes": number} | "unsure" | undefined): number {
+  let [days, hours, minutes] = [0, 0, 0];
+  if (daysData === "unsure") {
+    days = 0;
+  } else {
+    days = daysData["days per week"];
+  }
+  
+  if (!time || time === "unsure") {
+    hours = 0;
+    minutes = 0;
+  } else {
+    hours = time["hours"];
+    minutes = time["minutes"];
+  }
+
   return days * ((hours * 60) + minutes);
 }
 

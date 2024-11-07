@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { SurveyH2 } from './SurveyComponents';
 import { Checkbox, TextArea } from '@adobe/react-spectrum';
-import { TextQuestion } from '../../resources/questions/QuestionObject';
 import { useAnswerData } from '../../reducers/AnswerDataProvider';
+import { TextQuestion } from '../../resources/questions/QuestionTypes';
 
 interface TextQuestionProps {
   currentQuestion: TextQuestion,

@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import { MultipleChoiceQuestion } from "../../resources/questions/QuestionObject";
 import { useEffect, useState } from "react";
 import { useAnswerData } from "../../reducers/AnswerDataProvider";
 import { ContextSection, SurveyH2 } from "./SurveyComponents";
 import { Item, ListView, Picker, Selection, TextField } from "@adobe/react-spectrum";
+import { MultipleChoiceQuestion } from "../../resources/questions/QuestionTypes";
 
 const QuestionWrapper = styled.div`
   display: flex;
@@ -34,6 +34,8 @@ const MultipleChoiceQuestionWrapper = styled.div`
   padding: 2rem;
 `;
 
+const otherCategoryText = ["Yes, other", "Other", "Other (please specify)", "Other identity"];
+
 interface MCPickerProps {
   question: MultipleChoiceQuestion;
 }
@@ -44,23 +46,31 @@ const MCPicker = (props: MCPickerProps) => {
   const [otherText, setOtherText] = useState("");
 
   const { state, dispatch } = useAnswerData();
-  // const [otherText, setOtherText] = useState("");
+
+  let isAnswerOther = () => {
+    let key = selectedKey as string
+    if (key && key.includes(": ")) {
+      key = key.split(": ")[1];
+    }
+    return otherCategoryText.includes(key)
+  };
 
   useEffect(() => {
     if (state.data[question.getQuestionNumber()]) {
       const keyList = question.getOptions().map((answer) => `${question.getQuestionNumber()}: ${answer}`);
-      if (keyList.includes(state.data[question.getQuestionNumber()]) || !keyList.includes(`${question.getQuestionNumber()}: Yes, other`)) {
-        setSelectedKey(state.data[question.getQuestionNumber()]);
+      if (keyList.includes(state.data[question.getQuestionNumber()])) {
+        setSelectedKey(state.data[question.getQuestionNumber()])
       } else {
-        setSelectedKey(`${question.getQuestionNumber()}: Yes, other`);
-        setOtherText(state.data[question.getQuestionNumber()]);
+        const [key, otherText] = state.data[question.getQuestionNumber()].split("::");
+        setSelectedKey(key);
+        if (otherText) setOtherText(otherText);
       }
     }
   }, [question]);
 
   useEffect(() => {
-    let isAnswerOther: boolean = (selectedKey as string)?.includes("Yes, other");
-    if (selectedKey && !isAnswerOther) {
+
+    if (selectedKey && !isAnswerOther()) {
       dispatch({
         type: "add_answer",
         payload: {
@@ -68,12 +78,12 @@ const MCPicker = (props: MCPickerProps) => {
           answer: selectedKey
         }
       })
-    } else if (isAnswerOther && otherText.length > 1 && otherText.match(/[a-zA-Z]+/)) {
+    } else if (isAnswerOther() && otherText.length > 1 && otherText.match(/[a-zA-Z]+/)) {
       dispatch({
         type: "add_answer",
         payload: {
           questionNumber: question.getQuestionNumber(),
-          answer: otherText
+          answer: `${selectedKey}::${otherText}`
         }
       })
     } else {
@@ -87,15 +97,13 @@ const MCPicker = (props: MCPickerProps) => {
   }, [selectedKey, otherText]);
 
 
-  let isAnswerOther: boolean = (selectedKey as string)?.includes("Yes, other");
-
   return (
     <>
       <Picker
         items={question.getOptions().map((answer, index) => ({ answer, index }))}
         onSelectionChange={setSelectedKey}
         selectedKey={selectedKey}
-        aria-label={question.getQuestion() + " options"}
+        aria-label={"Question " + question.getQuestion() + " Options"}
       >
         {
           (item) => <Item key={`${question.getQuestionNumber()}: ${item.answer}`}>
@@ -104,7 +112,7 @@ const MCPicker = (props: MCPickerProps) => {
         }
       </Picker>
       {
-        isAnswerOther ? (
+        isAnswerOther() ? (
           <TextField label="Other"
             value={otherText}
             onChange={setOtherText}
@@ -126,16 +134,35 @@ const MCSelector = (props: MCSelectorProps) => {
   const [otherText, setOtherText] = useState("");
   const { state, dispatch } = useAnswerData();
 
+  let isAnswerOther = () => {
+    const keys = (selected as Set<string>)?.keys()
+    if (keys) {
+      const key = Array.from(keys)[0]
+      if (key && key.includes(": ")) {
+        return otherCategoryText.includes(key.split(": ")[1]);
+      }
+    }
+  };
+
   useEffect(() => {
     const answer = state.data[question.getQuestionNumber()];
     try {
       if (answer) {
         if (typeof answer === "string") {
-          const newSet = new Set<string>();
-          newSet.add(`${question.getQuestionNumber()}: ${question.getOptions().reverse()[0]}`);
-          setSelected(newSet);
+          const keyList = question.getOptions().map((answer) => `${question.getQuestionNumber()}: ${answer}`);
+          if (keyList.includes(state.data[question.getQuestionNumber()])) {
+            const newSet = new Set<string>();
+            newSet.add(`${question.getQuestionNumber()}: ${question.getOptions()[0]}`);
+            setSelected(newSet);
+          } else {
+            const newSet = new Set<string>();
+            const [key, other] = state.data[question.getQuestionNumber()].split("::");
+            newSet.add(`${question.getQuestionNumber()}: ${key.trim()}`);
+            setSelected(newSet);
+            if (other) setOtherText(other);
+          };
         }
-        else {
+        else {          
           setSelected(state.data[question.getQuestionNumber()]);
         }
       }
@@ -148,8 +175,7 @@ const MCSelector = (props: MCSelectorProps) => {
   }, [question]);
 
   useEffect(() => {
-    let isAnswerOther: boolean = (selected as any)?.currentKey?.includes("Yes, other");
-    if (selected && !isAnswerOther) {
+    if (selected && !isAnswerOther()) {
       dispatch({
         type: "add_answer",
         payload: {
@@ -158,12 +184,18 @@ const MCSelector = (props: MCSelectorProps) => {
         }
       })
       setOtherText("");
-    } else if (isAnswerOther && otherText.length > 1 && otherText.match(/[a-zA-Z]+/)) {
+    } else if (isAnswerOther() && otherText.length > 1 && otherText.match(/[a-zA-Z]+/)) {
+      const otherWord = question.getOptions().reduce((acc, curr) => {
+        if (otherCategoryText.includes(curr)) {
+          return curr;
+        }
+        return acc;
+      }, "");
       dispatch({
         type: "add_answer",
         payload: {
           questionNumber: question.getQuestionNumber(),
-          answer: otherText
+          answer: `${otherWord}::${otherText}`
         }
       })
     } else {
@@ -180,7 +212,6 @@ const MCSelector = (props: MCSelectorProps) => {
   if (question.getOptions().length > 6) return;
 
   if (selected === "all") { return; }
-  let isAnswerOther: boolean = (selected as any)?.currentKey?.includes("Yes, other");
 
   return (
     <>
@@ -202,7 +233,7 @@ const MCSelector = (props: MCSelectorProps) => {
         )}
       </ListView>
       {
-        isAnswerOther ? (
+        isAnswerOther() ? (
           <TextField label="Other"
             value={otherText}
             onChange={setOtherText}

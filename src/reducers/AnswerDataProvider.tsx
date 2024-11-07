@@ -12,19 +12,16 @@ interface AnswerData {
 
 const storeInSessionStorage = (state: AnswerData) => {
   const data = { ...state.data };
-  // console.log(data);
   for (const key in data) {
     if (!data[key]) {
       delete data[key];
     }
     if (data[key] instanceof Set) {
       if (data[key].size > 1) {
-        // console.log("Multiple answers found", key, data[key]);
         data[key] = Array.from(data[key]);
       }
       data[key] = (data[key] as any).currentKey;
     } else if (!JSON.stringify(data[key])) {
-      // console.log("Undefined data found", key, data[key], data);
       delete data[key];
     }
   }

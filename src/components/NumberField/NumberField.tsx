@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 
 import "./index.css";
-import { NumberQuestion } from '../../resources/questions/QuestionObject';
 
 const colourStyles = {
   default: {
@@ -85,7 +84,6 @@ const countDecimalPlaces = (num: number): number => {
 }
 
 interface NumberPickerProps {
-  question?: NumberQuestion;
   defaultValue?: number;
   minValue?: number;
   maxValue?: number;
@@ -160,7 +158,6 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
     if (!isDisabled) {
       const keyPress = (e.nativeEvent as any);
       let newValue = Number(e.target.value.replace(/,/g, ''));
-      console.log("handleInputChange", keyPress, newValue, e.target.value);
       
       if (keyPress.data === "-" && value) {
         setValue(-1 * value);

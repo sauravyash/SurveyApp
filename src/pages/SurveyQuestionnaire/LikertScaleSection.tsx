@@ -1,10 +1,10 @@
 // import { Radio, RadioGroup } from '@adobe/react-spectrum';
-import { LikertScaleQuestion } from '../../resources/questions/QuestionObject';
 import styled from 'styled-components';
 // import { SurveyH2 } from './SurveyComponents';
 import { useAnswerData } from '../../reducers/AnswerDataProvider';
 import { useEffect, useState } from 'react';
 import LikertComponent from '../../components/LikertComponent';
+import { LikertScaleQuestion } from '../../resources/questions/QuestionTypes';
 
 const QuestionWrapper = styled.div`
   display: block;

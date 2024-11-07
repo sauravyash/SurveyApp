@@ -1,9 +1,5 @@
 import { sampleData } from './sample_data.ts';
 
-// Import necessary functions from the separate file
-import { maleAlgorithm } from './maleAlgorithm';
-import { femaleAlgorithm } from './femaleAlgorithm';
-import { otherGenderAlgorithm } from './otherGenderAlgorithm';
 import {
   categorizeGender,
   categorizeAge,
@@ -26,15 +22,9 @@ import {
   calculateFishIntake,
   categoryMapper
 } from './processSurveyData';
-import { Inputs, Scores } from './types';
+import { Inputs, OutputResult, Scores } from './types';
+import { publicScoring } from './public/index.ts';
 
-
-export interface OutputResult {
-  scores: Scores,
-  inputs: Inputs
-}
-
-// Function to process the survey responses and calculate the scores
 export function processSurveyResponse(data: Record<string, any>): {scores: Scores, inputs: Inputs} {  
   const inputs: Inputs = {
     gender: categorizeGender(data["3"]), 
@@ -68,9 +58,9 @@ export function processSurveyResponse(data: Record<string, any>): {scores: Score
     happy: categoryMapper("common", data["53"]), // Happiness categorization from key "53"
     lonely: categoryMapper("common", data["54"]), // Loneliness from key "54"
     going: categoryMapper("common", data["55"]), // Going through with plans severity from key "55"
-    vigorous: calculateExercise(data["56"]["days per week"], data["57"]["hours"], data["57"]["minutes"]) * 8, // Vigorous exercise: key "56" for days, "57" for hours and minutes
-    moderate: calculateExercise(data["58"]["days per week"], data["59"]["hours"], data["59"]["minutes"]) * 4, // Moderate exercise: key "58" for days, "59" for hours and minutes
-    walk: calculateExercise(data["60"]["days per week"], data["61"]["hours"], data["61"]["minutes"]) * 3.3, // Walking exercise: key "60" for days, "61" for hours and minutes
+    vigorous: calculateExercise(data["56"], data["57"]) * 8, // Vigorous exercise: key "56" for days, "57" for hours and minutes
+    moderate: calculateExercise(data["58"], data["59"]) * 4, // Moderate exercise: key "58" for days, "59" for hours and minutes
+    walk: calculateExercise(data["60"], data["61"]) * 3.3, // Walking exercise: key "60" for days, "61" for hours and minutes
     newspaper: categoryMapper("frequency", data["63"]),
     magazines: categoryMapper("frequency", data["64"]),
     books: categoryMapper("frequency", data["65"]),
@@ -106,17 +96,7 @@ export function processSurveyResponse(data: Record<string, any>): {scores: Score
     inputs
   };
 
-  switch (inputs.gender) {
-    case "male":
-      res.scores = maleAlgorithm(inputs);
-      break;
-    case "female":
-      res.scores = femaleAlgorithm(inputs);
-      break;
-    case "other":
-      res.scores = otherGenderAlgorithm(inputs);
-      break;
-  }
+  res.scores = publicScoring(inputs);
 
   return res;
 }

@@ -1,4 +1,4 @@
-service: lead-survey-frontend
+service: lead-survey-frontend-page
 
 provider:
   name: aws
@@ -8,9 +8,10 @@ provider:
   environment:
     S3_BUCKET_NAME: ${self:custom.s3BucketName}
     SURVEY_BACKEND_URL: ${self:custom.serverURL}
+    SURVEY_TYPE: ${self:custom.SURVEY_TYPE}
 
-params:
-  dev:
+stages:
+  default:
     SURVEY_BACKEND_URL: ${self:custom.serverURL}
 
 plugins:
@@ -18,11 +19,12 @@ plugins:
   - serverless-cloudfront-invalidate
 
 custom:
-  s3BucketName: lead-survey-frontend-${self:provider.stage}
+  SURVEY_TYPE: ${env:SURVEY_TYPE}
+  s3BucketName: ${self:service}-${self:provider.stage}
   distributionFolder: dist
-  serverURL: 1fd28tgtc6.execute-api.ap-southeast-2.amazonaws.com/${self:provider.stage}
+  serverURL: rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/${self:provider.stage}
   cloudFrontDistributionId:
-    dev: E1C7U722TMF1NR
+    dev: EL66A8C6F0DQW
     prod: YOUR_PROD_DISTRIBUTION_ID_SET_ME
   s3Sync:
     - bucketName: ${self:custom.s3BucketName}

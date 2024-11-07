@@ -1,12 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-import 'dotenv/config';
+import {config} from 'dotenv';
+config();
 
 // https://vitejs.dev/config/
 export default defineConfig({
   define: {
     'env': process.env,
-    'ENV_VAR_BACKEND_URL': new String(process.env.SURVEY_BACKEND_URL),
+    'ENV_VAR_BACKEND_URL': new String(process.env.VITE_SURVEY_BACKEND_URL),
+    'ENV_VAR_SURVEY_TYPE': new String(process.env.VITE_SURVEY_TYPE),
   },
   plugins: [
     react(),

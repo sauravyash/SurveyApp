@@ -50,7 +50,6 @@ const router = createBrowserRouter([
 ]);
 
 const defaultTheme = AdobeDefaultTheme;
-// console.log(defaultTheme);
 
 
 function App() {

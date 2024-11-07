@@ -1,9 +1,9 @@
 import { DateField } from "@adobe/react-spectrum";
 import { SurveyH2 } from "./SurveyComponents";
-import { DateQuestion } from "../../resources/questions/QuestionObject";
 import { useAnswerData } from "../../reducers/AnswerDataProvider";
 import { useEffect, useState } from "react";
 import { parseDate, today, getLocalTimeZone, CalendarDate } from '@internationalized/date';
+import { DateQuestion } from "../../resources/questions/QuestionTypes";
 
 const DateQuestionSection = ({ question }: {
   question: DateQuestion

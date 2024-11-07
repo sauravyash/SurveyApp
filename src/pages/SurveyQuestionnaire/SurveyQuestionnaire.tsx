@@ -4,7 +4,6 @@ import { Provider, Button as AdobeButton, ButtonGroup, ProgressBar } from '@adob
 import Loading from "../../components/Loading";
 import styled from "styled-components";
 // import { ButtonWrapper } from "../../components/Button";
-import questionSections, { DateQuestion, MultipleChoiceQuestion, NumberQuestion, LikertScaleQuestion, WaistMeasurementQuestion, AllQuestions, TextQuestion } from "../../resources/questions/QuestionObject";
 import { useAnswerData } from "../../reducers/AnswerDataProvider";
 import { useNavigate } from "react-router-dom";
 import MultipleChoiceQuestionSection from "./MultipleChoiceQuestion";
@@ -16,6 +15,11 @@ import Markdown from "react-markdown";
 import RestoreProgressModal from "../../components/RestoreProgressModal";
 import imageListWebP from "../../resources/stockImageList";
 import TextQuestionSection from "./TextQuestionSection";
+import { AllQuestions } from "../../resources/questions/QuestionBanks/Public";
+import { LikertScaleQuestion, MultipleChoiceQuestion, TextQuestion, NumberQuestion, DateQuestion, WaistMeasurementQuestion } from "../../resources/questions/QuestionTypes";
+import questionSections from "../../resources/questions/QuestionBanks/Public";
+import { NumberQuestionV2 } from "../../resources/questions/QuestionTypes/NumberQuestion";
+import NumberQuestionSection2 from "./NumberQuestionSection2";
 
 const SurveyPage = styled.section`
   display: flex;
@@ -107,7 +111,6 @@ const SurveyQuestionnaire = () => {
     if (!question) {
       return [0, 0];
     }
-    // console.log("finding question position", qn, question);
 
     const section = questionSections.findIndex(section => section.questions.includes(question));
     const page = questionSections[section].questions.findIndex(q => q === question);
@@ -116,16 +119,6 @@ const SurveyQuestionnaire = () => {
 
   useEffect(() => {
     try {
-      // const hash = window.location.hash;
-      // if (hash.includes("question")) {
-      //   const questionNumber = parseInt(hash.split("-")[1]);
-      //   if (isFinite(questionNumber)) {
-      //     console.log("Attempting to load question number", questionNumber);
-      //     const [section, page] = findQuestionPosition(questionNumber);
-      //     setCurrentSection(section);
-      //     setCurrentPage(page);
-      //   }
-      // } else {
       if (!state.data) return;
       const qs = Object.keys(state.data).map(n => parseInt(n)).filter(n => isFinite(n));
       if (qs.length === 0) return;
@@ -133,13 +126,12 @@ const SurveyQuestionnaire = () => {
 
       if (isFinite(lastQ)) {
         const [section, page] = findQuestionPosition(lastQ);
-        // console.log("restoring question", lastQ, "position: ", section, page);
         setCurrentSection(section);
         setCurrentPage(page);
       }
       // }
     } catch (error) {
-      console.log("restore survey question position error", error);
+      console.error("restore survey question position error", error);
     }
 
   }, [isRestoreChanged]);
@@ -233,8 +225,6 @@ const SurveyQuestionnaire = () => {
     if (conditions.length === 0) return false;
 
     return !conditions.some((condition) => {
-      console.log(setToString(state.data[condition.question]), condition.answer);
-
       let res = setToString(state.data[condition.question]) === condition.answer;
       if (typeof condition.answer === "string") {
         res = setToString(state.data[condition.question]).includes(condition.answer);
@@ -319,6 +309,13 @@ const SurveyQuestionnaire = () => {
       question = (
         <NumberQuestionSection
           question={currentQuestion as NumberQuestion}
+        />
+      )
+      break;
+    case "number2":
+      question = (
+        <NumberQuestionSection2
+          question={currentQuestion as NumberQuestionV2}
         />
       )
       break;
