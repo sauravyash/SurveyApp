@@ -13,6 +13,7 @@ import ContentWrapper from '../../components/ContentWrapper';
 import { TermsAndCondtitions, TermsAndCondtitionsWrapper } from '../../components/TermsAndCondtitionsWrapper';
 import { Subtitle, Title } from '../../components/Headings';
 import RestoreProgressModal from '../../components/RestoreProgressModal';
+import { useAnswerData } from '../../reducers/AnswerDataProvider';
 
 const BackgroundImage = styled.img`
   position: absolute;
@@ -27,10 +28,13 @@ const BackgroundImage = styled.img`
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  const {state} = useAnswerData();
   return (
     <PageWrapper color='#002335'>
       <BackgroundImage src="images/stock/iStock-162666975.jpg" />
-      <ContentWrapper id="home-page">
+      <ContentWrapper id="home-page" style={{
+        fontSize: state.fontSize,
+      }}>
         <Title>Welcome to our site</Title>
         <Subtitle>Terms of Use</Subtitle>
         <TermsAndCondtitionsWrapper>

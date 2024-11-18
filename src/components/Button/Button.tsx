@@ -25,7 +25,7 @@ interface StyledButtonProps {
 const StyledButton = styled.button<StyledButtonProps>`
   font-family: 'Adobe Clean', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, 'Trebuchet MS', 'Lucida Grande', sans-serif;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 1em;
   line-height: 1.3;
   border-radius: 16px;
   padding: 7px 14px;

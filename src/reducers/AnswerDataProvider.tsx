@@ -5,7 +5,7 @@ interface AnswerData {
   collect_data: "yes" | "no" | null;
   data: any;
   session_data?: any;
-  largeTextMode: boolean;
+  fontSize: number;
   user: any;
   current_question: number;
 }
@@ -35,7 +35,7 @@ const initialState = {
   // Add your initial state properties here
   collect_data: null,
   data: {},
-  largeTextMode: false,
+  fontSize: 16,
   user: {},
   current_question: 0
 };
@@ -75,8 +75,8 @@ const reducer = (state: AnswerData, action: any) => {
       };
       break;
 
-    case 'set_large_text_mode':
-      state = { ...state, largeTextMode: action.payload };
+    case 'set_font_size':
+      state = { ...state, fontSize: action.payload };
       break;
 
     case 'set_user_data':

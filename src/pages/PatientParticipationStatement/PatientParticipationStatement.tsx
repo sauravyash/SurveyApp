@@ -20,6 +20,8 @@ import { Switch } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
 import { useAnswerData } from '../../reducers/AnswerDataProvider';
 
+import "./style.scss";
+
 const agree_statements: {
   icon: React.FC<any>,
   text: string,
@@ -63,13 +65,13 @@ interface Props {
 
 const PatientParticipationStatement: React.FC<Props> = () => {
   const navigate = useNavigate();
-  const { dispatch } = useAnswerData();
+  const { state, dispatch } = useAnswerData();
   const [page, setPage] = useState(0);
   const [data, setData] = useState({
     name: "",
     address: "",
     email: "",
-    reuseData: false,
+    reuseData: true,
     detailsCorrect: false
   });
   const [isDataValid, setIsDataValid] = useState(false);
@@ -116,7 +118,9 @@ const PatientParticipationStatement: React.FC<Props> = () => {
   }, [data]);
 
   return (
-    <PageWrapper color='#002335'>
+    <PageWrapper color='#002335' style={{
+      fontSize: state.fontSize,
+    }}>
       {page === 0 && (
         <ContentWrapper>
           <Title>Online participant information statement</Title>
@@ -165,13 +169,13 @@ const PatientParticipationStatement: React.FC<Props> = () => {
         </ContentWrapper>
       )}
       {page === 2 && (
-        <ContentWrapper>
+        <ContentWrapper id="consent-form-page">
           <Title>My Details</Title>
           <Divider borderColor='#999' />
           <div className="container" style={{ "textAlign": "left", maxWidth: "800px", overflowY: "auto" }}>
             <form id="consent-data">
               <div className="field">
-                <label className="label">Full Name*</label>
+                <label className="label">Full Name<sup>*</sup></label>
                 <div className="control">
                   <input
                     className="input"
@@ -198,7 +202,7 @@ const PatientParticipationStatement: React.FC<Props> = () => {
               </div>
 
               <div className="field">
-                <label className="label">Email address*</label>
+                <label className="label">Email address<sup>*</sup></label>
                 <div className="control">
                   <input
                     className="input"

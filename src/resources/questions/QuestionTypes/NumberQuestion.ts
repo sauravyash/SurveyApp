@@ -86,6 +86,7 @@ export class NumberQuestionV2 extends BaseQuestionObject {
     private units: string[];
     private scientific_unit: boolean;
     private showNoneCheckbox: boolean | string = false;
+    private contextLocation: "above" | "below" = "above";
 
     constructor(
         id: number,
@@ -145,7 +146,8 @@ export class NumberQuestionV2 extends BaseQuestionObject {
         return {
             ...super.getAttributes(),
             options: this.units,
-            scientific_unit: this.scientific_unit
+            scientific_unit: this.scientific_unit,
+            contextLocation: this.contextLocation
         };
     }
 
@@ -155,6 +157,10 @@ export class NumberQuestionV2 extends BaseQuestionObject {
 
     public setDisplayNoneCheckbox(value: boolean | string) {
         this.showNoneCheckbox = value;
+    }
+
+    public setContextLocation(location: "above" | "below") {
+        this.contextLocation = location
     }
 
     public getDisplayNoneCheckbox() {

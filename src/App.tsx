@@ -15,6 +15,7 @@ import { defaultTheme as AdobeDefaultTheme, Provider } from "@adobe/react-spectr
 import PatientParticipationStatement from "./pages/PatientParticipationStatement/PatientParticipationStatement";
 import { ErrorBoundary } from "./pages/ErrorBoundary";
 import { I18nProvider } from 'react-aria';
+import Accessibility from "./components/Accessibility";
 
 
 const router = createBrowserRouter([
@@ -59,6 +60,7 @@ function App() {
       <Provider theme={defaultTheme} colorScheme="light" height={"100%"} width={"100%"} data-theme="light">
         <AnswerDataProvider>
           <I18nProvider locale="en-AU">
+            <Accessibility />
             <RouterProvider router={router} />
           </I18nProvider>
         </AnswerDataProvider>

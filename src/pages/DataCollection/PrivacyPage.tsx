@@ -54,9 +54,9 @@ const ButtonSection = styled.section`
 `;
 
 const BoxButton = styled.button`
-  width: 50%;
-  min-width: 450px;
-  height: 450px;
+  // width: 50%;
+  // min-width: 450px;
+  // height: 450px;
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid #000;
   padding: 1em 2em;
@@ -124,12 +124,15 @@ const PrivacyPage: React.FC = () => {
 
   return (
     <PageWrapper>
-      <Wrapper id="privacy-page">
+      <Wrapper id="privacy-page" style={{
+        fontSize: state.fontSize,
+      }}>
         <ButtonSection>
           <BackgroundImage src={imageListWebP.find(url => url.includes("iStock-855246888"))} />
           <BoxButton onClick={() => handleDataCollection("yes")}>
             <Subtitle>I wish to</Subtitle>
-            <Title>TAKE THE ASSESSMENT AND</Title>
+            <Title>TAKE THE ASSESSMENT</Title>
+            <Subtitle>AND</Subtitle>
             <ButtonLikeBox className="is-success">Participate</ButtonLikeBox>
             <Title>IN RESEARCH</Title>
             <ContinueButton className='is-success'>
@@ -144,7 +147,8 @@ const PrivacyPage: React.FC = () => {
           <BackgroundImage src={imageListWebP.find(url => url.includes("iStock-162666975"))} />
           <BoxButton onClick={() => handleDataCollection("no")}>
             <Subtitle>I wish to</Subtitle>
-            <Title>TAKE THE ASSESSMENT AND</Title>
+            <Title>TAKE THE ASSESSMENT</Title>
+            <Subtitle>AND</Subtitle>
             <ButtonLikeBox className="is-dark">Not Participate</ButtonLikeBox>
             <Title>IN RESEARCH</Title>
             <ContinueButton className='is-dark'>

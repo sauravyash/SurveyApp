@@ -77,7 +77,7 @@ const NumberQuestionSection2 = (props: {
   useEffect(() => {
     const storedData = state.data[question.getQuestionNumber()];
     console.log("storedData", storedData);
-    
+
     if (storedData) {
       const storedAnswer: number = Object.values(storedData)[0] as number;
       const storedFullUnit = Object.keys(storedData).join(" / ");
@@ -96,8 +96,8 @@ const NumberQuestionSection2 = (props: {
     setSelectedUnitIndex("0");
 
     const unitTypes = question.getAttributes().scientific_unit ?
-    question.getUnits()["0"].split(" / ") :
-    [question.getUnits()["0"]];
+      question.getUnits()["0"].split(" / ") :
+      [question.getUnits()["0"]];
     setCurrentUnitTypes(unitTypes);
 
     setAnswer(defaultAnswer);
@@ -112,14 +112,14 @@ const NumberQuestionSection2 = (props: {
 
   useEffect(() => {
     const unitTypes = question.getAttributes().scientific_unit ?
-    question.getUnits()[selectedUnitInt].split(" / ") :
-    [question.getUnits()[selectedUnitInt]];
+      question.getUnits()[selectedUnitInt].split(" / ") :
+      [question.getUnits()[selectedUnitInt]];
     setCurrentUnitTypes(unitTypes);
 
     // const storedData = state.data[question.getQuestionNumber()];
     // const storedUnits = Object.keys(storedData).join(" / ");
     // console.log(storedUnits, unitTypes[selectedUnitInt], currentUnitTypes );
-    
+
     // if (storedUnits !== unitTypes[selectedUnitInt]) {
     //   setAnswer(answer => {
     //     delete answer[storedUnits];
@@ -174,7 +174,7 @@ const NumberQuestionSection2 = (props: {
   return (
     <NumberUnitsWrapper>
       {
-        question.getAttributes().context ?
+        question.getAttributes().context && question.getAttributes().contextLocation === "above" ?
           <ContextSection>{question.getAttributes().context}</ContextSection>
           : null
       }
@@ -261,6 +261,12 @@ const NumberQuestionSection2 = (props: {
             }
           </Checkbox>
         ) : null
+      }
+
+      {
+        question.getAttributes().context && question.getAttributes().contextLocation === "below" ?
+          <ContextSection>{question.getAttributes().context}</ContextSection>
+          : null
       }
     </NumberUnitsWrapper>
   )

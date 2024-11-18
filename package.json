@@ -16,6 +16,7 @@
     "@adobe/react-spectrum": "^3.35.1",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.7",
     "@mui/material": "^5.16.7",
     "@react-pdf/renderer": "^3.4.4",
     "@spectrum-icons/workflow": "^4.2.12",
@@ -45,6 +46,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "sass": "^1.81.0",
     "tsx": "^4.19.1",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"
