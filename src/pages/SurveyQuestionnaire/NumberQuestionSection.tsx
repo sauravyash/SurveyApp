@@ -183,6 +183,7 @@ const NumberQuestionSection = (props: {
                   return curr;
                 })
               }}
+              
             />
           ))
         }

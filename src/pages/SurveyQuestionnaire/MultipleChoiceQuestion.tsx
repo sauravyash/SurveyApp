@@ -16,7 +16,7 @@ const QuestionWrapper = styled.div`
   background: #fff;
   border-radius: 1em;
   margin: auto;
-  padding: 2rem;
+  padding: 0 2rem;
   overflow: auto;
 `;
 

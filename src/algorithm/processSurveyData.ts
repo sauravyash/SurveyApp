@@ -109,7 +109,8 @@ export function categorizeHBP(systolicData: UnitData, hbp_diag: YesNoInput, hbp_
   return 'no';
 }
 
-export function categorizeTBI(tbi: string): 'yes' | 'no' {
+export function categorizeTBI(tbi: string | undefined): 'yes' | 'no' {
+  if (!tbi) return 'no';
   if (tbi.includes("Yes")) return 'yes';
   return 'no';
 }

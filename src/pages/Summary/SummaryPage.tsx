@@ -108,6 +108,7 @@ const SummaryPage = () => {
     console.log(res.data);
     if (res.data?.URL) {
       var newWindow = window.open(res.data.URL, '_blank');
+      console.log("GENERATED PDF -->", res.data.URL);
       if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
         //POPUP BLOCKED
         window.location.href = res.data.URL;

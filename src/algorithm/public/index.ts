@@ -3,6 +3,8 @@ import { femaleAlgorithm } from "./femaleAlgorithm";
 import { maleAlgorithm } from "./maleAlgorithm";
 import { otherGenderAlgorithm } from "./otherGenderAlgorithm";
 
+const MAX_SCORE = 48.25;
+
 export function publicScoring(inputs: Inputs): Scores {
   let scores: Scores = {
     dementia_score: 0,
@@ -10,6 +12,7 @@ export function publicScoring(inputs: Inputs): Scores {
     mi_score: 0,
     diabetes_score: 0
   };
+
   switch (inputs.gender) {
     case "male":
       scores = maleAlgorithm(inputs);
@@ -21,5 +24,18 @@ export function publicScoring(inputs: Inputs): Scores {
       scores = otherGenderAlgorithm(inputs);
       break;
   }
+
+  for (const k in scores) {
+    const key = k as keyof Scores;
+    if (scores[key] < 0) {
+      console.error(`Score for ${key} is less than 0. Setting to 0.`);
+      scores[key] = 0;
+    }
+    if (scores[key] > MAX_SCORE) {
+      console.error(`Score for ${key} is greater than max score (${MAX_SCORE}). Setting to ${MAX_SCORE}.`);
+      scores[key] = MAX_SCORE;
+    }
+  }
+
   return scores;
 }

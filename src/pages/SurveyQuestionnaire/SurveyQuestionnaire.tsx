@@ -301,7 +301,7 @@ const SurveyQuestionnaire = () => {
     case "text":
       question = (
         <TextQuestionSection
-          currentQuestion={currentQuestion as TextQuestion} 
+          currentQuestion={currentQuestion as TextQuestion}
         />
       )
       break;
@@ -352,7 +352,9 @@ const SurveyQuestionnaire = () => {
 
   return (
     <Provider>
-      <SurveyPage>
+      <SurveyPage style={{
+        fontSize: state.fontSize,
+      }}>
         <BackgroundImage src={bgImage} />
         <SurveyWrapper>
           <ProgressBar

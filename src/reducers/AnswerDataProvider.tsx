@@ -1,6 +1,9 @@
 import React, { ReactNode, createContext, useEffect, useReducer } from 'react';
+import { sampleData } from './sampleData';
 
-interface AnswerData {
+const USE_TEST_DATA = false;
+
+export interface AnswerData {
   // Define the properties of the data object
   collect_data: "yes" | "no" | null;
   data: any;
@@ -31,8 +34,7 @@ const storeInSessionStorage = (state: AnswerData) => {
 }
 
 // Define the initial state
-const initialState = {
-  // Add your initial state properties here
+const initialState: AnswerData = USE_TEST_DATA ? sampleData : {
   collect_data: null,
   data: {},
   fontSize: 16,

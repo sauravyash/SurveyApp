@@ -1,4 +1,4 @@
-import { sampleData } from './sample_data.ts';
+// import { sampleData } from './sample_data.ts';
 
 import {
   categorizeGender,
@@ -26,6 +26,7 @@ import { Inputs, OutputResult, Scores } from './types';
 import { publicScoring } from './public/index.ts';
 
 export function processSurveyResponse(data: Record<string, any>): {scores: Scores, inputs: Inputs} {  
+  
   const inputs: Inputs = {
     gender: categorizeGender(data["3"]), 
     age_cat: categorizeAge(data["1"]), 
@@ -103,12 +104,4 @@ export function processSurveyResponse(data: Record<string, any>): {scores: Score
 
 // Export the function to be used in the main file    
 export default processSurveyResponse;
-
-
-async function test() {
-  const res = processSurveyResponse(sampleData);
-  console.log(res);
-}
-
-test();
   

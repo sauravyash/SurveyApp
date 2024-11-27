@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 
 import "./index.css";
+import { useAnswerData } from '../../reducers/AnswerDataProvider';
 
 const colourStyles = {
   default: {
@@ -34,7 +35,7 @@ const ChevronButton = styled.div<ChevronButtonProps>`
   padding: 0 .5rem;
   margin: 0;
   border-radius: 0;
-  height: 20px;
+  height: 1.25em;
   background-color: ${colourStyles.default.background};
   
 
@@ -114,7 +115,7 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
   label = null,
   margin = "0",
 }) => {
-
+  const { state } = useAnswerData();
   const [value, setValue] = useState<number | undefined>(defaultValue);
 
   useEffect(() => {
@@ -199,7 +200,10 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
         color: colourStyles.default.color,
         zIndex: 100,
       }}>{label}</label>}
-      <div className="control" id="number-input-control">
+      <div className="control" id="number-input-control"
+      style={{
+        fontSize: state.fontSize,
+      }}>
         <NumberInput
           className="input"
           type="text"
@@ -213,9 +217,10 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
             borderTopRightRadius: "4px",
             width: "128px",
             paddingRight: "36px",
+            fontSize: "1em",
           }}
         />
-        <div className="control" style={{ position: "absolute", right: 0, top: 0, zIndex: 100, overflow: "hidden" }}>
+        <div className="control" style={{ position: "absolute", right: 0, top: 0, zIndex: 100, overflow: "hidden", fontSize: state.fontSize }}>
           <div className="buttons has-addons is-flex-direction-column">
             <ChevronButton
               className='number-control-button number-control-button-top'
