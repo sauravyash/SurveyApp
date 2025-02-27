@@ -1,6 +1,6 @@
 import { AnswerData } from "./AnswerDataProvider";
 
-export const sampleData: AnswerData = {
+export const sampleDataPublic: AnswerData = {
   "collect_data": "yes",
   "data": {
       "1": {
@@ -158,3 +158,23 @@ export const sampleData: AnswerData = {
   },
   "current_question": 109
 }
+
+export const sampleDataGP: AnswerData = {
+    "collect_data": "yes",
+    "data": {
+        "1": {
+            "year": 19
+        },
+    },
+    "fontSize": 16,
+    "user": {
+        "name": "Yash",
+        "address": "test addy",
+        "email": "yagasti@gmail.com",
+        "reuseData": true,
+        "detailsCorrect": true
+    },
+    "current_question": 109
+}
+
+export const sampleData: AnswerData = sampleDataPublic;

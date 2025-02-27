@@ -1,5 +1,5 @@
-import { SectionIntroScreen, MultipleChoiceQuestion } from "../QuestionTypes";
-import { NumberQuestionV2 } from "../QuestionTypes/NumberQuestion";
+import { SectionIntroScreen, MultipleChoiceQuestion } from "../../QuestionTypes";
+import { NumberQuestionV2 } from "../../QuestionTypes/NumberQuestion";
 
 export const FoodAndHabitsQuestions = [
   new SectionIntroScreen(80.1,

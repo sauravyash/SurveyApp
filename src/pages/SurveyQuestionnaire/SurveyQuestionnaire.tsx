@@ -15,11 +15,11 @@ import Markdown from "react-markdown";
 import RestoreProgressModal from "../../components/RestoreProgressModal";
 import imageListWebP from "../../resources/stockImageList";
 import TextQuestionSection from "./TextQuestionSection";
-import { AllQuestions } from "../../resources/questions/QuestionBanks/Public";
 import { LikertScaleQuestion, MultipleChoiceQuestion, TextQuestion, NumberQuestion, DateQuestion, WaistMeasurementQuestion } from "../../resources/questions/QuestionTypes";
-import questionSections from "../../resources/questions/QuestionBanks/Public";
 import { NumberQuestionV2 } from "../../resources/questions/QuestionTypes/NumberQuestion";
 import NumberQuestionSection2 from "./NumberQuestionSection2";
+
+import questionSections, { AllQuestions } from "../../resources/questions/QuestionBanks";
 
 const SurveyPage = styled.section`
   display: flex;
@@ -100,6 +100,7 @@ const SurveyQuestionnaire = () => {
   const [bgImage, setBgImage] = useState(imageListWebP[0]);
   const { state, dispatch } = useAnswerData();
   const navigate = useNavigate();
+  
 
   const sectiontitle = questionSections[currentSection]?.title;
 

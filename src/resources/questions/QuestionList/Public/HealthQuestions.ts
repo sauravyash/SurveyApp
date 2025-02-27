@@ -1,5 +1,5 @@
-import { SectionIntroScreen, NumberQuestion, MultipleChoiceQuestion } from "../QuestionTypes";
-import { NumberQuestionV2 } from "../QuestionTypes/NumberQuestion";
+import { SectionIntroScreen, NumberQuestion, MultipleChoiceQuestion } from "../../QuestionTypes";
+import { NumberQuestionV2 } from "../../QuestionTypes/NumberQuestion";
 
 export const HealthQuestions = [
     new SectionIntroScreen(17.1,
@@ -14,22 +14,22 @@ export const HealthQuestions = [
     ),
     new NumberQuestion(19, "What is your HDL cholesterol level?", ["mmol/L"], true, 0, 20, 1.5, true, undefined, true, 0.1),
     new NumberQuestion(20, "What is your LDL cholesterol level?", ["mmol/L"], true, 0, 20, 3.5, true, undefined, true, 0.1),
-    new NumberQuestionV2(21, "What are your triglyceride levels?",
-        ["mmol/L", "mg/dL"],
-        true, {
-        "mmol/L": {
-            min: 0.1,       // Avoid 0 as triglycerides cannot be zero
-            max: 10,        // Upper bound for severe cases
-            defaultValue: 1.5,
-            step: 0.1
-        },
-        "mg/dL": {
-            min: 10,        // Avoid 0; start from a reasonable minimum
-            max: 900,       // Upper limit for extreme conditions
-            defaultValue: 150,
-            step: 1
-        }
-    }, true, undefined),
+    new NumberQuestionV2(21, 
+        "What are your triglyceride levels?",
+        ["mmol/L", "mg/dL"], true, {
+            "mmol/L": {
+                min: 0.1,       // Avoid 0 as triglycerides cannot be zero
+                max: 10,        // Upper bound for severe cases
+                defaultValue: 1.5,
+                step: 0.1
+            },
+            "mg/dL": {
+                min: 10,        // Avoid 0; start from a reasonable minimum
+                max: 900,       // Upper limit for extreme conditions
+                defaultValue: 150,
+                step: 1
+            }
+        }, true, undefined, true),
     new MultipleChoiceQuestion(22, "Have you ever been told by a doctor or other health professional that you have diabetes?", ["Yes", "No", "Don’t know"]),
     new MultipleChoiceQuestion(23, "Have you been found to have high blood glucose (sugar) (for example, in a health examination, during an illness, during pregnancy) or fasting glucose above 7 mmol/L?", ["Yes", "No", "Don’t know"]),
     new MultipleChoiceQuestion(24,
@@ -55,7 +55,7 @@ export const HealthQuestions = [
     ),
     new NumberQuestion(28,
         "Could you please specify at what age were you first told that you had high blood pressure?",
-        ["year"], false, 0, 130, 50, true,
+        ["year"], false, 1, 130, 50, true,
         [{
             question: 27,
             answer: "Yes"
@@ -71,7 +71,7 @@ export const HealthQuestions = [
     ),
     new NumberQuestion(30,
         "Could you please specify at what age you started taking medications for high blood pressure?",
-        ["year"], false, 0, 130, 50, true,
+        ["year"], false, 1, 130, 50, true,
         [{
             question: 29,
             answer: "Yes"

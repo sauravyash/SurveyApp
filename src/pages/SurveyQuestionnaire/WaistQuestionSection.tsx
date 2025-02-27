@@ -9,13 +9,13 @@ const SpecialAnswerData = {
 };
 
 const WaistQuestionSection = (props: {
-  question: WaistMeasurementQuestion
+  question: WaistMeasurementQuestion,
 }) => {
   const { question } = props;
   const { state } = useAnswerData();
   // default on males for extra gender options
   const genderText: () => string = () => {
-    let gender = state.data[SpecialAnswerData.gender];
+    let gender = state.data[SpecialAnswerData.gender] || "Male";
     if (typeof gender === "string") return gender;
     return gender.currentKey || "";
   };
@@ -39,7 +39,9 @@ const WaistQuestionSection = (props: {
       if (typeof currentAnswer === "string" && currentAnswer.includes(": ")) {
         currentAnswer = currentAnswer.split(": ")[1];
       }
-      if (currentAnswer instanceof Set && (currentAnswer as any).currentKey.includes(": ")) {
+      if (currentAnswer instanceof Set 
+        && (currentAnswer as any).currentKey 
+        && (currentAnswer as any).currentKey.includes(": ")) {
         currentAnswer = (currentAnswer as any).currentKey.split(": ")[1];
       }
       conditions.push({question: condition.question, answer: currentAnswer});

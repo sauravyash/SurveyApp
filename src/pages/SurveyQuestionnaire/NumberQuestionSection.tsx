@@ -60,6 +60,8 @@ const NumberQuestionSection = (props: {
   const { question } = props;
   const { state, dispatch } = useAnswerData();
   const [selectedUnit, setSelectedUnit] = useState("0");
+  const [hasLoadedState, setHasLoadedState] = useState(false);
+  const [hasLoadedUnits, setHasLoadedUnits] = useState(false);
   const unitTypes = question.getAttributes().scientific_unit ?
     question.getUnits()[Number(selectedUnit)].split(" / ") :
     [question.getUnits()[Number(selectedUnit)]];
@@ -105,12 +107,16 @@ const NumberQuestionSection = (props: {
         }
       })
     } else {
-      dispatch({
-        type: "remove_answer",
-        payload: {
-          questionNumber: question.getQuestionNumber()
-        }
-      })
+      if (hasLoadedState && hasLoadedUnits) {
+        dispatch({
+          type: "remove_answer",
+          payload: {
+            questionNumber: question.getQuestionNumber()
+          }
+        })
+      } else {
+        setHasLoadedState(true);
+      }
     }
   }, [answer])
 
@@ -128,12 +134,16 @@ const NumberQuestionSection = (props: {
         }
       })
     } else {
-      dispatch({
-        type: "remove_answer",
-        payload: {
-          questionNumber: question.getQuestionNumber()
-        }
-      })
+      if (hasLoadedState && hasLoadedUnits) {
+        dispatch({
+          type: "remove_answer",
+          payload: {
+            questionNumber: question.getQuestionNumber()
+          }
+        })
+      } else {
+        setHasLoadedUnits(true);
+      }
     }
   }, [selectedUnit]);
 

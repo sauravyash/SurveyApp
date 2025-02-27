@@ -1,4 +1,4 @@
-import { LikertScaleQuestion, SectionIntroScreen } from "../QuestionTypes";
+import { LikertScaleQuestion, SectionIntroScreen } from "../../QuestionTypes";
 
 const commonOptions = {
   0: "Rarely or none of the time (less than 1 day)",

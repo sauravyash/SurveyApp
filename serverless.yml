@@ -1,4 +1,4 @@
-service: lead-survey-frontend-page
+service: lead-survey-frontend-${env:VITE_SURVEY_TYPE}
 
 provider:
   name: aws
@@ -8,7 +8,6 @@ provider:
   environment:
     S3_BUCKET_NAME: ${self:custom.s3BucketName}
     SURVEY_BACKEND_URL: ${self:custom.serverURL}
-    SURVEY_TYPE: ${self:custom.SURVEY_TYPE}
 
 stages:
   default:
@@ -19,18 +18,22 @@ plugins:
   - serverless-cloudfront-invalidate
 
 custom:
-  SURVEY_TYPE: ${env:SURVEY_TYPE}
+  surveyType: ${env:VITE_SURVEY_TYPE}
   s3BucketName: ${self:service}-${self:provider.stage}
   distributionFolder: dist
   serverURL: rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/${self:provider.stage}
   cloudFrontDistributionId:
-    dev: EL66A8C6F0DQW
-    prod: YOUR_PROD_DISTRIBUTION_ID_SET_ME
+    public:
+      dev: ER6PYB0KUZTQN
+      prod: YOUR_PROD_DISTRIBUTION_ID_SET_ME
+    gp:
+      dev: E1DZEVASJ2KRI1
+      prod: YOUR_PROD_DISTRIBUTION_ID_SET_ME
   s3Sync:
     - bucketName: ${self:custom.s3BucketName}
       localDir: ${self:custom.distributionFolder}
   cloudfrontInvalidate:
-    - distributionId: ${self:custom.cloudFrontDistributionId.${self:provider.stage}}
+    - distributionId: ${self:custom.cloudFrontDistributionId.${self:custom.surveyType}.${self:provider.stage}}
       items:
         - "/*"
 

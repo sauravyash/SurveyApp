@@ -1,101 +1,45 @@
-# Dementia Risk Assessment Study
+# Terms of Use for CogDrisk Assessment
 
-## What is the research study about?
+## Introduction
+Your access to and use of the CogDrisk assessment ("Tool", "Website", "Service") operated by the CogDrisk research study ("us", "we", or "our") is subject to these terms of use ("Agreement"). This Agreement applies to all users who log in or use the Service.
 
-You are invited to take part in this research study. The study aims to collect data on risk factors for dementia in adults aged 18 and older. This questionnaire includes items on:
+## Intellectual Property
+All materials, products (assessment), and services on this website are the property of the CogDrisk research team (Professor Kaarin J. Anstey and her team), including all copyrights, trade secrets, trademarks, patents, and other intellectual property. You agree not to reproduce or redistribute CogDrisk research team's intellectual property in any way, including electronic, digital or new trademark registrations.
 
-- Your age
-- Sex
-- Education level
-- Lifestyle habits
-- Health factors
+## Disclaimer
+The CogDrisk tool is not intended to be used as a diagnosis tool for dementia. The information provided on this website and in the tool is for educational and research purposes only. If you have any concerns, you should consult your medical practitioner to receive specific medical advice.
 
-It uses information from published studies to assign risk scores to your responses. Upon completion, you will receive:
+## Data Usage
+### Temporary Data Processing
+To calculate the risk score, we require temporary access to anonymized survey responses in your web browser. This data will briefly be sent to our servers for calculation purposes and then erased, becoming inaccessible to any staff member.
 
-- Advice on which health and lifestyle factors may pose a risk for developing dementia
-- Expert advice and recommendations
-- Increased dementia literacy and awareness of probable risk factors
+### Personal Information Collection
+For individual accounts, we collect:
+- Email address (for account access and correspondence)
+- Analytics information including:
+  - Time and date of access
+  - Internet protocol (IP) address
+  - Pages accessed and downloaded items
+  - Web browser type and version
 
-## Who is conducting this research?
+Analytics data is stored securely, not used for identification purposes, and is treated in accordance with section 8 of the NeuRA's full Privacy Policy.
 
-The study is being carried out by the following researchers from UNSW and Neuroscience Research Australia (NeuRA):
+## Assessment Information Storage
+Assessment information is stored in a de-identified format on a NeuRA secure server. Responses are assigned a unique code linkable to personal details, which are stored separately and protected by strict role-based access privileges.
 
-- Prof. Kaarin Anstey
-- Dr Ruth Peters
-- Dr Scherazad Kootar
-- Dr Md Hamidul Huque
+## Account Options and Responsibilities
+You may choose between:
+1. Taking the assessment without participating in research
+2. Participating in research (requires consent and personal information)
 
-**Research Funder:** This research has not been funded by any specific research grant.
+When creating an account, you are responsible for:
+- Ensuring information accuracy
+- Maintaining security of identifying information
+- All activities under your account or password
+- Reporting potential security issues immediately
 
-## Inclusion Criteria
-
-To participate, you must:
-
-- Be 18 years or older
-- Have access to internet services and a computer, mobile, or tablet
-
-## Participation Details
-
-Participation is voluntary. If you decide to take part:
-
-1. Read the information carefully (ask questions if necessary)
-2. Complete the online questionnaire
-
-## What does participation in this research require, and are there any risks involved?
-
-If you decide to take part in the research study, we will ask you to complete an online questionnaire. The questionnaire will ask you questions about your personal information, health, lifestyle, and other related questions to provide information on your dementia risk profile. It should take approximately 20 to 30 minutes to complete.
-
-If you experience discomfort or feelings of distress while participating in the research and you require support, you can stop participating at any time. You can also tell a member of the research team and they will provide you with assistance or alternatively a list of support services and their contact details are provided below.
-
-If at any stage during the study, you become distressed or require additional support from someone not involved in the research please call:
-
-| Contact for feelings of distress |               |
-|----------------------------------|---------------|
-| Name/Organisation                | Lifeline Australia |
-| Telephone                        | 13 11 14      |
-
-## Data Handling and Privacy
-
-- Submission of the online questionnaire is an indication of your consent. By clicking the 'I agree to participate' button you are providing your permission for the research team to collect and use information about you for the research study.
-- Your survey responses will be assigned a unique code
-- Personal details will be stored separately from survey responses
-- Data will be stored for a minimum of 7 years after study completion
-- Temporary data use: Anonymized survey responses will be briefly sent to servers for risk score calculation, then erased
-
-## Results and Withdrawal
-
-- You can request a copy of the results via email or mail
-- You may withdraw at any time by completing the Withdrawal of Consent Form or contacting the research team
-
-## Complaints and Further Questions
-
-### What if I have a complaint or any concerns about the research study?
-
-If you have a complaint regarding any aspect of the study or the way it is being conducted, please contact the UNSW Human Ethics Coordinator:
-
-| Complaints Contact |                                   |
-|--------------------|-----------------------------------|
-| Position           | Human Research Ethics Coordinator |
-| Telephone          | +61 2 9385 6222                   |
-| Email              | humanethics@unsw.edu.au           |
-| HC Reference Number| HC200108                          |
-
-### What should I do if I have further questions about my involvement in the research study?
-
-The person you may need to contact will depend on the nature of your query. If you require further information regarding this study or if you have any problems which may be related to your involvement in the study, you can contact the following member/s of the research team:
-
-| Research Team Contact |                                                                        |
-|-----------------------|------------------------------------------------------------------------|
-| Name                  | Dr Scherazad Kootar                                                    |
-| Position              | Postdoctoral Fellow                                                    |
-| Telephone             | +61 2 9399 1043                                                        |
-| Email                 | s.kootar@unsw.edu.au                                                   |
-
-| Research Team Contact |                                                                        |
-|-----------------------|------------------------------------------------------------------------|
-| Name                  | Prof. Kaarin Anstey                                                    |
-| Position              | Scientia Professor (UNSW) and Senior Principal Research Scientist (NeuRA) |
-| Telephone             | +61 2 9399 1019                                                        |
-| Email                 | k.anstey@unsw.edu.au                                                   |
-
-If you would like to receive a copy of the results, you can let the research team know by inserting your email or mailing address in the consent form. We will only use these details to send you the results of the research.
+## Contact Information
+For questions about this agreement, contact the CogDrisk team:
+- Email: cogdrisk@neura.edu.au
+- Phone: +61 2 9399 1043
+- Hours: Monday – Friday, 9am-5pm (AEST)

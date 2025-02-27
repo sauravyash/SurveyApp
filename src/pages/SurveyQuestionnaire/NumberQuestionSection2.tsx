@@ -65,18 +65,15 @@ const NumberQuestionSection2 = (props: {
   const [currentUnitTypes, setCurrentUnitTypes] = useState<string[]>([]);
 
   const unit = currentUnitTypes[selectedUnitInt] || "default";
-
-  const defaultAnswer = currentUnitTypes.length <= 1 ? {
-    [question.getUnits()[0]]: undefined,
-  } : {
-    [currentUnitTypes[0]]: undefined,
-  }
+  const defaultAnswer = {};
+  // const defaultAnswer = question.getUnits()[0].split(" / ").length <= 1 ? {
+  //   [question.getUnits()[0]]: undefined,
+  // } : {};
 
   const [answer, setAnswer] = useState<NumberQuestionKey>(defaultAnswer);
 
   useEffect(() => {
     const storedData = state.data[question.getQuestionNumber()];
-    console.log("storedData", storedData);
 
     if (storedData) {
       const storedAnswer: number = Object.values(storedData)[0] as number;
@@ -116,22 +113,9 @@ const NumberQuestionSection2 = (props: {
       [question.getUnits()[selectedUnitInt]];
     setCurrentUnitTypes(unitTypes);
 
-    // const storedData = state.data[question.getQuestionNumber()];
-    // const storedUnits = Object.keys(storedData).join(" / ");
-    // console.log(storedUnits, unitTypes[selectedUnitInt], currentUnitTypes );
-
-    // if (storedUnits !== unitTypes[selectedUnitInt]) {
-    //   setAnswer(answer => {
-    //     delete answer[storedUnits];
-    //     return answer;
-    //   })
-    // }
-
   }, [selectedUnitIndex]);
 
   useEffect(() => {
-    const answ = Object.values(answer)[0];
-    const defaultAns = Object.values(defaultAnswer)[0];
     if (answer === "unsure") {
       dispatch({
         type: "add_answer",
@@ -141,10 +125,21 @@ const NumberQuestionSection2 = (props: {
         }
       })
     }
-    else if (answ !== undefined
-      && answ !== defaultAns
-      && answ >= question.getMinValue(unit)
-      && answ <= question.getMaxValue(unit)) {
+    else if (answer !== undefined) {
+      for (const key in answer) {
+        const ans = answer[key];
+        if (key === question.getUnits().join(" / ")) continue;
+        if (ans === undefined) {
+          return;
+        }
+        if (ans <= question.getMinValue(unit)
+          && ans >= question.getMaxValue(unit)
+          && ans === answer[key]) {
+          return;
+        }
+
+      }
+
       dispatch({
         type: "add_answer",
         payload: {
@@ -162,14 +157,21 @@ const NumberQuestionSection2 = (props: {
     }
   }, [answer]);
 
-  const currentAnswer = question.getAttributes().scientific_unit ?
-    1 : (
-      state.data[question.getQuestionNumber()] ?
-        Object.entries(state.data[question.getQuestionNumber()])[0][1] as any :
-        0
-    ) || 1;
-
-
+  let currentAnswer;
+  if (question.getAttributes().scientific_unit) {
+    currentAnswer = 1;
+  } else {
+    if (!state.data[question.getQuestionNumber()]) {
+      currentAnswer = 1;
+    } else {
+      const a = Object.entries(state.data[question.getQuestionNumber()]);
+      if (a.length === 0) {
+        currentAnswer = 1;
+      } else {
+        currentAnswer = a[0][1] as number;
+      }
+    }
+  }
 
   return (
     <NumberUnitsWrapper>
@@ -198,6 +200,12 @@ const NumberQuestionSection2 = (props: {
               margin={"0 1em"}
               onChange={(num) => {
                 setAnswer(curr => {
+                  if ((curr as any).default !== undefined) {
+                    delete (curr as any).default;
+                  }
+                  if ((curr as any)[question.getUnits()[0]] !== undefined) {
+                    delete (curr as any)[question.getUnits()[0]];
+                  }
                   if (curr !== "unsure") {
                     return ({
                       ...curr,

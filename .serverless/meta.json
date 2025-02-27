@@ -1,789 +1,18 @@
 {
-  "/Users/yashagasti/Documents/Arludo/repos/LEAD_survey_app": {
-    "versionSfCore": null,
-    "versionFramework": "4.4.7",
-    "isWithinCompose": false,
-    "isCompose": false,
-    "composeOrgName": null,
-    "composeResolverProviders": {
-      "default-aws-credential-resolver": "<REDACTED>",
-      "opt": {
-        "instance": {
-          "credentials": "<REDACTED>",
-          "serviceConfigFile": {
-            "service": "lead-survey-frontend-page",
-            "provider": {
-              "name": "aws",
-              "runtime": "nodejs20.x",
-              "region": "ap-southeast-2",
-              "stage": "dev",
-              "environment": {
-                "S3_BUCKET_NAME": "lead-survey-frontend-page-dev",
-                "SURVEY_BACKEND_URL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev",
-                "SURVEY_TYPE": "public"
-              },
-              "versionFunctions": true,
-              "compiledCloudFormationTemplate": {
-                "AWSTemplateFormatVersion": "2010-09-09",
-                "Description": "The AWS CloudFormation template for this Serverless application",
-                "Resources": {
-                  "WebsiteBucket": {
-                    "Type": "AWS::S3::Bucket",
-                    "Properties": {
-                      "BucketName": "lead-survey-frontend-page-dev",
-                      "WebsiteConfiguration": {
-                        "IndexDocument": "index.html",
-                        "ErrorDocument": "index.html"
-                      },
-                      "PublicAccessBlockConfiguration": {
-                        "BlockPublicAcls": false,
-                        "BlockPublicPolicy": false,
-                        "IgnorePublicAcls": false,
-                        "RestrictPublicBuckets": false
-                      }
-                    }
-                  },
-                  "WebsiteBucketPolicy": {
-                    "Type": "AWS::S3::BucketPolicy",
-                    "Properties": {
-                      "Bucket": {
-                        "Ref": "WebsiteBucket"
-                      },
-                      "PolicyDocument": {
-                        "Version": "2012-10-17",
-                        "Statement": [
-                          {
-                            "Effect": "Allow",
-                            "Principal": "*",
-                            "Action": [
-                              "s3:GetObject"
-                            ],
-                            "Resource": "arn:aws:s3:::lead-survey-frontend-page-dev/*"
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "CloudFrontDistribution": {
-                    "Type": "AWS::CloudFront::Distribution",
-                    "Properties": {
-                      "DistributionConfig": {
-                        "Origins": [
-                          {
-                            "DomainName": "lead-survey-frontend-page-dev.s3.ap-southeast-2.amazonaws.com",
-                            "Id": "S3Origin",
-                            "S3OriginConfig": {}
-                          }
-                        ],
-                        "Enabled": true,
-                        "DefaultRootObject": "index.html",
-                        "DefaultCacheBehavior": {
-                          "Compress": true,
-                          "AllowedMethods": [
-                            "GET",
-                            "HEAD"
-                          ],
-                          "TargetOriginId": "S3Origin",
-                          "ForwardedValues": {
-                            "QueryString": false,
-                            "Cookies": {
-                              "Forward": "none"
-                            }
-                          },
-                          "ViewerProtocolPolicy": "redirect-to-https"
-                        },
-                        "ViewerCertificate": {
-                          "CloudFrontDefaultCertificate": true
-                        },
-                        "CustomErrorResponses": [
-                          {
-                            "ErrorCode": 403,
-                            "ResponseCode": 200,
-                            "ResponsePagePath": "/index.html"
-                          },
-                          {
-                            "ErrorCode": 404,
-                            "ResponseCode": 200,
-                            "ResponsePagePath": "/index.html"
-                          }
-                        ]
-                      }
-                    }
-                  }
-                },
-                "Outputs": {
-                  "ServerlessDeploymentBucketName": {
-                    "Value": "serverless-framework-deployments-ap-southeast-2-35e4da54-cbb5",
-                    "Export": {
-                      "Name": "sls-lead-survey-frontend-page-dev-ServerlessDeploymentBucketName"
-                    }
-                  }
-                }
-              }
-            },
-            "stages": {
-              "default": {
-                "SURVEY_BACKEND_URL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev"
-              }
-            },
-            "plugins": [
-              "serverless-s3-sync",
-              "serverless-cloudfront-invalidate"
-            ],
-            "custom": {
-              "SURVEY_TYPE": "public",
-              "s3BucketName": "lead-survey-frontend-page-dev",
-              "distributionFolder": "dist",
-              "serverURL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev",
-              "cloudFrontDistributionId": {
-                "dev": "EL66A8C6F0DQW",
-                "prod": "YOUR_PROD_DISTRIBUTION_ID_SET_ME"
-              },
-              "s3Sync": [
-                {
-                  "bucketName": "lead-survey-frontend-page-dev",
-                  "localDir": "dist"
-                }
-              ],
-              "cloudfrontInvalidate": [
-                {
-                  "distributionId": "EL66A8C6F0DQW",
-                  "items": [
-                    "/*"
-                  ]
-                }
-              ]
-            },
-            "resources": {
-              "Resources": {
-                "WebsiteBucket": {
-                  "Type": "AWS::S3::Bucket",
-                  "Properties": {
-                    "BucketName": "lead-survey-frontend-page-dev",
-                    "WebsiteConfiguration": {
-                      "IndexDocument": "index.html",
-                      "ErrorDocument": "index.html"
-                    },
-                    "PublicAccessBlockConfiguration": {
-                      "BlockPublicAcls": false,
-                      "BlockPublicPolicy": false,
-                      "IgnorePublicAcls": false,
-                      "RestrictPublicBuckets": false
-                    }
-                  }
-                },
-                "WebsiteBucketPolicy": {
-                  "Type": "AWS::S3::BucketPolicy",
-                  "Properties": {
-                    "Bucket": {
-                      "Ref": "WebsiteBucket"
-                    },
-                    "PolicyDocument": {
-                      "Version": "2012-10-17",
-                      "Statement": [
-                        {
-                          "Effect": "Allow",
-                          "Principal": "*",
-                          "Action": [
-                            "s3:GetObject"
-                          ],
-                          "Resource": "arn:aws:s3:::lead-survey-frontend-page-dev/*"
-                        }
-                      ]
-                    }
-                  }
-                },
-                "CloudFrontDistribution": {
-                  "Type": "AWS::CloudFront::Distribution",
-                  "Properties": {
-                    "DistributionConfig": {
-                      "Origins": [
-                        {
-                          "DomainName": "lead-survey-frontend-page-dev.s3.ap-southeast-2.amazonaws.com",
-                          "Id": "S3Origin",
-                          "S3OriginConfig": {}
-                        }
-                      ],
-                      "Enabled": true,
-                      "DefaultRootObject": "index.html",
-                      "DefaultCacheBehavior": {
-                        "Compress": true,
-                        "AllowedMethods": [
-                          "GET",
-                          "HEAD"
-                        ],
-                        "TargetOriginId": "S3Origin",
-                        "ForwardedValues": {
-                          "QueryString": false,
-                          "Cookies": {
-                            "Forward": "none"
-                          }
-                        },
-                        "ViewerProtocolPolicy": "redirect-to-https"
-                      },
-                      "ViewerCertificate": {
-                        "CloudFrontDefaultCertificate": true
-                      },
-                      "CustomErrorResponses": [
-                        {
-                          "ErrorCode": 403,
-                          "ResponseCode": 200,
-                          "ResponsePagePath": "/index.html"
-                        },
-                        {
-                          "ErrorCode": 404,
-                          "ResponseCode": 200,
-                          "ResponsePagePath": "/index.html"
-                        }
-                      ]
-                    }
-                  }
-                }
-              },
-              "Outputs": {}
-            }
-          },
-          "configFileDirPath": "/Users/yashagasti/Documents/Arludo/repos/LEAD_survey_app",
-          "config": {
-            "type": "opt"
-          },
-          "options": {
-            "stage": "dev"
-          },
-          "stage": "dev",
-          "dashboard": null,
-          "logger": {
-            "namespace": "s:core:resolver:opt",
-            "prefix": null,
-            "prefixColor": null
-          },
-          "_credentialsPromise": "<REDACTED>"
-        },
-        "resolvers": {}
-      },
-      "self": {
-        "instance": {
-          "credentials": "<REDACTED>",
-          "serviceConfigFile": {
-            "service": "lead-survey-frontend-page",
-            "provider": {
-              "name": "aws",
-              "runtime": "nodejs20.x",
-              "region": "ap-southeast-2",
-              "stage": "dev",
-              "environment": {
-                "S3_BUCKET_NAME": "lead-survey-frontend-page-dev",
-                "SURVEY_BACKEND_URL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev",
-                "SURVEY_TYPE": "public"
-              },
-              "versionFunctions": true,
-              "compiledCloudFormationTemplate": {
-                "AWSTemplateFormatVersion": "2010-09-09",
-                "Description": "The AWS CloudFormation template for this Serverless application",
-                "Resources": {
-                  "WebsiteBucket": {
-                    "Type": "AWS::S3::Bucket",
-                    "Properties": {
-                      "BucketName": "lead-survey-frontend-page-dev",
-                      "WebsiteConfiguration": {
-                        "IndexDocument": "index.html",
-                        "ErrorDocument": "index.html"
-                      },
-                      "PublicAccessBlockConfiguration": {
-                        "BlockPublicAcls": false,
-                        "BlockPublicPolicy": false,
-                        "IgnorePublicAcls": false,
-                        "RestrictPublicBuckets": false
-                      }
-                    }
-                  },
-                  "WebsiteBucketPolicy": {
-                    "Type": "AWS::S3::BucketPolicy",
-                    "Properties": {
-                      "Bucket": {
-                        "Ref": "WebsiteBucket"
-                      },
-                      "PolicyDocument": {
-                        "Version": "2012-10-17",
-                        "Statement": [
-                          {
-                            "Effect": "Allow",
-                            "Principal": "*",
-                            "Action": [
-                              "s3:GetObject"
-                            ],
-                            "Resource": "arn:aws:s3:::lead-survey-frontend-page-dev/*"
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "CloudFrontDistribution": {
-                    "Type": "AWS::CloudFront::Distribution",
-                    "Properties": {
-                      "DistributionConfig": {
-                        "Origins": [
-                          {
-                            "DomainName": "lead-survey-frontend-page-dev.s3.ap-southeast-2.amazonaws.com",
-                            "Id": "S3Origin",
-                            "S3OriginConfig": {}
-                          }
-                        ],
-                        "Enabled": true,
-                        "DefaultRootObject": "index.html",
-                        "DefaultCacheBehavior": {
-                          "Compress": true,
-                          "AllowedMethods": [
-                            "GET",
-                            "HEAD"
-                          ],
-                          "TargetOriginId": "S3Origin",
-                          "ForwardedValues": {
-                            "QueryString": false,
-                            "Cookies": {
-                              "Forward": "none"
-                            }
-                          },
-                          "ViewerProtocolPolicy": "redirect-to-https"
-                        },
-                        "ViewerCertificate": {
-                          "CloudFrontDefaultCertificate": true
-                        },
-                        "CustomErrorResponses": [
-                          {
-                            "ErrorCode": 403,
-                            "ResponseCode": 200,
-                            "ResponsePagePath": "/index.html"
-                          },
-                          {
-                            "ErrorCode": 404,
-                            "ResponseCode": 200,
-                            "ResponsePagePath": "/index.html"
-                          }
-                        ]
-                      }
-                    }
-                  }
-                },
-                "Outputs": {
-                  "ServerlessDeploymentBucketName": {
-                    "Value": "serverless-framework-deployments-ap-southeast-2-35e4da54-cbb5",
-                    "Export": {
-                      "Name": "sls-lead-survey-frontend-page-dev-ServerlessDeploymentBucketName"
-                    }
-                  }
-                }
-              }
-            },
-            "stages": {
-              "default": {
-                "SURVEY_BACKEND_URL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev"
-              }
-            },
-            "plugins": [
-              "serverless-s3-sync",
-              "serverless-cloudfront-invalidate"
-            ],
-            "custom": {
-              "SURVEY_TYPE": "public",
-              "s3BucketName": "lead-survey-frontend-page-dev",
-              "distributionFolder": "dist",
-              "serverURL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev",
-              "cloudFrontDistributionId": {
-                "dev": "EL66A8C6F0DQW",
-                "prod": "YOUR_PROD_DISTRIBUTION_ID_SET_ME"
-              },
-              "s3Sync": [
-                {
-                  "bucketName": "lead-survey-frontend-page-dev",
-                  "localDir": "dist"
-                }
-              ],
-              "cloudfrontInvalidate": [
-                {
-                  "distributionId": "EL66A8C6F0DQW",
-                  "items": [
-                    "/*"
-                  ]
-                }
-              ]
-            },
-            "resources": {
-              "Resources": {
-                "WebsiteBucket": {
-                  "Type": "AWS::S3::Bucket",
-                  "Properties": {
-                    "BucketName": "lead-survey-frontend-page-dev",
-                    "WebsiteConfiguration": {
-                      "IndexDocument": "index.html",
-                      "ErrorDocument": "index.html"
-                    },
-                    "PublicAccessBlockConfiguration": {
-                      "BlockPublicAcls": false,
-                      "BlockPublicPolicy": false,
-                      "IgnorePublicAcls": false,
-                      "RestrictPublicBuckets": false
-                    }
-                  }
-                },
-                "WebsiteBucketPolicy": {
-                  "Type": "AWS::S3::BucketPolicy",
-                  "Properties": {
-                    "Bucket": {
-                      "Ref": "WebsiteBucket"
-                    },
-                    "PolicyDocument": {
-                      "Version": "2012-10-17",
-                      "Statement": [
-                        {
-                          "Effect": "Allow",
-                          "Principal": "*",
-                          "Action": [
-                            "s3:GetObject"
-                          ],
-                          "Resource": "arn:aws:s3:::lead-survey-frontend-page-dev/*"
-                        }
-                      ]
-                    }
-                  }
-                },
-                "CloudFrontDistribution": {
-                  "Type": "AWS::CloudFront::Distribution",
-                  "Properties": {
-                    "DistributionConfig": {
-                      "Origins": [
-                        {
-                          "DomainName": "lead-survey-frontend-page-dev.s3.ap-southeast-2.amazonaws.com",
-                          "Id": "S3Origin",
-                          "S3OriginConfig": {}
-                        }
-                      ],
-                      "Enabled": true,
-                      "DefaultRootObject": "index.html",
-                      "DefaultCacheBehavior": {
-                        "Compress": true,
-                        "AllowedMethods": [
-                          "GET",
-                          "HEAD"
-                        ],
-                        "TargetOriginId": "S3Origin",
-                        "ForwardedValues": {
-                          "QueryString": false,
-                          "Cookies": {
-                            "Forward": "none"
-                          }
-                        },
-                        "ViewerProtocolPolicy": "redirect-to-https"
-                      },
-                      "ViewerCertificate": {
-                        "CloudFrontDefaultCertificate": true
-                      },
-                      "CustomErrorResponses": [
-                        {
-                          "ErrorCode": 403,
-                          "ResponseCode": 200,
-                          "ResponsePagePath": "/index.html"
-                        },
-                        {
-                          "ErrorCode": 404,
-                          "ResponseCode": 200,
-                          "ResponsePagePath": "/index.html"
-                        }
-                      ]
-                    }
-                  }
-                }
-              },
-              "Outputs": {}
-            }
-          },
-          "configFileDirPath": "/Users/yashagasti/Documents/Arludo/repos/LEAD_survey_app",
-          "config": {
-            "type": "self"
-          },
-          "options": {
-            "stage": "dev"
-          },
-          "stage": "dev",
-          "dashboard": null,
-          "logger": {
-            "namespace": "s:core:resolver:self",
-            "prefix": null,
-            "prefixColor": null
-          },
-          "_credentialsPromise": "<REDACTED>"
-        },
-        "resolvers": {}
-      },
-      "env": {
-        "instance": {
-          "credentials": "<REDACTED>",
-          "serviceConfigFile": {
-            "service": "lead-survey-frontend-page",
-            "provider": {
-              "name": "aws",
-              "runtime": "nodejs20.x",
-              "region": "ap-southeast-2",
-              "stage": "dev",
-              "environment": {
-                "S3_BUCKET_NAME": "lead-survey-frontend-page-dev",
-                "SURVEY_BACKEND_URL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev",
-                "SURVEY_TYPE": "public"
-              },
-              "versionFunctions": true,
-              "compiledCloudFormationTemplate": {
-                "AWSTemplateFormatVersion": "2010-09-09",
-                "Description": "The AWS CloudFormation template for this Serverless application",
-                "Resources": {
-                  "WebsiteBucket": {
-                    "Type": "AWS::S3::Bucket",
-                    "Properties": {
-                      "BucketName": "lead-survey-frontend-page-dev",
-                      "WebsiteConfiguration": {
-                        "IndexDocument": "index.html",
-                        "ErrorDocument": "index.html"
-                      },
-                      "PublicAccessBlockConfiguration": {
-                        "BlockPublicAcls": false,
-                        "BlockPublicPolicy": false,
-                        "IgnorePublicAcls": false,
-                        "RestrictPublicBuckets": false
-                      }
-                    }
-                  },
-                  "WebsiteBucketPolicy": {
-                    "Type": "AWS::S3::BucketPolicy",
-                    "Properties": {
-                      "Bucket": {
-                        "Ref": "WebsiteBucket"
-                      },
-                      "PolicyDocument": {
-                        "Version": "2012-10-17",
-                        "Statement": [
-                          {
-                            "Effect": "Allow",
-                            "Principal": "*",
-                            "Action": [
-                              "s3:GetObject"
-                            ],
-                            "Resource": "arn:aws:s3:::lead-survey-frontend-page-dev/*"
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "CloudFrontDistribution": {
-                    "Type": "AWS::CloudFront::Distribution",
-                    "Properties": {
-                      "DistributionConfig": {
-                        "Origins": [
-                          {
-                            "DomainName": "lead-survey-frontend-page-dev.s3.ap-southeast-2.amazonaws.com",
-                            "Id": "S3Origin",
-                            "S3OriginConfig": {}
-                          }
-                        ],
-                        "Enabled": true,
-                        "DefaultRootObject": "index.html",
-                        "DefaultCacheBehavior": {
-                          "Compress": true,
-                          "AllowedMethods": [
-                            "GET",
-                            "HEAD"
-                          ],
-                          "TargetOriginId": "S3Origin",
-                          "ForwardedValues": {
-                            "QueryString": false,
-                            "Cookies": {
-                              "Forward": "none"
-                            }
-                          },
-                          "ViewerProtocolPolicy": "redirect-to-https"
-                        },
-                        "ViewerCertificate": {
-                          "CloudFrontDefaultCertificate": true
-                        },
-                        "CustomErrorResponses": [
-                          {
-                            "ErrorCode": 403,
-                            "ResponseCode": 200,
-                            "ResponsePagePath": "/index.html"
-                          },
-                          {
-                            "ErrorCode": 404,
-                            "ResponseCode": 200,
-                            "ResponsePagePath": "/index.html"
-                          }
-                        ]
-                      }
-                    }
-                  }
-                },
-                "Outputs": {
-                  "ServerlessDeploymentBucketName": {
-                    "Value": "serverless-framework-deployments-ap-southeast-2-35e4da54-cbb5",
-                    "Export": {
-                      "Name": "sls-lead-survey-frontend-page-dev-ServerlessDeploymentBucketName"
-                    }
-                  }
-                }
-              }
-            },
-            "stages": {
-              "default": {
-                "SURVEY_BACKEND_URL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev"
-              }
-            },
-            "plugins": [
-              "serverless-s3-sync",
-              "serverless-cloudfront-invalidate"
-            ],
-            "custom": {
-              "SURVEY_TYPE": "public",
-              "s3BucketName": "lead-survey-frontend-page-dev",
-              "distributionFolder": "dist",
-              "serverURL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev",
-              "cloudFrontDistributionId": {
-                "dev": "EL66A8C6F0DQW",
-                "prod": "YOUR_PROD_DISTRIBUTION_ID_SET_ME"
-              },
-              "s3Sync": [
-                {
-                  "bucketName": "lead-survey-frontend-page-dev",
-                  "localDir": "dist"
-                }
-              ],
-              "cloudfrontInvalidate": [
-                {
-                  "distributionId": "EL66A8C6F0DQW",
-                  "items": [
-                    "/*"
-                  ]
-                }
-              ]
-            },
-            "resources": {
-              "Resources": {
-                "WebsiteBucket": {
-                  "Type": "AWS::S3::Bucket",
-                  "Properties": {
-                    "BucketName": "lead-survey-frontend-page-dev",
-                    "WebsiteConfiguration": {
-                      "IndexDocument": "index.html",
-                      "ErrorDocument": "index.html"
-                    },
-                    "PublicAccessBlockConfiguration": {
-                      "BlockPublicAcls": false,
-                      "BlockPublicPolicy": false,
-                      "IgnorePublicAcls": false,
-                      "RestrictPublicBuckets": false
-                    }
-                  }
-                },
-                "WebsiteBucketPolicy": {
-                  "Type": "AWS::S3::BucketPolicy",
-                  "Properties": {
-                    "Bucket": {
-                      "Ref": "WebsiteBucket"
-                    },
-                    "PolicyDocument": {
-                      "Version": "2012-10-17",
-                      "Statement": [
-                        {
-                          "Effect": "Allow",
-                          "Principal": "*",
-                          "Action": [
-                            "s3:GetObject"
-                          ],
-                          "Resource": "arn:aws:s3:::lead-survey-frontend-page-dev/*"
-                        }
-                      ]
-                    }
-                  }
-                },
-                "CloudFrontDistribution": {
-                  "Type": "AWS::CloudFront::Distribution",
-                  "Properties": {
-                    "DistributionConfig": {
-                      "Origins": [
-                        {
-                          "DomainName": "lead-survey-frontend-page-dev.s3.ap-southeast-2.amazonaws.com",
-                          "Id": "S3Origin",
-                          "S3OriginConfig": {}
-                        }
-                      ],
-                      "Enabled": true,
-                      "DefaultRootObject": "index.html",
-                      "DefaultCacheBehavior": {
-                        "Compress": true,
-                        "AllowedMethods": [
-                          "GET",
-                          "HEAD"
-                        ],
-                        "TargetOriginId": "S3Origin",
-                        "ForwardedValues": {
-                          "QueryString": false,
-                          "Cookies": {
-                            "Forward": "none"
-                          }
-                        },
-                        "ViewerProtocolPolicy": "redirect-to-https"
-                      },
-                      "ViewerCertificate": {
-                        "CloudFrontDefaultCertificate": true
-                      },
-                      "CustomErrorResponses": [
-                        {
-                          "ErrorCode": 403,
-                          "ResponseCode": 200,
-                          "ResponsePagePath": "/index.html"
-                        },
-                        {
-                          "ErrorCode": 404,
-                          "ResponseCode": 200,
-                          "ResponsePagePath": "/index.html"
-                        }
-                      ]
-                    }
-                  }
-                }
-              },
-              "Outputs": {}
-            }
-          },
-          "configFileDirPath": "/Users/yashagasti/Documents/Arludo/repos/LEAD_survey_app",
-          "config": {
-            "type": "env"
-          },
-          "options": {
-            "stage": "dev"
-          },
-          "stage": "dev",
-          "dashboard": null,
-          "logger": {
-            "namespace": "s:core:resolver:env",
-            "prefix": null,
-            "prefixColor": null
-          },
-          "_credentialsPromise": "<REDACTED>"
-        },
-        "resolvers": {}
-      }
-    },
-    "composeServiceName": null,
-    "servicePath": "/Users/yashagasti/Documents/Arludo/repos/LEAD_survey_app",
+  "/Users/yashagasti/Documents/Arludo/repos/LEAD_survey_app/serverless.yml": {
+    "versionFramework": "4.7.0",
+    "servicePath": "/Users/yashagasti/Documents/Arludo/repos/LEAD_survey_app/serverless.yml",
     "serviceConfigFileName": "serverless.yml",
     "service": {
-      "service": "lead-survey-frontend-page",
+      "service": "lead-survey-frontend-gp",
       "provider": {
         "name": "aws",
         "runtime": "nodejs20.x",
         "region": "ap-southeast-2",
         "stage": "dev",
         "environment": {
-          "S3_BUCKET_NAME": "lead-survey-frontend-page-dev",
-          "SURVEY_BACKEND_URL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev",
-          "SURVEY_TYPE": "public"
+          "S3_BUCKET_NAME": "lead-survey-frontend-gp-dev",
+          "SURVEY_BACKEND_URL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev"
         },
         "versionFunctions": true,
         "compiledCloudFormationTemplate": {
@@ -793,7 +22,7 @@
             "WebsiteBucket": {
               "Type": "AWS::S3::Bucket",
               "Properties": {
-                "BucketName": "lead-survey-frontend-page-dev",
+                "BucketName": "lead-survey-frontend-gp-dev",
                 "WebsiteConfiguration": {
                   "IndexDocument": "index.html",
                   "ErrorDocument": "index.html"
@@ -821,7 +50,7 @@
                       "Action": [
                         "s3:GetObject"
                       ],
-                      "Resource": "arn:aws:s3:::lead-survey-frontend-page-dev/*"
+                      "Resource": "arn:aws:s3:::lead-survey-frontend-gp-dev/*"
                     }
                   ]
                 }
@@ -833,7 +62,7 @@
                 "DistributionConfig": {
                   "Origins": [
                     {
-                      "DomainName": "lead-survey-frontend-page-dev.s3.ap-southeast-2.amazonaws.com",
+                      "DomainName": "lead-survey-frontend-gp-dev.s3.ap-southeast-2.amazonaws.com",
                       "Id": "S3Origin",
                       "S3OriginConfig": {}
                     }
@@ -878,7 +107,7 @@
             "ServerlessDeploymentBucketName": {
               "Value": "serverless-framework-deployments-ap-southeast-2-35e4da54-cbb5",
               "Export": {
-                "Name": "sls-lead-survey-frontend-page-dev-ServerlessDeploymentBucketName"
+                "Name": "sls-lead-survey-frontend-gp-dev-ServerlessDeploymentBucketName"
               }
             }
           }
@@ -894,23 +123,29 @@
         "serverless-cloudfront-invalidate"
       ],
       "custom": {
-        "SURVEY_TYPE": "public",
-        "s3BucketName": "lead-survey-frontend-page-dev",
+        "surveyType": "gp",
+        "s3BucketName": "lead-survey-frontend-gp-dev",
         "distributionFolder": "dist",
         "serverURL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev",
         "cloudFrontDistributionId": {
-          "dev": "EL66A8C6F0DQW",
-          "prod": "YOUR_PROD_DISTRIBUTION_ID_SET_ME"
+          "public": {
+            "dev": "ER6PYB0KUZTQN",
+            "prod": "YOUR_PROD_DISTRIBUTION_ID_SET_ME"
+          },
+          "gp": {
+            "dev": "E1DZEVASJ2KRI1",
+            "prod": "YOUR_PROD_DISTRIBUTION_ID_SET_ME"
+          }
         },
         "s3Sync": [
           {
-            "bucketName": "lead-survey-frontend-page-dev",
+            "bucketName": "lead-survey-frontend-gp-dev",
             "localDir": "dist"
           }
         ],
         "cloudfrontInvalidate": [
           {
-            "distributionId": "EL66A8C6F0DQW",
+            "distributionId": "E1DZEVASJ2KRI1",
             "items": [
               "/*"
             ]
@@ -922,7 +157,7 @@
           "WebsiteBucket": {
             "Type": "AWS::S3::Bucket",
             "Properties": {
-              "BucketName": "lead-survey-frontend-page-dev",
+              "BucketName": "lead-survey-frontend-gp-dev",
               "WebsiteConfiguration": {
                 "IndexDocument": "index.html",
                 "ErrorDocument": "index.html"
@@ -950,7 +185,7 @@
                     "Action": [
                       "s3:GetObject"
                     ],
-                    "Resource": "arn:aws:s3:::lead-survey-frontend-page-dev/*"
+                    "Resource": "arn:aws:s3:::lead-survey-frontend-gp-dev/*"
                   }
                 ]
               }
@@ -962,7 +197,7 @@
               "DistributionConfig": {
                 "Origins": [
                   {
-                    "DomainName": "lead-survey-frontend-page-dev.s3.ap-southeast-2.amazonaws.com",
+                    "DomainName": "lead-survey-frontend-gp-dev.s3.ap-southeast-2.amazonaws.com",
                     "Id": "S3Origin",
                     "S3OriginConfig": {}
                   }
@@ -1006,22 +241,114 @@
         "Outputs": {}
       }
     },
-    "serviceRawFile": "service: lead-survey-frontend-page\n\nprovider:\n  name: aws\n  runtime: nodejs20.x\n  region: ap-southeast-2\n  stage: ${opt:stage, 'dev'}\n  environment:\n    S3_BUCKET_NAME: ${self:custom.s3BucketName}\n    SURVEY_BACKEND_URL: ${self:custom.serverURL}\n    SURVEY_TYPE: ${self:custom.SURVEY_TYPE}\n\nstages:\n  default:\n    SURVEY_BACKEND_URL: ${self:custom.serverURL}\n\nplugins:\n  - serverless-s3-sync\n  - serverless-cloudfront-invalidate\n\ncustom:\n  SURVEY_TYPE: ${env:SURVEY_TYPE}\n  s3BucketName: ${self:service}-${self:provider.stage}\n  distributionFolder: dist\n  serverURL: rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/${self:provider.stage}\n  cloudFrontDistributionId:\n    dev: EL66A8C6F0DQW\n    prod: YOUR_PROD_DISTRIBUTION_ID_SET_ME\n  s3Sync:\n    - bucketName: ${self:custom.s3BucketName}\n      localDir: ${self:custom.distributionFolder}\n  cloudfrontInvalidate:\n    - distributionId: ${self:custom.cloudFrontDistributionId.${self:provider.stage}}\n      items:\n        - \"/*\"\n\n\nresources:\n  Resources:\n    WebsiteBucket:\n      Type: AWS::S3::Bucket\n      Properties:\n        BucketName: ${self:custom.s3BucketName}\n        WebsiteConfiguration:\n          IndexDocument: index.html\n          ErrorDocument: index.html\n        PublicAccessBlockConfiguration:\n          BlockPublicAcls: false\n          BlockPublicPolicy: false\n          IgnorePublicAcls: false\n          RestrictPublicBuckets: false\n\n    WebsiteBucketPolicy:\n      Type: AWS::S3::BucketPolicy\n      Properties:\n        Bucket: !Ref WebsiteBucket\n        PolicyDocument:\n          Version: \"2012-10-17\"\n          Statement:\n            - Effect: Allow\n              Principal: \"*\"\n              Action:\n                - s3:GetObject\n              Resource: arn:aws:s3:::${self:custom.s3BucketName}/*\n\n    CloudFrontDistribution:\n      Type: AWS::CloudFront::Distribution\n      Properties:\n        DistributionConfig:\n          Origins:\n            - DomainName: ${self:custom.s3BucketName}.s3.${self:provider.region}.amazonaws.com\n              Id: S3Origin\n              S3OriginConfig: {}\n          Enabled: true\n          DefaultRootObject: index.html\n          DefaultCacheBehavior:\n            Compress: true\n            AllowedMethods:\n              - GET\n              - HEAD\n            TargetOriginId: S3Origin\n            ForwardedValues:\n              QueryString: false\n              Cookies:\n                Forward: none\n            ViewerProtocolPolicy: redirect-to-https\n          ViewerCertificate:\n            CloudFrontDefaultCertificate: true\n          CustomErrorResponses:\n            - ErrorCode: 403\n              ResponseCode: 200\n              ResponsePagePath: /index.html\n            - ErrorCode: 404\n              ResponseCode: 200\n              ResponsePagePath: /index.html\n",
-    "command": [
-      "deploy"
-    ],
-    "options": {
-      "stage": "dev"
+    "provider": {
+      "name": "aws",
+      "runtime": "nodejs20.x",
+      "region": "ap-southeast-2",
+      "stage": "dev",
+      "environment": {
+        "S3_BUCKET_NAME": "lead-survey-frontend-gp-dev",
+        "SURVEY_BACKEND_URL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev"
+      },
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "WebsiteBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketName": "lead-survey-frontend-gp-dev",
+              "WebsiteConfiguration": {
+                "IndexDocument": "index.html",
+                "ErrorDocument": "index.html"
+              },
+              "PublicAccessBlockConfiguration": {
+                "BlockPublicAcls": false,
+                "BlockPublicPolicy": false,
+                "IgnorePublicAcls": false,
+                "RestrictPublicBuckets": false
+              }
+            }
+          },
+          "WebsiteBucketPolicy": {
+            "Type": "AWS::S3::BucketPolicy",
+            "Properties": {
+              "Bucket": {
+                "Ref": "WebsiteBucket"
+              },
+              "PolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": "*",
+                    "Action": [
+                      "s3:GetObject"
+                    ],
+                    "Resource": "arn:aws:s3:::lead-survey-frontend-gp-dev/*"
+                  }
+                ]
+              }
+            }
+          },
+          "CloudFrontDistribution": {
+            "Type": "AWS::CloudFront::Distribution",
+            "Properties": {
+              "DistributionConfig": {
+                "Origins": [
+                  {
+                    "DomainName": "lead-survey-frontend-gp-dev.s3.ap-southeast-2.amazonaws.com",
+                    "Id": "S3Origin",
+                    "S3OriginConfig": {}
+                  }
+                ],
+                "Enabled": true,
+                "DefaultRootObject": "index.html",
+                "DefaultCacheBehavior": {
+                  "Compress": true,
+                  "AllowedMethods": [
+                    "GET",
+                    "HEAD"
+                  ],
+                  "TargetOriginId": "S3Origin",
+                  "ForwardedValues": {
+                    "QueryString": false,
+                    "Cookies": {
+                      "Forward": "none"
+                    }
+                  },
+                  "ViewerProtocolPolicy": "redirect-to-https"
+                },
+                "ViewerCertificate": {
+                  "CloudFrontDefaultCertificate": true
+                },
+                "CustomErrorResponses": [
+                  {
+                    "ErrorCode": 403,
+                    "ResponseCode": 200,
+                    "ResponsePagePath": "/index.html"
+                  },
+                  {
+                    "ErrorCode": 404,
+                    "ResponseCode": 200,
+                    "ResponsePagePath": "/index.html"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "serverless-framework-deployments-ap-southeast-2-35e4da54-cbb5",
+            "Export": {
+              "Name": "sls-lead-survey-frontend-gp-dev-ServerlessDeploymentBucketName"
+            }
+          }
+        }
+      }
     },
-    "error": null,
-    "params": {},
-    "machineId": "03c96701302deb4adf2ef30689da6210",
-    "stage": "dev",
-    "accessKeyV2": "<REDACTED>",
-    "accessKeyV1": "<REDACTED>",
-    "orgId": "6af66278-9b4b-4403-a944-3f4ce0d471f4",
-    "orgName": "yaash",
-    "userId": "PRpwKLjg2XCwcvSnlK",
     "dashboard": {
       "isEnabledForService": false,
       "requiredAuthentication": false,
@@ -1031,27 +358,126 @@
       "serviceProvider": null,
       "instanceParameters": null
     },
+    "serviceRawFile": "service: lead-survey-frontend-${env:VITE_SURVEY_TYPE}\n\nprovider:\n  name: aws\n  runtime: nodejs20.x\n  region: ap-southeast-2\n  stage: ${opt:stage, 'dev'}\n  environment:\n    S3_BUCKET_NAME: ${self:custom.s3BucketName}\n    SURVEY_BACKEND_URL: ${self:custom.serverURL}\n\nstages:\n  default:\n    SURVEY_BACKEND_URL: ${self:custom.serverURL}\n\nplugins:\n  - serverless-s3-sync\n  - serverless-cloudfront-invalidate\n\ncustom:\n  surveyType: ${env:VITE_SURVEY_TYPE}\n  s3BucketName: ${self:service}-${self:provider.stage}\n  distributionFolder: dist\n  serverURL: rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/${self:provider.stage}\n  cloudFrontDistributionId:\n    public:\n      dev: ER6PYB0KUZTQN\n      prod: YOUR_PROD_DISTRIBUTION_ID_SET_ME\n    gp:\n      dev: E1DZEVASJ2KRI1\n      prod: YOUR_PROD_DISTRIBUTION_ID_SET_ME\n  s3Sync:\n    - bucketName: ${self:custom.s3BucketName}\n      localDir: ${self:custom.distributionFolder}\n  cloudfrontInvalidate:\n    - distributionId: ${self:custom.cloudFrontDistributionId.${self:custom.surveyType}.${self:provider.stage}}\n      items:\n        - \"/*\"\n\n\nresources:\n  Resources:\n    WebsiteBucket:\n      Type: AWS::S3::Bucket\n      Properties:\n        BucketName: ${self:custom.s3BucketName}\n        WebsiteConfiguration:\n          IndexDocument: index.html\n          ErrorDocument: index.html\n        PublicAccessBlockConfiguration:\n          BlockPublicAcls: false\n          BlockPublicPolicy: false\n          IgnorePublicAcls: false\n          RestrictPublicBuckets: false\n\n    WebsiteBucketPolicy:\n      Type: AWS::S3::BucketPolicy\n      Properties:\n        Bucket: !Ref WebsiteBucket\n        PolicyDocument:\n          Version: \"2012-10-17\"\n          Statement:\n            - Effect: Allow\n              Principal: \"*\"\n              Action:\n                - s3:GetObject\n              Resource: arn:aws:s3:::${self:custom.s3BucketName}/*\n\n    CloudFrontDistribution:\n      Type: AWS::CloudFront::Distribution\n      Properties:\n        DistributionConfig:\n          Origins:\n            - DomainName: ${self:custom.s3BucketName}.s3.${self:provider.region}.amazonaws.com\n              Id: S3Origin\n              S3OriginConfig: {}\n          Enabled: true\n          DefaultRootObject: index.html\n          DefaultCacheBehavior:\n            Compress: true\n            AllowedMethods:\n              - GET\n              - HEAD\n            TargetOriginId: S3Origin\n            ForwardedValues:\n              QueryString: false\n              Cookies:\n                Forward: none\n            ViewerProtocolPolicy: redirect-to-https\n          ViewerCertificate:\n            CloudFrontDefaultCertificate: true\n          CustomErrorResponses:\n            - ErrorCode: 403\n              ResponseCode: 200\n              ResponsePagePath: /index.html\n            - ErrorCode: 404\n              ResponseCode: 200\n              ResponsePagePath: /index.html\n",
+    "command": [
+      "deploy"
+    ],
+    "options": {
+      "stage": "dev"
+    },
+    "orgId": "6af66278-9b4b-4403-a944-3f4ce0d471f4",
+    "orgName": "yaash",
+    "userId": "PRpwKLjg2XCwcvSnlK",
     "userName": "yaash",
-    "subscription": null,
-    "userEmail": "yAgasti@gmail.com",
-    "serviceProviderAwsRegion": "ap-southeast-2",
-    "serviceProviderAwsCredentials": "<REDACTED>",
     "serviceProviderAwsAccountId": "590183926143",
-    "projectType": "traditional",
-    "versionSf": "4.4.7",
-    "serviceProviderAwsCfStackName": "lead-survey-frontend-page-dev",
-    "integrations": {},
-    "serviceUniqueId": "arn:aws:cloudformation:ap-southeast-2:590183926143:stack/lead-survey-frontend-page-dev/631ef4d0-9019-11ef-8901-061fa3476053",
-    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:ap-southeast-2:590183926143:stack/lead-survey-frontend-page-dev/631ef4d0-9019-11ef-8901-061fa3476053",
-    "serviceProviderAwsCfStackCreated": "2024-10-22T02:00:18.436Z",
+    "serviceProviderAwsCfStackName": "lead-survey-frontend-gp-dev",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:ap-southeast-2:590183926143:stack/lead-survey-frontend-gp-dev/ac5a2b90-acea-11ef-a4ef-0a667c85b3c7",
+    "serviceProviderAwsCfStackCreated": "2024-11-27T18:08:58.662Z",
     "serviceProviderAwsCfStackUpdated": null,
     "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
     "serviceProviderAwsCfStackOutputs": [
       {
         "OutputKey": "ServerlessDeploymentBucketName",
         "OutputValue": "serverless-framework-deployments-ap-southeast-2-35e4da54-cbb5",
-        "ExportName": "sls-lead-survey-frontend-page-dev-ServerlessDeploymentBucketName"
+        "ExportName": "sls-lead-survey-frontend-gp-dev-ServerlessDeploymentBucketName"
       }
-    ]
+    ],
+    "compiledCloudFormationTemplate": {
+      "AWSTemplateFormatVersion": "2010-09-09",
+      "Description": "The AWS CloudFormation template for this Serverless application",
+      "Resources": {
+        "WebsiteBucket": {
+          "Type": "AWS::S3::Bucket",
+          "Properties": {
+            "BucketName": "lead-survey-frontend-gp-dev",
+            "WebsiteConfiguration": {
+              "IndexDocument": "index.html",
+              "ErrorDocument": "index.html"
+            },
+            "PublicAccessBlockConfiguration": {
+              "BlockPublicAcls": false,
+              "BlockPublicPolicy": false,
+              "IgnorePublicAcls": false,
+              "RestrictPublicBuckets": false
+            }
+          }
+        },
+        "WebsiteBucketPolicy": {
+          "Type": "AWS::S3::BucketPolicy",
+          "Properties": {
+            "Bucket": {
+              "Ref": "WebsiteBucket"
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": "*",
+                  "Action": [
+                    "s3:GetObject"
+                  ],
+                  "Resource": "arn:aws:s3:::lead-survey-frontend-gp-dev/*"
+                }
+              ]
+            }
+          }
+        },
+        "CloudFrontDistribution": {
+          "Type": "AWS::CloudFront::Distribution",
+          "Properties": {
+            "DistributionConfig": {
+              "Origins": [
+                {
+                  "DomainName": "lead-survey-frontend-gp-dev.s3.ap-southeast-2.amazonaws.com",
+                  "Id": "S3Origin",
+                  "S3OriginConfig": {}
+                }
+              ],
+              "Enabled": true,
+              "DefaultRootObject": "index.html",
+              "DefaultCacheBehavior": {
+                "Compress": true,
+                "AllowedMethods": [
+                  "GET",
+                  "HEAD"
+                ],
+                "TargetOriginId": "S3Origin",
+                "ForwardedValues": {
+                  "QueryString": false,
+                  "Cookies": {
+                    "Forward": "none"
+                  }
+                },
+                "ViewerProtocolPolicy": "redirect-to-https"
+              },
+              "ViewerCertificate": {
+                "CloudFrontDefaultCertificate": true
+              },
+              "CustomErrorResponses": [
+                {
+                  "ErrorCode": 403,
+                  "ResponseCode": 200,
+                  "ResponsePagePath": "/index.html"
+                },
+                {
+                  "ErrorCode": 404,
+                  "ResponseCode": 200,
+                  "ResponsePagePath": "/index.html"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Outputs": {
+        "ServerlessDeploymentBucketName": {
+          "Value": "serverless-framework-deployments-ap-southeast-2-35e4da54-cbb5",
+          "Export": {
+            "Name": "sls-lead-survey-frontend-gp-dev-ServerlessDeploymentBucketName"
+          }
+        }
+      }
+    }
   }
 }

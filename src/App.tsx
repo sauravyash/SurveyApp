@@ -16,6 +16,7 @@ import PatientParticipationStatement from "./pages/PatientParticipationStatement
 import { ErrorBoundary } from "./pages/ErrorBoundary";
 import { I18nProvider } from 'react-aria';
 import Accessibility from "./components/Accessibility";
+import SurveyTester from "./pages/SurveyTester";
 
 
 const router = createBrowserRouter([
@@ -42,6 +43,11 @@ const router = createBrowserRouter([
   {
     path: "/patient-information",
     element: <PatientParticipationStatement />,
+    errorElement: <ErrorBoundary />
+  },
+  {
+    path: "/survey/tester",
+    element: <SurveyTester />,
     errorElement: <ErrorBoundary />
   },
   {

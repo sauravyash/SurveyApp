@@ -147,7 +147,7 @@ export class NumberQuestionV2 extends BaseQuestionObject {
             ...super.getAttributes(),
             options: this.units,
             scientific_unit: this.scientific_unit,
-            contextLocation: this.contextLocation
+            contextLocation: this.contextLocation,
         };
     }
 

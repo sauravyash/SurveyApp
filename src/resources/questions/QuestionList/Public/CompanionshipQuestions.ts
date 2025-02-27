@@ -1,4 +1,4 @@
-import { SectionIntroScreen, MultipleChoiceQuestion, LikertScaleQuestion } from "../QuestionTypes";
+import { SectionIntroScreen, MultipleChoiceQuestion, LikertScaleQuestion } from "../../QuestionTypes";
 
 const companionshipOptions = {
   0: "Hardly ever",

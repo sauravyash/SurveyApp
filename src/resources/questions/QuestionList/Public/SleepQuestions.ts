@@ -1,4 +1,4 @@
-import { SectionIntroScreen, LikertScaleQuestion, MultipleChoiceQuestion } from "../QuestionTypes";
+import { SectionIntroScreen, LikertScaleQuestion, MultipleChoiceQuestion } from "../../QuestionTypes";
 
 const sleepQuestionOptions = {
   0: "None",
@@ -19,7 +19,7 @@ Please rate the **current (i.e. last 2 weeks)** severity of your insomnia proble
       "Problems waking up too early"
   ]),
   new MultipleChoiceQuestion(42, "How satisfied/dissatisfied are you with your current sleep pattern?",
-      ["Very satisfied", "Satisfied", "Moderately Satisfied", "Dissatisfied", "Very Dissatisfied"], true),
+      ["Very Satisfied", "Satisfied", "Moderately Satisfied", "Dissatisfied", "Very Dissatisfied"], true),
   new MultipleChoiceQuestion(43, "How noticeable to others do you think your sleep problem is in terms of impairing the quality of your life?",
       ["Not at all Noticeable", "A Little", "Somewhat", "Much", "Very Much Noticeable"], true),
   new MultipleChoiceQuestion(44, "How worried/distressed are you about your current sleep problem?",

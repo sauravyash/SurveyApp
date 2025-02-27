@@ -132,15 +132,35 @@ const MCSelector = (props: MCSelectorProps) => {
   const { question } = props;
   const [selected, setSelected] = useState<Selection>();
   const [otherText, setOtherText] = useState("");
+  const [hasLoadedState, setHasLoadedState] = useState(false);
   const { state, dispatch } = useAnswerData();
 
   let isAnswerOther = () => {
-    const keys = (selected as Set<string>)?.keys()
-    if (keys) {
-      const key = Array.from(keys)[0]
-      if (key && key.includes(": ")) {
-        return otherCategoryText.includes(key.split(": ")[1]);
+    try {
+      let keys;
+      if (selected instanceof Set) {
+        keys = (selected as Set<string>)?.keys()
+      } else if (typeof selected === "string") {
+        keys = [selected as string]
+      } else if (typeof selected === "object" && !!(selected as any)?.currentKey) {
+        console.log("selected", selected);
+
+        keys = [(selected as any)?.currentKey]
       }
+
+
+      if (keys) {
+        const key = Array.from(keys)[0]
+        if (key && key.includes(": ")) {
+          return otherCategoryText.includes(key.split(": ")[1]);
+        } else {
+          return false;
+        }
+      }
+      return false;
+    } catch (error) {
+      console.error(error);
+      return false;
     }
   };
 
@@ -148,11 +168,13 @@ const MCSelector = (props: MCSelectorProps) => {
     const answer = state.data[question.getQuestionNumber()];
     try {
       if (answer) {
+        // console.log("answer", answer);
+
         if (typeof answer === "string") {
           const keyList = question.getOptions().map((answer) => `${question.getQuestionNumber()}: ${answer}`);
           if (keyList.includes(state.data[question.getQuestionNumber()])) {
             const newSet = new Set<string>();
-            newSet.add(`${question.getQuestionNumber()}: ${question.getOptions()[0]}`);
+            newSet.add(answer);
             setSelected(newSet);
           } else {
             const newSet = new Set<string>();
@@ -162,7 +184,10 @@ const MCSelector = (props: MCSelectorProps) => {
             if (other) setOtherText(other);
           };
         }
-        else {          
+        else if (answer instanceof Set) {
+          setSelected(answer as Set<string>);
+        }
+        else {
           setSelected(state.data[question.getQuestionNumber()]);
         }
       }
@@ -199,12 +224,16 @@ const MCSelector = (props: MCSelectorProps) => {
         }
       })
     } else {
-      dispatch({
-        type: "remove_answer",
-        payload: {
-          questionNumber: question.getQuestionNumber()
-        }
-      })
+      if (hasLoadedState) {
+        dispatch({
+          type: "remove_answer",
+          payload: {
+            questionNumber: question.getQuestionNumber()
+          }
+        })
+      } else {
+        setHasLoadedState(true);
+      }
     }
 
   }, [selected, otherText]);

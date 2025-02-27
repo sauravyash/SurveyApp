@@ -117,12 +117,23 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
 }) => {
   const { state } = useAnswerData();
   const [value, setValue] = useState<number | undefined>(defaultValue);
+  const [isDecimalPressed, setIsDecimalPressed] = useState(false);
 
   useEffect(() => {
     if (defaultValue === undefined || (defaultValue >= minValue || defaultValue <= maxValue)) {
       setValue(defaultValue);
     }
   }, [defaultValue]);
+
+  useEffect(() => {
+    if (value === undefined) return;
+    if (value > maxValue) {
+      setValue(maxValue);
+    }
+    if (value < minValue) {
+      setValue(minValue);
+    }
+  }, [minValue, maxValue, value]);
 
   const formatValue = (val: number | undefined) => {
     if (val === undefined) return "";
@@ -131,7 +142,7 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
 
   const increment = (e: any) => {
     e.nativeEvent.preventDefault();
-    
+
     if (!isDisabled && value !== undefined) {
       const newValue = Math.min(value + step, maxValue);
       setValue(newValue);
@@ -140,7 +151,7 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
       setValue(minValue);
       onChange?.(minValue);
     }
-    
+
   };
 
   const decrement = (e: any) => {
@@ -159,7 +170,29 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
     if (!isDisabled) {
       const keyPress = (e.nativeEvent as any);
       let newValue = Number(e.target.value.replace(/,/g, ''));
+
+      if (keyPress.data === ".") {
+        setIsDecimalPressed(true);
+        return;
+      }
       
+      if (isDecimalPressed) {
+        if (keyPress.data === ".") {
+          return;
+        }
+        if (value === 0) {
+          newValue = Number("0." + keyPress.data);
+          setValue(newValue);
+          onChange?.(newValue);
+          setIsDecimalPressed(false);
+          return;
+        }
+        let newValueStr = (String(newValue).slice(0, -1) + "." + keyPress.data).replace("..", ".");
+        newValue = Number(newValueStr);
+        setIsDecimalPressed(false);
+      }
+
+
       if (keyPress.data === "-" && value) {
         setValue(-1 * value);
         onChange?.(-1 * value);
@@ -201,13 +234,13 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
         zIndex: 100,
       }}>{label}</label>}
       <div className="control" id="number-input-control"
-      style={{
-        fontSize: state.fontSize,
-      }}>
+        style={{
+          fontSize: state.fontSize,
+        }}>
         <NumberInput
           className="input"
           type="text"
-          value={formatValue(value)}
+          value={formatValue(value) + (isDecimalPressed ? "." : "")}
           onChange={handleInputChange}
           disabled={isDisabled}
           aria-label={ariaLabel}

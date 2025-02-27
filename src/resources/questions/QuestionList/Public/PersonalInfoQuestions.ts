@@ -1,5 +1,5 @@
-import { DateQuestion, MultipleChoiceQuestion, NumberQuestion, SectionIntroScreen, WaistMeasurementQuestion } from "../QuestionTypes";
-import { NumberQuestionV2 } from "../QuestionTypes/NumberQuestion";
+import { DateQuestion, MultipleChoiceQuestion, NumberQuestion, SectionIntroScreen, WaistMeasurementQuestion } from "../../QuestionTypes";
+import { NumberQuestionV2 } from "../../QuestionTypes/NumberQuestion";
 
 const asia_category_name = "Asia (including the Indian sub-continent), Middle East, North Africa, Southern Europe";
 

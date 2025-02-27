@@ -1,7 +1,7 @@
-import { PersonalInformationQuestions, HealthQuestions, SleepQuestions, FeelingsQuestions, PhysicalActivityQuestions, LeisureActivityQuestions, CompanionshipQuestions, FoodAndHabitsQuestions, EnvironmentalExposuresQuestions } from "../QuestionList/Public";
+import { PersonalInformationQuestions, HealthQuestions, SleepQuestions, FeelingsQuestions, PhysicalActivityQuestions, LeisureActivityQuestions, CompanionshipQuestions, FoodAndHabitsQuestions } from "../QuestionList/GP";
 import { BaseQuestionObject } from "../QuestionTypes";
 
-export const PublicQuestionSections: {
+export const GPQuestionSections: {
   title: string,
   questions: BaseQuestionObject[]
 }[] = [
@@ -37,10 +37,6 @@ export const PublicQuestionSections: {
       title: "Food and Habits Questions",
       questions: FoodAndHabitsQuestions
     },
-    {
-      title: "Environmental Exposures Questions",
-      questions: EnvironmentalExposuresQuestions
-    }
   ]
 
 export const AllQuestions: BaseQuestionObject[] = [
@@ -52,7 +48,6 @@ export const AllQuestions: BaseQuestionObject[] = [
   ...LeisureActivityQuestions,
   ...CompanionshipQuestions,
   ...FoodAndHabitsQuestions,
-  ...EnvironmentalExposuresQuestions
 ]
 
-export default PublicQuestionSections;
+export default GPQuestionSections;

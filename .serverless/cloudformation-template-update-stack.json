@@ -5,7 +5,7 @@
     "WebsiteBucket": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
-        "BucketName": "lead-survey-frontend-page-dev",
+        "BucketName": "lead-survey-frontend-gp-dev",
         "WebsiteConfiguration": {
           "IndexDocument": "index.html",
           "ErrorDocument": "index.html"
@@ -33,7 +33,7 @@
               "Action": [
                 "s3:GetObject"
               ],
-              "Resource": "arn:aws:s3:::lead-survey-frontend-page-dev/*"
+              "Resource": "arn:aws:s3:::lead-survey-frontend-gp-dev/*"
             }
           ]
         }
@@ -45,7 +45,7 @@
         "DistributionConfig": {
           "Origins": [
             {
-              "DomainName": "lead-survey-frontend-page-dev.s3.ap-southeast-2.amazonaws.com",
+              "DomainName": "lead-survey-frontend-gp-dev.s3.ap-southeast-2.amazonaws.com",
               "Id": "S3Origin",
               "S3OriginConfig": {}
             }
@@ -90,7 +90,7 @@
     "ServerlessDeploymentBucketName": {
       "Value": "serverless-framework-deployments-ap-southeast-2-35e4da54-cbb5",
       "Export": {
-        "Name": "sls-lead-survey-frontend-page-dev-ServerlessDeploymentBucketName"
+        "Name": "sls-lead-survey-frontend-gp-dev-ServerlessDeploymentBucketName"
       }
     }
   }

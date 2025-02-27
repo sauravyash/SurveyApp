@@ -1,4 +1,4 @@
-import { MultipleChoiceQuestion, SectionIntroScreen, TextQuestion } from "../QuestionTypes";
+import { MultipleChoiceQuestion, SectionIntroScreen, TextQuestion } from "../../QuestionTypes";
 
 export const LeisureActivityQuestions = [
   new SectionIntroScreen(62.1,

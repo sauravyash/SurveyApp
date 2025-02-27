@@ -1,8 +1,8 @@
 {
   "service": {
-    "service": "lead-survey-frontend-page",
+    "service": "lead-survey-frontend-gp",
     "serviceObject": {
-      "name": "lead-survey-frontend-page"
+      "name": "lead-survey-frontend-gp"
     },
     "provider": {
       "name": "aws",
@@ -10,9 +10,8 @@
       "region": "ap-southeast-2",
       "stage": "dev",
       "environment": {
-        "S3_BUCKET_NAME": "lead-survey-frontend-page-dev",
-        "SURVEY_BACKEND_URL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev",
-        "SURVEY_TYPE": "public"
+        "S3_BUCKET_NAME": "lead-survey-frontend-gp-dev",
+        "SURVEY_BACKEND_URL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev"
       },
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
@@ -22,7 +21,7 @@
           "WebsiteBucket": {
             "Type": "AWS::S3::Bucket",
             "Properties": {
-              "BucketName": "lead-survey-frontend-page-dev",
+              "BucketName": "lead-survey-frontend-gp-dev",
               "WebsiteConfiguration": {
                 "IndexDocument": "index.html",
                 "ErrorDocument": "index.html"
@@ -50,7 +49,7 @@
                     "Action": [
                       "s3:GetObject"
                     ],
-                    "Resource": "arn:aws:s3:::lead-survey-frontend-page-dev/*"
+                    "Resource": "arn:aws:s3:::lead-survey-frontend-gp-dev/*"
                   }
                 ]
               }
@@ -62,7 +61,7 @@
               "DistributionConfig": {
                 "Origins": [
                   {
-                    "DomainName": "lead-survey-frontend-page-dev.s3.ap-southeast-2.amazonaws.com",
+                    "DomainName": "lead-survey-frontend-gp-dev.s3.ap-southeast-2.amazonaws.com",
                     "Id": "S3Origin",
                     "S3OriginConfig": {}
                   }
@@ -107,30 +106,36 @@
           "ServerlessDeploymentBucketName": {
             "Value": "serverless-framework-deployments-ap-southeast-2-35e4da54-cbb5",
             "Export": {
-              "Name": "sls-lead-survey-frontend-page-dev-ServerlessDeploymentBucketName"
+              "Name": "sls-lead-survey-frontend-gp-dev-ServerlessDeploymentBucketName"
             }
           }
         }
       }
     },
     "custom": {
-      "SURVEY_TYPE": "public",
-      "s3BucketName": "lead-survey-frontend-page-dev",
+      "surveyType": "gp",
+      "s3BucketName": "lead-survey-frontend-gp-dev",
       "distributionFolder": "dist",
       "serverURL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev",
       "cloudFrontDistributionId": {
-        "dev": "EL66A8C6F0DQW",
-        "prod": "YOUR_PROD_DISTRIBUTION_ID_SET_ME"
+        "public": {
+          "dev": "ER6PYB0KUZTQN",
+          "prod": "YOUR_PROD_DISTRIBUTION_ID_SET_ME"
+        },
+        "gp": {
+          "dev": "E1DZEVASJ2KRI1",
+          "prod": "YOUR_PROD_DISTRIBUTION_ID_SET_ME"
+        }
       },
       "s3Sync": [
         {
-          "bucketName": "lead-survey-frontend-page-dev",
+          "bucketName": "lead-survey-frontend-gp-dev",
           "localDir": "dist"
         }
       ],
       "cloudfrontInvalidate": [
         {
-          "distributionId": "EL66A8C6F0DQW",
+          "distributionId": "E1DZEVASJ2KRI1",
           "items": [
             "/*"
           ]
@@ -148,7 +153,7 @@
         "WebsiteBucket": {
           "Type": "AWS::S3::Bucket",
           "Properties": {
-            "BucketName": "lead-survey-frontend-page-dev",
+            "BucketName": "lead-survey-frontend-gp-dev",
             "WebsiteConfiguration": {
               "IndexDocument": "index.html",
               "ErrorDocument": "index.html"
@@ -176,7 +181,7 @@
                   "Action": [
                     "s3:GetObject"
                   ],
-                  "Resource": "arn:aws:s3:::lead-survey-frontend-page-dev/*"
+                  "Resource": "arn:aws:s3:::lead-survey-frontend-gp-dev/*"
                 }
               ]
             }
@@ -188,7 +193,7 @@
             "DistributionConfig": {
               "Origins": [
                 {
-                  "DomainName": "lead-survey-frontend-page-dev.s3.ap-southeast-2.amazonaws.com",
+                  "DomainName": "lead-survey-frontend-gp-dev.s3.ap-southeast-2.amazonaws.com",
                   "Id": "S3Origin",
                   "S3OriginConfig": {}
                 }
@@ -232,9 +237,9 @@
       "Outputs": {}
     },
     "configValidationMode": "warn",
-    "serviceFilename": "serverless.yml",
+    "serviceFilename": "serverless",
     "initialServerlessConfig": {
-      "service": "lead-survey-frontend-page",
+      "service": "lead-survey-frontend-gp",
       "provider": {
         "$ref": "$[\"service\"][\"provider\"]"
       },
@@ -258,7 +263,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/lead-survey-frontend-page/dev/1730982106821-2024-11-07T12:21:46.821Z",
+    "artifactDirectoryName": "serverless/lead-survey-frontend-gp/dev/1740483234504-2025-02-25T11:33:54.504Z",
     "artifact": ""
   }
 }

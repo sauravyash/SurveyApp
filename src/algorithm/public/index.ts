@@ -4,6 +4,7 @@ import { maleAlgorithm } from "./maleAlgorithm";
 import { otherGenderAlgorithm } from "./otherGenderAlgorithm";
 
 const MAX_SCORE = 48.25;
+const IS_SAFE_SCORING = false;
 
 export function publicScoring(inputs: Inputs): Scores {
   let scores: Scores = {
@@ -25,17 +26,18 @@ export function publicScoring(inputs: Inputs): Scores {
       break;
   }
 
-  for (const k in scores) {
-    const key = k as keyof Scores;
-    if (scores[key] < 0) {
-      console.error(`Score for ${key} is less than 0. Setting to 0.`);
-      scores[key] = 0;
-    }
-    if (scores[key] > MAX_SCORE) {
-      console.error(`Score for ${key} is greater than max score (${MAX_SCORE}). Setting to ${MAX_SCORE}.`);
-      scores[key] = MAX_SCORE;
+  if (IS_SAFE_SCORING) {
+    for (const k in scores) {
+      const key = k as keyof Scores;
+      if (scores[key] < 0) {
+        console.error(`Score for ${key} is less than 0. Setting to 0.`);
+        scores[key] = 0;
+      }
+      if (scores[key] > MAX_SCORE) {
+        console.error(`Score for ${key} is greater than max score (${MAX_SCORE}). Setting to ${MAX_SCORE}.`);
+        scores[key] = MAX_SCORE;
+      }
     }
   }
-
   return scores;
 }

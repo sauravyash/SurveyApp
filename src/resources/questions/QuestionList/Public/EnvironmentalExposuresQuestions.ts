@@ -1,4 +1,4 @@
-import { SectionIntroScreen, MultipleChoiceQuestion } from "../QuestionTypes";
+import { SectionIntroScreen, MultipleChoiceQuestion } from "../../QuestionTypes";
 
 export const EnvironmentalExposuresQuestions = [
     new SectionIntroScreen(109.1,

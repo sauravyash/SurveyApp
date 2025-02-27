@@ -13,23 +13,36 @@ export interface AnswerData {
   current_question: number;
 }
 
-const storeInSessionStorage = (state: AnswerData) => {
-  const data = { ...state.data };
+export const cleanAnswerData = (data: any) : any => {
   for (const key in data) {
     if (!data[key]) {
       delete data[key];
     }
     if (data[key] instanceof Set) {
-      if (data[key].size > 1) {
+      // console.log('converting set to array', data[key]);
+      if (!!(data[key] as any)?.currentKey) {
+        data[key] = (data[key] as any).currentKey;
+      } else if (data[key].size > 1) {
         data[key] = Array.from(data[key]);
+      } else {
+        data[key] = (data[key] as any).values().next().value;
       }
-      data[key] = (data[key] as any).currentKey;
     } else if (!JSON.stringify(data[key])) {
       delete data[key];
+    } else {
+      data[key] = data[key];
+      // console.log('storing data', data[key]);
     }
   }
+  return data;
+}
+
+const storeInSessionStorage = (state: AnswerData) => {
+  const data = { ...cleanAnswerData(state.data) };
 
   const cleanedState = { ...state, data };
+  // console.log('storing in session storage', cleanedState, state);
+  
   sessionStorage.setItem('answerData', JSON.stringify(cleanedState));
 }
 
@@ -47,6 +60,8 @@ const reducer = (state: AnswerData, action: any) => {
   switch (action.type) {
     case "set_data":
       state = { ...action.payload };
+      console.log('setting data', state);
+      
       break;
 
     case "set_local_data":
@@ -58,6 +73,9 @@ const reducer = (state: AnswerData, action: any) => {
       break;
 
     case 'add_answer':
+      if (action.payload.answer === null) {
+        console.error(`Adding Answer ${action.payload.questionNumber} is null`);
+      }
       state = {
         ...state,
         data: {

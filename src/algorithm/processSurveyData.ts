@@ -14,8 +14,13 @@ export function getUnitAndValue(value: UnitData): { unit: string, value: any }[]
   }];
 }
 
-export function categorizeGender(gender: string): ('male' | 'female' | 'other') {
-  gender = gender.toLowerCase();
+export function categorizeGender(gender: string | unknown): ('male' | 'female' | 'other') {
+  if (typeof gender !== 'string') {
+    gender = ((gender as any).currentKey as string);
+    if (!gender) return 'other';
+  }
+
+  gender = (gender as string).toLowerCase();
   if (gender === 'male' || gender === 'female') return gender;
   return 'other';
 }
@@ -51,6 +56,16 @@ export function categorizeEducation(education: string): string {
 export function calculateBMI(weight: UnitData, height: UnitData): string {
   const weightData = getUnitAndValue(weight);
   const heightData = getUnitAndValue(height)[0];
+  
+  if (!heightData || heightData.value === undefined) {
+    console.info("Height data is undefined:", heightData);
+    return 'unknown';
+  }
+  if (!weightData || weightData.length === 0) {
+    console.info("Weight data is undefined:", weightData);
+    return 'unknown';
+  }
+
   const normalisedHeight = heightData.unit === 'cm' ? heightData.value / 100 : heightData.value * 0.0254;
 
   let normalisedWeight = 0;
@@ -68,7 +83,7 @@ export function calculateBMI(weight: UnitData, height: UnitData): string {
         normalisedWeight += value * 2.205;
       }
     });
-  }
+  }  
 
   const bmi = normalisedWeight / (normalisedHeight * normalisedHeight);
 
@@ -80,20 +95,51 @@ export function calculateBMI(weight: UnitData, height: UnitData): string {
 
 export function categorizeCholesterol(totalCholesterol: UnitData, highCholesterol: string): 'high' | 'normal' {
   const totalCholesterolData = getUnitAndValue(totalCholesterol)[0].value;
+  if (highCholesterol === undefined || highCholesterol === null) {
+    console.error("High cholesterol is undefined or null:", highCholesterol);
+    return 'high';
+  }
+  if (typeof highCholesterol !== 'string') {
+    highCholesterol = (highCholesterol as any).currentKey;
+    if (!highCholesterol) return 'high';
+  }
+
   if (totalCholesterolData > 5.5 || highCholesterol.toLowerCase() === 'yes') return 'high';
   return 'normal';
 }
 
-export function categorizeHDL(gender: string, hdlData: UnitData): 'yes' | 'no' {
-  const hdl = getUnitAndValue(hdlData)[0].value;
-  if ((gender === 'male' || gender === 'other') && (hdl < 1.0 || hdl < 40)) return 'yes';
-  if (gender === 'female' && (hdl < 1.3 || hdl < 50)) return 'yes';
+export function categorizeHDL(hdlData: UnitData, ldlData: UnitData, gender: string): 'yes' | 'no' {
+  const { value: ldlValue, unit: ldlUnit} = getUnitAndValue(ldlData)[0];
+  const { value: hdlValue, unit: hdlUnit} = getUnitAndValue(hdlData)[0];
+
+  if (ldlUnit === "mmol/L" && ldlValue > 4.1) return 'yes';
+  if (ldlUnit === "mg/dL" && ldlValue > 160) return 'yes';
+
+  if (gender === 'female') {
+    if (hdlUnit === "mmol/L" && hdlValue < 1.3) return 'yes'; 
+    if (hdlUnit === "mg/dL" && hdlValue < 50) return 'yes';
+  } else {
+    if (hdlUnit === "mmol/L" && hdlValue < 1.0) return 'yes';
+    if (hdlUnit === "mg/dL" && hdlValue < 40) return 'yes';
+  }
+
   return 'no';
 }
 
-export function categorizeLDL(ldlData: UnitData): 'yes' | 'no' {
-  const ldl = getUnitAndValue(ldlData)[0].value;
-  if (ldl > 4.1 || ldl > 160) return 'yes';
+export function categorizeLDL(ldlData: UnitData, hdlData: UnitData, gender: string): 'yes' | 'no' {
+  const { value: ldlValue, unit: ldlUnit} = getUnitAndValue(ldlData)[0];
+  const { value: hdlValue, unit: hdlUnit} = getUnitAndValue(hdlData)[0];
+  
+  if (gender === 'female') {
+    if (hdlUnit === "mmol/L" && hdlValue < 1.3) return 'yes'; 
+    if (hdlUnit === "mg/dL" && hdlValue < 50) return 'yes';
+  } else {
+    if (hdlUnit === "mmol/L" && hdlValue < 1.0) return 'yes';
+    if (hdlUnit === "mg/dL" && hdlValue < 40) return 'yes';
+  }
+
+  if (ldlUnit === "mmol/L" && ldlValue > 4.1) return 'yes';
+  if (ldlUnit === "mg/dL" && ldlValue > 160) return 'yes';
   return 'no';
 }
 
@@ -111,6 +157,10 @@ export function categorizeHBP(systolicData: UnitData, hbp_diag: YesNoInput, hbp_
 
 export function categorizeTBI(tbi: string | undefined): 'yes' | 'no' {
   if (!tbi) return 'no';
+  if (typeof tbi !== 'string') {
+    tbi = (tbi as any).currentKey;
+    if (!tbi) return 'no';
+  }
   if (tbi.includes("Yes")) return 'yes';
   return 'no';
 }
@@ -138,7 +188,7 @@ export function categorizeHearingLoss(hearing_problem: string, hearing_adequate:
 }
 
 const sleep = ["None", "Mild", "Moderate", "Severe", "Very Severe"];
-const satisfied = ["Very satisfied", "Satisfied", "Moderately Satisfied", "Dissatisfied", "Very Dissatisfied"];
+const satisfied = ["Very Satisfied", "Satisfied", "Moderately Satisfied", "Dissatisfied", "Very Dissatisfied"];
 const noticable = ["Not at all Noticeable", "A Little", "Somewhat", "Much", "Very Much Noticeable"];
 const worried = ["Not at all Worried", "A Little", "Somewhat", "Much", "Very Much Worried"];
 const interfering = ["Not at all Interfering", "A Little", "Somewhat", "Much", "Very Much Interfering"];
@@ -148,19 +198,20 @@ const common = [
   "Occasionally or a moderate amount of time (3-4 days)",
   "Most or all of the time (5-7 days)"
 ];
-const companionship = ["Hardly ever", "Some of the time", "Often"];
+const companionship = ["Don't Know", "Hardly ever", "Some of the time", "Often"];
 const frequency = [
-  "Don’t know", 
-  "Once a year or less", 
-  "Several times a year", 
-  "Several times a month", 
+  "Don’t know",
+  "Once a year or less",
+  "Several times a year",
+  "Several times a month",
   "Several times a week",
   "Every day or almost everyday",
 ];
 
-type mapType = "common" | "companionship" | "sleep" | "satisfied" | "noticable" | "worried" | "interfering" | "frequency";
+type mapTypes = "common" | "companionship" | "sleep" | "satisfied" | "noticable" | "worried" | "interfering" | "frequency";
 
-export function categoryMapper(mapType: mapType, level: string): number {
+const SAFETY_VALUE = 0;
+export function categoryMapper(mapType: mapTypes, level: string | Set<string>): number {
   const mapList: Record<string, string[]> = {
     "sleep": sleep,
     "satisfied": satisfied,
@@ -172,22 +223,47 @@ export function categoryMapper(mapType: mapType, level: string): number {
     "companionship": companionship,
   };
 
+  if (level instanceof Set) {
+    level = Array.from(level)[0].split(": ")[1];
+  }
+  
+
   const map = mapList[mapType].map((v, i) => ({ [v]: i })).reduce((acc, curr) => ({
     ...acc,
     ...curr
   }), {} as Record<string, number>);
-  return map[level] ?? NaN;
+
+  // console.log(mapType, level, map[level]);
+  
+  return map[level] ?? SAFETY_VALUE;
 }
 
 export function categorizeSmoking(smokeStatus: string): 'current' | 'non-smoker' | 'former' {
+  if (!smokeStatus) return 'non-smoker';
+  // console.log(smokeStatus);
+  if (typeof smokeStatus !== 'string') {
+    smokeStatus = (smokeStatus as any).currentKey;
+    if (!smokeStatus) return 'non-smoker';
+  }
+
   smokeStatus = smokeStatus.toLowerCase();
-  if (smokeStatus === 'yes currently') return 'current';
+  if (smokeStatus === 'yes, currently') return 'current';
   if (smokeStatus === 'yes, not currently') return 'former';
   // if (smokeStatus === 'never') 
   return 'non-smoker';
 }
 
 export function categorizeAlcohol(alco_freq: string, alco_quant: number): number {
+  if (alco_freq === undefined || alco_freq === null) {
+    console.info("Alcohol frequency is undefined or null:", alco_freq);
+    return 1;
+  }
+  // console.log(alco_freq, alco_quant);
+  if (typeof alco_freq !== 'string') {
+    alco_freq = (alco_freq as any).currentKey;
+    if (!alco_freq) return 1;
+  }
+
   alco_freq = alco_freq.toLowerCase();
   if (alco_freq === 'never') return 0;
   if (alco_freq === 'monthly or less') return 1;
@@ -200,35 +276,48 @@ export function categorizeAlcohol(alco_freq: string, alco_quant: number): number
   return 2;
 }
 
-export function calculateExercise(daysData: {"days per week": number} | "unsure", time: {"hours": number, "minutes": number} | "unsure" | undefined): number {
+export function calculateExercise(daysData: { "days per week": number } | "unsure", time: { "hours": number, "minutes": number } | "unsure" | undefined): number {
   let [days, hours, minutes] = [0, 0, 0];
-  if (daysData === "unsure") {
+  
+  if (daysData === undefined || daysData === null) {
+    days = 0;
+    console.error("Days data is undefined or null:", daysData);
+  } else if (daysData === "unsure") {
     days = 0;
   } else {
     days = daysData["days per week"];
   }
-  
+
   if (!time || time === "unsure") {
     hours = 0;
     minutes = 0;
   } else {
-    hours = time["hours"];
-    minutes = time["minutes"];
+    hours = time["hours"] || 0;
+    minutes = time["minutes"] || 0;
   }
-
-  return days * ((hours * 60) + minutes);
+  const score = days * ((hours * 60) + minutes);
+  return score;
 }
 
-export function calculateFruitVeg(veg_freq: number | string, veg_serve: number, fruit_serve: number): number {
-  if (typeof veg_freq === 'number' && veg_serve < 3) return 0;
-  if (typeof veg_freq === 'number' && veg_freq > 4) return 1;
-  if ((veg_serve === 3 || veg_serve === 4) && (fruit_serve > 1)) return 1;
+export function calculateFruitVeg(veg_freq: string, veg_serve_str: string, fruit_serve_str: string): number {
 
-  if (typeof veg_freq === 'string') {
-    veg_freq = veg_freq.toLowerCase();
-    if (veg_freq === "not_everyday") return 0;
-  }
+  const fruit_serve_parsed = fruit_serve_str && fruit_serve_str.substring(0, 1) || "D";
+  const veg_serve_parsed = veg_serve_str && veg_serve_str.substring(0, 1) || "D";
+  const veg_serve = veg_serve_parsed === "D" ? 0 : parseInt(veg_serve_parsed);
+  const fruit_serve = fruit_serve_parsed === "D" ? 0 : parseInt(fruit_serve_parsed);
 
+  if (veg_freq === "Every day") {
+    if (veg_serve < 3) {
+      return 0;
+    }
+    if (veg_serve > 4) {
+      return 1;
+    }
+    if ((veg_serve === 4 || veg_serve === 3) && fruit_serve > 1) {
+      return 1;
+    }
+  }    
+  
   return 0;
 }
 
