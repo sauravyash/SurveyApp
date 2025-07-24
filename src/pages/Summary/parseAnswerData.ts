@@ -1,7 +1,7 @@
 import { AllQuestions } from "../../resources/questions/QuestionBanks";
 import { NumberQuestion } from "../../resources/questions/QuestionTypes";
 
-export const parseAnswerData: (arr: [string, any]) => string = (arr) => {
+export const parseAnswerData: (arr: [string, any]) => string = (arr) => { 
   if (!arr[1] || arr[1] === "") {
     return "No answer provided";
   }
@@ -15,6 +15,9 @@ export const parseAnswerData: (arr: [string, any]) => string = (arr) => {
     }
     if (val.startsWith("Other::")) {
       val = val.split("::")[1];
+    }
+    if (val.includes(`q${arr[0]}:`)) {
+      val = val.split(`q${arr[0]}:`)[1];
     }
     return val;
   }

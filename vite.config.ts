@@ -9,6 +9,7 @@ export default defineConfig({
     'env': process.env,
     'ENV_VAR_BACKEND_URL': new String(process.env.VITE_SURVEY_BACKEND_URL),
     'ENV_VAR_SURVEY_TYPE': new String(process.env.VITE_SURVEY_TYPE),
+    'process.env': {}
   },
   plugins: [
     react(),

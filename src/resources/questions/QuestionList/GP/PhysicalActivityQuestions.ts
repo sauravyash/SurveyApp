@@ -22,7 +22,7 @@ export const PhysicalActivityQuestions = [
     new NumberQuestion(30,
         "During the last 7 days, on how many days did you do vigorous physical activities like heavy lifting, digging, aerobics, or fast bicycling?",
         ["days per week"], false, 0, 7, -Infinity, true, undefined, false, 1,
-        `Think about all the vigorous activities that you did in the last 7 days. Vigorous physical activities refer to activities that take hard physical effort and make you breathe much harder than normal. Think only about those activities that you did for at least 10 minutes at a time.`),
+        `Think about all the vigorous activities that you did in the last 7 days. Vigorous physical activities refer to activities that take hard physical effort and make you breathe much harder than normal. Think *only* about those activities that you did for at least 10 minutes at a time.`),
     new NumberQuestionV2(31,
         "How much time did you usually spend doing vigorous physical activities on one of those days?",
         ["hours / minutes"], true, hourMinsBounds, true,
@@ -31,8 +31,20 @@ export const PhysicalActivityQuestions = [
             answer: 0,
             modifier: "not"
         }], true),
-    new NumberQuestion(32, "During the last 7 days, on how many days did you do moderate physical activities like carrying light loads, bicycling at a regular pace, or doubles tennis? Do not include walking.",
-        ["days per week"], false, 0, 7, 0, true, undefined, false, 1, "Think about all the moderate activities that you did in the last 7 days. Moderate activities refer to activities that take moderate physical effort and make you breathe somewhat harder than normal. Think only about those physical activities that you did for at least 10 minutes at a time."),
+    new NumberQuestionV2(32, 
+        "During the last 7 days, on how many days did you do moderate physical activities like carrying light loads, bicycling at a regular pace, or doubles tennis? Do not include walking.",
+        ["days per week"], 
+        false, 
+        {
+            "days per week": {
+                min: 0,
+                max: 7,
+                step: 1,
+                defaultValue: 0
+            }
+        }, true, undefined, false, 
+        "Think about all the moderate activities that you did in the last 7 days. Moderate activities refer to activities that take moderate physical effort and make you breathe somewhat harder than normal. Think *only* about those physical activities that you did for at least 10 minutes at a time."
+    ),
     new NumberQuestionV2(33, "How much time did you usually spend doing moderate physical activities on one of those days?",
         ["hours / minutes"], true, hourMinsBounds, true,
         [
@@ -42,8 +54,15 @@ export const PhysicalActivityQuestions = [
                 modifier: "not"
             },
         ], true),
-    new NumberQuestion(34, "During the last 7 days, on how many days did you walk for at least 10 minutes at a time?",
-        ["days per week"], true, 0, 7, -Infinity, true, undefined, false, 1, " Think about the time you spent walking in the last 7 days. This includes at work and at home, walking to travel from place to place, and any other walking that you have done solely for recreation, sport, exercise, or leisure."),
+    new NumberQuestionV2(34, "During the last 7 days, on how many days did you walk for at least 10 minutes at a time?",
+        ["days per week"], true, 
+        {
+            "days per week": {
+                min: 0, 
+                max: 7,
+                step: 1
+            }
+        }, true, undefined, false, " Think about the time you spent walking in the last 7 days. This includes at work and at home, walking to travel from place to place, and any other walking that you have done solely for recreation, sport, exercise, or leisure."),
     new NumberQuestionV2(35, "How much time did you usually spend walking on one of those days?",
         ["hours / minutes"], true, hourMinsBounds, true, 
         [
@@ -58,3 +77,10 @@ export const PhysicalActivityQuestions = [
 (PhysicalActivityQuestions[1] as NumberQuestion).setDisplayNoneCheckbox(true);
 (PhysicalActivityQuestions[3] as NumberQuestion).setDisplayNoneCheckbox(true);
 (PhysicalActivityQuestions[5] as NumberQuestion).setDisplayNoneCheckbox(true);
+(PhysicalActivityQuestions.find(q => q.getQuestionNumber() === 32) as NumberQuestionV2).setContextOptions({
+    location: "below"
+});
+
+(PhysicalActivityQuestions.find(q => q.getQuestionNumber() === 34) as NumberQuestionV2).setContextOptions({
+    location: "below"
+});

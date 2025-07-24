@@ -1,5 +1,5 @@
 import PageWrapper from '../../components/PageWrapper';
-import ContentWrapper from '../../components/ContentWrapper';
+import ContentWrapper, { PrintScreenWrapper } from '../../components/ContentWrapper';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -54,14 +54,12 @@ const agree_statements: {
     },
     {
       icon: Email,
-      text: 'A copy of the participant information statement and consent form was provided to me via email',
-      color: undefined
+      text: 'A copy of the participant information statement and consent form can be provided to me via email',
+      color: 'informative'
     }
   ];
 
-interface Props {
-  // Define the props for your component here
-}
+interface Props {}
 
 const PatientParticipationStatement: React.FC<Props> = () => {
   const navigate = useNavigate();
@@ -72,12 +70,15 @@ const PatientParticipationStatement: React.FC<Props> = () => {
     address: "",
     email: "",
     reuseData: true,
-    detailsCorrect: false
+    detailsCorrect: false,
+    emailConsentForm: false
   });
   const [isDataValid, setIsDataValid] = useState(false);
 
+  const [printFormActive, setPrintFormActive] = useState(false);
+
   useEffect(() => {
-    dispatch({ type: 'set_user_data', payload: data});
+    dispatch({ type: 'set_user_data', payload: data });
   }, [data]);
 
   const lastPage = 2;
@@ -107,6 +108,11 @@ const PatientParticipationStatement: React.FC<Props> = () => {
     return String(name).match(/^[a-zA-Z\s]*$/);
   }
 
+  const handleDoNotAgree = () => {
+    dispatch({ type: 'set_collect_data', payload: false });
+    navigate('/survey')
+  }
+
   useEffect(() => {
     if (data.name && data.email && data.detailsCorrect) {
       if (validateEmail(data.email) && validateName(data.name)) {
@@ -117,11 +123,44 @@ const PatientParticipationStatement: React.FC<Props> = () => {
     setIsDataValid(false);
   }, [data]);
 
+  useEffect(() => {
+    if (printFormActive) {
+      window.print();
+      setPrintFormActive(false);
+    }
+  }, [printFormActive])
+
+  const ConsentForm = () => (
+    <div className='content' id='printer-friendly'>
+      <Markdown remarkPlugins={[remarkGfm]}>{terms_of_use}</Markdown>
+      <h2>Declaration by the participant</h2>
+      <p>By checking the I agree/start questionnaire option below:</p>
+      <ul style={{ listStyle: "none", margin: 0 }}>
+        {agree_statements.map((statement, index) => (
+          <li key={index} className="mb-3">
+            <div className='columns is-vcentered'>
+              <div className="mt-2"><statement.icon size="S" margin={"0 1.5rem"} color={statement.color} /></div>
+              <div className="column"><span>{statement.text}</span></div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+
+  if (printFormActive) {
+    return (
+      <PrintScreenWrapper>
+        <ConsentForm />
+      </PrintScreenWrapper>
+    )
+  }
+
   return (
-    <PageWrapper color='#002335' style={{
+    <PageWrapper color='#491a35' style={{
       fontSize: state.fontSize,
     }}>
-      {page === 0 && (
+      {page === 0 && !printFormActive && (
         <ContentWrapper>
           <Title>Online participant information statement</Title>
           <Divider borderColor='#999' />
@@ -131,6 +170,11 @@ const PatientParticipationStatement: React.FC<Props> = () => {
             </TermsAndCondtitions>
           </TermsAndCondtitionsWrapper>
           <ButtonWrapper>
+            <Button
+              colour='accent'
+              variant='fill'
+              onClick={() => setPrintFormActive(true)}
+            >Print Consent Form</Button>
             <Button
               colour='accent'
               variant='fill'
@@ -160,6 +204,16 @@ const PatientParticipationStatement: React.FC<Props> = () => {
             </TermsAndCondtitions>
           </TermsAndCondtitionsWrapper>
           <ButtonWrapper>
+            <Button
+              colour='accent'
+              variant='fill'
+              onClick={handleDoNotAgree}
+            >I Do Not Agree</Button>
+            <Button
+              colour='accent'
+              variant='fill'
+              onClick={() => setPrintFormActive(true)}
+            >Print Consent Form</Button>
             <Button
               colour='accent'
               variant='fill'
@@ -228,6 +282,17 @@ const PatientParticipationStatement: React.FC<Props> = () => {
               </div>
 
               <div className="field">
+                <label className="label">Email me a copy of the consent form: </label>
+                <div className="control">
+                  <Switch
+                    isSelected={data.emailConsentForm}
+                    onChange={(e) => setData(prev => ({ ...prev, emailConsentForm: e }))}>
+                    {'I would like a copy of the consent form sent to my email upon submission.'}
+                  </Switch>
+                </div>
+              </div>
+
+              <div className="field">
                 <label className="label">Acknowledgment of consent:</label>
                 <div className="control">
                   <Switch
@@ -245,6 +310,11 @@ const PatientParticipationStatement: React.FC<Props> = () => {
               variant='fill'
               onClick={handlePrevPage}
             >Go Back</Button>
+            <Button
+              colour='accent'
+              variant='fill'
+              onClick={() => setPrintFormActive(true)}
+            >Print Consent Form</Button>
             <Button
               colour='accent'
               variant='fill'

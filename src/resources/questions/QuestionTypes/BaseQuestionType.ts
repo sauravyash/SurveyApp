@@ -45,4 +45,8 @@ export class BaseQuestionObject {
   public getConditions() {
       return this.conditions;
   }
+
+  protected setContext(context: string) {
+    this.context = context;
+  }
 }

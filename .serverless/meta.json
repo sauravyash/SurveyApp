@@ -1,6 +1,6 @@
 {
   "/Users/yashagasti/Documents/Arludo/repos/LEAD_survey_app/serverless.yml": {
-    "versionFramework": "4.7.0",
+    "versionFramework": "4.17.1",
     "servicePath": "/Users/yashagasti/Documents/Arludo/repos/LEAD_survey_app/serverless.yml",
     "serviceConfigFileName": "serverless.yml",
     "service": {

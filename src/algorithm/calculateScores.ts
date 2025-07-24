@@ -20,7 +20,7 @@ export function processSurveyResponse(data: Record<string, any>): { scores: Scor
     inputs
   };
   if (IS_SURVEY_TYPE_GP) {
-    res.scores = GPScoring(inputs);
+    res.scores = GPScoring(inputs);    
   } else {
     res.scores = publicScoring(inputs);
   }

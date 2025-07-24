@@ -12,7 +12,7 @@ export const SleepQuestions = [
   new SectionIntroScreen(39.1,
       `The next group of questions ask about your sleep habits and any problems you may have with sleep.\n
 For each question, please select the option that best describes your answer.\n
-Please rate the **current (i.e. last 2 weeks)** severity of your insomnia problem(s).`),
+Please rate the **current (i.e., last 2 weeks)** severity of your insomnia problem(s).`),
   new LikertScaleQuestion(39, "Difficulty falling asleep", sleepQuestionOptions, [
       "Difficulty falling asleep",
       "Difficulty staying asleep",

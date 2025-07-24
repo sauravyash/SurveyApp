@@ -1,10 +1,16 @@
-import { MultipleChoiceQuestion, NumberQuestion, SectionIntroScreen } from "../../QuestionTypes";
+import { MultipleChoiceQuestion, SectionIntroScreen } from "../../QuestionTypes";
 import { NumberQuestionV2 } from "../../QuestionTypes/NumberQuestion";
 
 export const PersonalInformationQuestions = [
     new SectionIntroScreen(1.1,
         `In this section, we will ask you for some general information about yourself.`),
-    new NumberQuestion(1, "What is your age?", ["year"], false, 18, 130, 50),
+    new NumberQuestionV2(1, "What is your age?", ["year"], false, {
+        "year": {
+            min: 18,
+            max: 130,
+            step: 1
+        }
+    }),
     new MultipleChoiceQuestion(2, "What is your gender?", ["Male", "Female", "Non-Binary", "Other identity", "Prefer not to say"], true),
     new MultipleChoiceQuestion(3, "What was the highest qualification that you completed?",
         [
@@ -45,3 +51,9 @@ export const PersonalInformationQuestions = [
         },
     ),
 ];
+
+(PersonalInformationQuestions.find(q => q.getQuestionNumber() === 1) as NumberQuestionV2).setContextOptions({
+    textColour: "red",
+    location: "below",
+    text: "You must be 18 or older to participate in this assessment."
+});

@@ -17,4 +17,16 @@ const ContentWrapper = styled.section`
   // overflow-y: auto;
 `;
 
+export const PrintScreenWrapper = styled.section`
+  display: block;
+  flex-direction: column;
+  padding: 0;
+  text-align: left;
+  position: relative;
+  background: #fff;
+  border-radius: 1em;
+  margin: auto;
+  padding: 2rem;
+`;
+
 export default ContentWrapper;

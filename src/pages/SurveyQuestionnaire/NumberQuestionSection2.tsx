@@ -66,30 +66,59 @@ const NumberQuestionSection2 = (props: {
 
   const unit = currentUnitTypes[selectedUnitInt] || "default";
   const defaultAnswer = {};
-  // const defaultAnswer = question.getUnits()[0].split(" / ").length <= 1 ? {
-  //   [question.getUnits()[0]]: undefined,
-  // } : {};
 
   const [answer, setAnswer] = useState<NumberQuestionKey>(defaultAnswer);
 
   useEffect(() => {
     const storedData = state.data[question.getQuestionNumber()];
 
+
     if (storedData) {
-      const storedAnswer: number = Object.values(storedData)[0] as number;
-      const storedFullUnit = Object.keys(storedData).join(" / ");
-      const index = question.getUnits().findIndex(unit => unit === storedFullUnit);
+      console.log(Object.keys(storedData), storedData);
+
+      if (Object.keys(storedData).length > 1) {
+        const storedKeys = Object.keys(storedData);
+        const storedMainKey = storedKeys.join(" / ");
+        console.log(storedMainKey, storedKeys);
+        const index = question.getUnits().findIndex(unit => unit === storedMainKey);
+        if (index < 0) {
+          console.error("main key not found in question")
+          return;
+        }
+        setSelectedUnitIndex(index.toString());
+
+        const ans: any = {};
+        for (const key of storedKeys) {
+          ans[key] = storedData[key] ?? question.getDefaultValue(key);
+          
+        }
+
+        setAnswer(ans);
+        return;
+      }
+
+      const storedKey = Object.keys(storedData)[0];
+      const index = question.getUnits().findIndex(unit => unit === storedKey);
+      const storedAnswer: number = storedData[storedKey] as number;
+
       if (index > -1) {
         setSelectedUnitIndex(index.toString());
-        if (storedAnswer <= question.getMaxValue(unit)
-          && storedAnswer >= question.getMinValue(unit)) {
-          setAnswer(storedData);
+        if (storedAnswer <= question.getMaxValue(storedKey)
+          && storedAnswer >= question.getMinValue(storedKey)) {
+          const unitTypes = question.getAttributes().scientific_unit ?
+            question.getUnits()[index].split(" / ") : [question.getUnits()[index]];
+
+          setCurrentUnitTypes(unitTypes);
+          setAnswer({ [storedKey]: storedAnswer });
           return;
         }
         setAnswer({ [unit]: undefined });
         return;
       }
+    } else {
+      setAnswer({ "undefined": undefined });
     }
+
     setSelectedUnitIndex("0");
 
     const unitTypes = question.getAttributes().scientific_unit ?
@@ -105,6 +134,8 @@ const NumberQuestionSection2 = (props: {
         answer: defaultAnswer
       }
     })
+    console.log("setting default answer");
+
   }, [question]);
 
   useEffect(() => {
@@ -116,6 +147,7 @@ const NumberQuestionSection2 = (props: {
   }, [selectedUnitIndex]);
 
   useEffect(() => {
+
     if (answer === "unsure") {
       dispatch({
         type: "add_answer",
@@ -126,28 +158,56 @@ const NumberQuestionSection2 = (props: {
       })
     }
     else if (answer !== undefined) {
+      // validate input
       for (const key in answer) {
         const ans = answer[key];
         if (key === question.getUnits().join(" / ")) continue;
         if (ans === undefined) {
           return;
         }
-        if (ans <= question.getMinValue(unit)
-          && ans >= question.getMaxValue(unit)
+        if (ans < question.getMinValue(unit)
+          && ans > question.getMaxValue(unit)
           && ans === answer[key]) {
+          console.info("exceeding bounds")
           return;
         }
-
       }
+
+      // autofill missing input if multiple inputs exist
+      const currentAnswerKeyList = Object.keys(answer);
+
+      console.log(question.getUnits(), currentAnswerKeyList, answer)
+
+      
+
+      const ans: any = {};
+      const unitList = currentAnswerKeyList || currentUnitTypes;
+      if (Object.keys(answer).length > 1) {
+        for (const unit of unitList) {
+          if (!Object.keys(answer).includes(unit)) {
+            ans[unit] = question.getDefaultValue(unit);
+          } else {
+            ans[unit] = answer[unit];
+          }
+        }
+      } else {
+        const key = Object.keys(answer)[0];
+        if (key) {
+          ans[key] = answer[key];
+        }
+      }
+      console.log(ans);
+      
 
       dispatch({
         type: "add_answer",
         payload: {
           questionNumber: question.getQuestionNumber(),
-          answer
+          answer: ans
         }
       })
     } else {
+      console.log("removing ans");
       dispatch({
         type: "remove_answer",
         payload: {
@@ -173,19 +233,22 @@ const NumberQuestionSection2 = (props: {
     }
   }
 
+  const contextSection = (
+    <ContextSection options={question.getContextOptions()}>{question.getAttributes().context}</ContextSection>
+  )
+
   return (
-    <NumberUnitsWrapper>
+    <NumberUnitsWrapper key={question.getQuestionNumber()}>
       {
         question.getAttributes().context && question.getAttributes().contextLocation === "above" ?
-          <ContextSection>{question.getAttributes().context}</ContextSection>
-          : null
+          contextSection : null
       }
       <SurveyH2>{question.getQuestion()}</SurveyH2>
       <AnswerRowWrapper>
         {
           currentUnitTypes.map((unit, index) => (
             <NumberField
-              key={index}
+              key={question.getQuestionNumber() + " " + index}
               isDisabled={answer === "unsure"}
               aria-label={unit}
               formatOptions={{
@@ -233,7 +296,7 @@ const NumberQuestionSection2 = (props: {
                     questionNumber: question.getQuestionNumber()
                   }
                 })
-                setSelectedUnitIndex(unit.toString());
+                unit && setSelectedUnitIndex(unit.toString());
                 setAnswer({});
               }}
             >
@@ -273,8 +336,7 @@ const NumberQuestionSection2 = (props: {
 
       {
         question.getAttributes().context && question.getAttributes().contextLocation === "below" ?
-          <ContextSection>{question.getAttributes().context}</ContextSection>
-          : null
+          contextSection : null
       }
     </NumberUnitsWrapper>
   )

@@ -37,7 +37,15 @@ export function categorizeAge(ageData: UnitData): string {
   return '<64';
 }
 
+function stripQIfPresent(str: string) {
+  if (/^q\d+:/.test(str)) {
+    return str.replace(/^q\d+:\s*/, '');
+  }
+  return str;
+}
 export function categorizeEducation(education: string): string {
+  education = stripQIfPresent(education);
+
   if (["Partially completed primary/elementary school (or equivalent)",
     "Completed primary/elementary school (or equivalent)"].includes(education)) return 'less than secondary';
   if (["School certificate (Year 10) (or equivalent)",
@@ -56,7 +64,7 @@ export function categorizeEducation(education: string): string {
 export function calculateBMI(weight: UnitData, height: UnitData): string {
   const weightData = getUnitAndValue(weight);
   const heightData = getUnitAndValue(height)[0];
-  
+
   if (!heightData || heightData.value === undefined) {
     console.info("Height data is undefined:", heightData);
     return 'unknown';
@@ -83,7 +91,7 @@ export function calculateBMI(weight: UnitData, height: UnitData): string {
         normalisedWeight += value * 2.205;
       }
     });
-  }  
+  }
 
   const bmi = normalisedWeight / (normalisedHeight * normalisedHeight);
 
@@ -109,14 +117,17 @@ export function categorizeCholesterol(totalCholesterol: UnitData, highCholestero
 }
 
 export function categorizeHDL(hdlData: UnitData, ldlData: UnitData, gender: string): 'yes' | 'no' {
-  const { value: ldlValue, unit: ldlUnit} = getUnitAndValue(ldlData)[0];
-  const { value: hdlValue, unit: hdlUnit} = getUnitAndValue(hdlData)[0];
+  const { value: ldlValue, unit: ldlUnit } = getUnitAndValue(ldlData)[0];
+  const { value: hdlValue, unit: hdlUnit } = getUnitAndValue(hdlData)[0];
+
+  console.log(ldlValue, ldlUnit, hdlValue, hdlUnit);
+  
 
   if (ldlUnit === "mmol/L" && ldlValue > 4.1) return 'yes';
   if (ldlUnit === "mg/dL" && ldlValue > 160) return 'yes';
 
   if (gender === 'female') {
-    if (hdlUnit === "mmol/L" && hdlValue < 1.3) return 'yes'; 
+    if (hdlUnit === "mmol/L" && hdlValue < 1.3) return 'yes';
     if (hdlUnit === "mg/dL" && hdlValue < 50) return 'yes';
   } else {
     if (hdlUnit === "mmol/L" && hdlValue < 1.0) return 'yes';
@@ -127,11 +138,11 @@ export function categorizeHDL(hdlData: UnitData, ldlData: UnitData, gender: stri
 }
 
 export function categorizeLDL(ldlData: UnitData, hdlData: UnitData, gender: string): 'yes' | 'no' {
-  const { value: ldlValue, unit: ldlUnit} = getUnitAndValue(ldlData)[0];
-  const { value: hdlValue, unit: hdlUnit} = getUnitAndValue(hdlData)[0];
-  
+  const { value: ldlValue, unit: ldlUnit } = getUnitAndValue(ldlData)[0];
+  const { value: hdlValue, unit: hdlUnit } = getUnitAndValue(hdlData)[0];
+
   if (gender === 'female') {
-    if (hdlUnit === "mmol/L" && hdlValue < 1.3) return 'yes'; 
+    if (hdlUnit === "mmol/L" && hdlValue < 1.3) return 'yes';
     if (hdlUnit === "mg/dL" && hdlValue < 50) return 'yes';
   } else {
     if (hdlUnit === "mmol/L" && hdlValue < 1.0) return 'yes';
@@ -226,7 +237,7 @@ export function categoryMapper(mapType: mapTypes, level: string | Set<string>): 
   if (level instanceof Set) {
     level = Array.from(level)[0].split(": ")[1];
   }
-  
+
 
   const map = mapList[mapType].map((v, i) => ({ [v]: i })).reduce((acc, curr) => ({
     ...acc,
@@ -234,7 +245,7 @@ export function categoryMapper(mapType: mapTypes, level: string | Set<string>): 
   }), {} as Record<string, number>);
 
   // console.log(mapType, level, map[level]);
-  
+
   return map[level] ?? SAFETY_VALUE;
 }
 
@@ -258,27 +269,37 @@ export function categorizeAlcohol(alco_freq: string, alco_quant: number): number
     console.info("Alcohol frequency is undefined or null:", alco_freq);
     return 1;
   }
-  // console.log(alco_freq, alco_quant);
+
   if (typeof alco_freq !== 'string') {
     alco_freq = (alco_freq as any).currentKey;
     if (!alco_freq) return 1;
   }
 
   alco_freq = alco_freq.toLowerCase();
-  if (alco_freq === 'never') return 0;
-  if (alco_freq === 'monthly or less') return 1;
-  if (alco_freq === '2-4 times a month' && alco_quant < 14) return 1;
-  if (alco_freq === '2-3 times a week' && alco_quant < 5) return 1;
-  if (alco_freq === '4+ times a week' && alco_quant < 4) return 1;
-  if (alco_freq === '2-4 times a month' && alco_quant >= 14) return 2;
-  if (alco_freq === '2-3 times a week' && alco_quant > 5) return 2;
-  if (alco_freq === '4+ times a week' && alco_quant > 4) return 2;
+  const alco_freq_map: { [key: string]: number } = {
+    "never": 0,
+    "monthly or less": 1,
+    "2-4 times a month": 2,
+    "2-3 times a week": 3,
+    "4+ times a week": 4,
+  };
+
+  const alco_freq_num = alco_freq_map[alco_freq];
+  if (alco_freq_num === 0) return 0;
+  if (alco_freq_num === 1 && alco_quant < 14) return 1;
+  if (alco_freq_num > 1 && alco_freq_num < 4 && alco_quant < 5) return 1;
+  if (alco_freq_num > 3 && alco_quant < 4) return 1;
+
+  if (alco_freq_num === 1 && alco_quant >= 14) return 2;
+  if (alco_freq_num > 1 && alco_freq_num < 4 && alco_quant >= 5) return 2;
+  if (alco_freq_num > 3 && alco_quant >= 4) return 2;
+
   return 2;
 }
 
 export function calculateExercise(daysData: { "days per week": number } | "unsure", time: { "hours": number, "minutes": number } | "unsure" | undefined): number {
   let [days, hours, minutes] = [0, 0, 0];
-  
+
   if (daysData === undefined || daysData === null) {
     days = 0;
     console.error("Days data is undefined or null:", daysData);
@@ -302,8 +323,7 @@ export function calculateExercise(daysData: { "days per week": number } | "unsur
 export function calculateFruitVeg(veg_freq: string, veg_serve_str: string, fruit_serve_str: string): number {
 
   const fruit_serve_parsed = fruit_serve_str && fruit_serve_str.substring(0, 1) || "D";
-  const veg_serve_parsed = veg_serve_str && veg_serve_str.substring(0, 1) || "D";
-  const veg_serve = veg_serve_parsed === "D" ? 0 : parseInt(veg_serve_parsed);
+  const veg_serve = parseInt(stripQIfPresent(veg_serve_str));
   const fruit_serve = fruit_serve_parsed === "D" ? 0 : parseInt(fruit_serve_parsed);
 
   if (veg_freq === "Every day") {
@@ -316,8 +336,8 @@ export function calculateFruitVeg(veg_freq: string, veg_serve_str: string, fruit
     if ((veg_serve === 4 || veg_serve === 3) && fruit_serve > 1) {
       return 1;
     }
-  }    
-  
+  }
+
   return 0;
 }
 

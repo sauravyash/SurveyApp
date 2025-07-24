@@ -1,4 +1,5 @@
-import { SectionIntroScreen, NumberQuestion, MultipleChoiceQuestion } from "../../QuestionTypes";
+import { SectionIntroScreen, MultipleChoiceQuestion } from "../../QuestionTypes";
+import { NumberQuestionV2 } from "../../QuestionTypes/NumberQuestion";
 
 const healthConditions = [
   "Diabetes",
@@ -31,15 +32,52 @@ export const HealthQuestions = [
   new MultipleChoiceQuestion(6,
     "Have you ever been told by a doctor or other health professional that you have one of the following?",
     healthConditions, true, undefined, undefined),
-  new NumberQuestion(7, "What is your HDL cholesterol level?", ["mmol/L", "mg/dl"], true, 0, 20, 1.5, true, undefined, true, 0.1),
-  new NumberQuestion(8, "What is your LDL cholesterol level?", ["mmol/L", "mg/dl"], true, 0, 20, 3.5, true, undefined, true, 0.1),
+  new NumberQuestionV2(7, "What is your HDL cholesterol level?",
+    ["mmol/L", "mg/dL"], true, {
+    "mmol/L": {
+      min: 0.3,       // Low extreme (~12 mg/dL)
+      max: 3.0,       // High extreme (~116 mg/dL)
+      defaultValue: 1.3, // Typical “desirable” (~50 mg/dL)
+      step: 0.1
+    },
+    "mg/dL": {
+      min: 20,        // Very low HDL
+      max: 100,       // Upper range
+      defaultValue: 50,
+      step: 1
+    }
+  },
+    true,
+    undefined,
+    true
+  ),
+  new NumberQuestionV2(8, "What is your LDL cholesterol level?",
+    ["mmol/L", "mg/dL"], true, {
+    "mmol/L": {
+      min: 0.5,       // Low extreme (~19 mg/dL)
+      max: 6.0,       // Severe hypercholesterolemia (~232 mg/dL)
+      defaultValue: 2.6, // Typical treatment threshold (~100 mg/dL)
+      step: 0.1
+    },
+    "mg/dL": {
+      min: 20,        // Very low LDL
+      max: 250,       // Upper extreme
+      defaultValue: 100,
+      step: 1
+    }
+  },
+    true,
+    undefined,
+    true
+  ),
+
 
   new MultipleChoiceQuestion(9, "Have you ever been told by your doctor that you have a condition called Left Ventricular Hypertrophy detected by ECG?", ["Yes", "No", "Don’t know"]),
   new MultipleChoiceQuestion(10, "Have you ever been told by a doctor that you have had kidney disease?", ["Yes", "No", "Don’t know"]),
   new MultipleChoiceQuestion(11, "Do you have trouble with your hearing?",
     [
-      "Yes, I was prescribed hearing aids/implant and wear them",
-      "Yes, I was prescribed hearing aids but do not wear them",
+      "Yes, use hearing aid",
+      "Yes, but do not use hearing aid",
       "No",
       "Don’t know"
     ],

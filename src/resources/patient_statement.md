@@ -1,101 +1,76 @@
-# Dementia Risk Assessment Study
+# 1. **Online Participant Information Statement**  
+   **Dementia and related NCDs Risk (DemNCDrisk) Assessment**
 
-## What is the research study about?
+# 2. **What is the research study about?**  
+   You are invited to take part in this research study. The research study aims to collect data on risk factors for dementia and related non-communicable diseases (NCDs) including stroke, diabetes and myocardial infarction (MI) (or heart attack), in adults aged 18 years and older. This questionnaire includes items on your age, sex, education level, your lifestyle habits and health factors. It uses information obtained from published studies to assign risk scores to the responses to the questionnaire. On completion of the questionnaire, you will be advised which health and lifestyle factors may pose a risk for developing dementia, stroke, diabetes, and heart attack, followed by expert advice and recommendations. It is also hoped that the knowledge you gain from completing this questionnaire will increase your awareness of probable risk factors.
 
-You are invited to take part in this research study. The study aims to collect data on risk factors for dementia in adults aged 18 and older. This questionnaire includes items on:
+   The data collected from this research will help researchers understand the risk factors present in the wider Australian population to inform health policy and programs to reduce the burden of chronic disease.
 
-- Your age
-- Sex
-- Education level
-- Lifestyle habits
-- Health factors
+# 3. **Who is conducting this research?**  
+   The study is being carried out by the following researchers:
+   - **Prof. Kaarin Anstey**  
+   - **Dr Ruth Peters**  
+   - **Dr Md Hamidul Huque**  
+   - **Dr Kim Kiely**  
+   - **Ms Meiwei Li**  
 
-It uses information from published studies to assign risk scores to your responses. Upon completion, you will receive:
+   All are from UNSW and Neuroscience Research Australia (NeuRA).  
+   **Research Funder:** National Health and Medical Research Council.
 
-- Advice on which health and lifestyle factors may pose a risk for developing dementia
-- Expert advice and recommendations
-- Increased dementia literacy and awareness of probable risk factors
+# 4. **Inclusion / Exclusion Criteria**  
+   Before you decide to participate in this research study, we need to ensure that it is ok for you to take part. The research study is looking to recruit people who meet the following criteria:
+   - **Inclusion:**  
+     - Adults aged 18 years and older.  
+     - Have access to internet services and have a computer, mobile device, or tablet.
 
-## Who is conducting this research?
+# 5. **Do I have to take part in this research study?**  
+   Participation in any research study is voluntary. If you do not want to take part, you do not have to.  
+   If you decide you want to take part in the research study, you will be asked to:
+   1. Read the information carefully (and ask questions if necessary).  
+   2. Complete the online questionnaire.
 
-The study is being carried out by the following researchers from UNSW and Neuroscience Research Australia (NeuRA):
+# 6. **What does participation in this research require, and are there any risks involved?**  
+   If you decide to take part in the research study, we will ask you to complete an online questionnaire. The questionnaire will collect data on your age, sex, health, lifestyle, and other related questions to provide information on your risk of future dementia, stroke, diabetes, and heart attack. It should take approximately **20 to 30 minutes** to complete.
 
-- Prof. Kaarin Anstey
-- Dr Ruth Peters
-- Dr Scherazad Kootar
-- Dr Md Hamidul Huque
+   There are no expected risks to you in completing this questionnaire; however, if you feel discomfort or change your mind during the questionnaire, you can stop participating at any time. You can also tell a member of the research team and they will provide you with assistance.
 
-**Research Funder:** This research has not been funded by any specific research grant.
+   If you are concerned about the risk profile and recommendations provided to you after the questionnaire, you are encouraged to discuss it with a qualified health care provider such as your GP.
 
-## Inclusion Criteria
+# 7. **What are the possible benefits to participation?**  
+   - You will receive personalised risk profiles and detailed recommendations based on your questionnaire responses.  
+   - The research will help us understand risk factors in the wider Australian population to inform health policy and programs aimed at reducing the burden of chronic disease.  
+   - By managing modifiable risk factors and maintaining a healthy lifestyle, you may reduce your own risk of developing dementia and related NCDs.
 
-To participate, you must:
+# 8. **What will happen to information about me?**  
+   - Submission of the online questionnaire indicates your consent. By clicking the **“I agree to participate”** button, you are providing permission for the research team to collect and use information about you for the research study.  
+   - The research team will store your de-identified data for a minimum of **7 years** after completion of the research.  
+   - Data storage:  
+     - De-identified format (responses coded and stored separately from your email).  
+     - Secure UNSW Amazon Web Server with multi-factor authentication.  
+     - Login details and survey data stored separately; linkage only possible by the research team.
 
-- Be 18 years or older
-- Have access to internet services and a computer, mobile, or tablet
+   You will be asked to provide consent for the research team to share or use your de-identified information in future research that focuses on identifying prevalence of risk factors for chronic disease and evaluating interventions to promote healthy ageing. Your information will only be shared in a format that cannot identify you.
 
-## Participation Details
+# 9. **How and when will I find out what the results of the research study are?**  
+   The research team intends to publish and report the results of the study in a way that will not identify you. Findings using the DemNCDrisk tool will be reported on the publicly available DemNCDrisk website.
 
-Participation is voluntary. If you decide to take part:
+# 10. **What if I want to withdraw from the research study?**  
+  If you consent and later change your mind, you may withdraw at any time by:
+  - Completing the **Withdrawal of Consent Form** at the end of this document, or  
+  - Contacting the research team directly.
 
-1. Read the information carefully (ask questions if necessary)
-2. Complete the online questionnaire
+  Upon withdrawal, any data you have provided will be destroyed and no further information collected. Your decision will not affect your relationship with UNSW Sydney or NeuRA.
 
-## What does participation in this research require, and are there any risks involved?
+# 11. **What should I do if I have further questions about my involvement?**  
+  **Chief Investigator**  
+  - **Name:** Prof. Kaarin Anstey  
+  - **Position:** Scientia Professor (UNSW) & Senior Principal Research Scientist (NeuRA)  
+  - **Telephone:** (02) 9399 1019  
+  - **Email:** k.anstey@unsw.edu.au
 
-If you decide to take part in the research study, we will ask you to complete an online questionnaire. The questionnaire will ask you questions about your personal information, health, lifestyle, and other related questions to provide information on your dementia risk profile. It should take approximately 20 to 30 minutes to complete.
-
-If you experience discomfort or feelings of distress while participating in the research and you require support, you can stop participating at any time. You can also tell a member of the research team and they will provide you with assistance or alternatively a list of support services and their contact details are provided below.
-
-If at any stage during the study, you become distressed or require additional support from someone not involved in the research please call:
-
-| Contact for feelings of distress |               |
-|----------------------------------|---------------|
-| Name/Organisation                | Lifeline Australia |
-| Telephone                        | 13 11 14      |
-
-## Data Handling and Privacy
-
-- Submission of the online questionnaire is an indication of your consent. By clicking the 'I agree to participate' button you are providing your permission for the research team to collect and use information about you for the research study.
-- Your survey responses will be assigned a unique code
-- Personal details will be stored separately from survey responses
-- Data will be stored for a minimum of 7 years after study completion
-- Temporary data use: Anonymized survey responses will be briefly sent to servers for risk score calculation, then erased
-
-## Results and Withdrawal
-
-- You can request a copy of the results via email or mail
-- You may withdraw at any time by completing the Withdrawal of Consent Form or contacting the research team
-
-## Complaints and Further Questions
-
-### What if I have a complaint or any concerns about the research study?
-
-If you have a complaint regarding any aspect of the study or the way it is being conducted, please contact the UNSW Human Ethics Coordinator:
-
-| Complaints Contact |                                   |
-|--------------------|-----------------------------------|
-| Position           | Human Research Ethics Coordinator |
-| Telephone          | +61 2 9385 6222                   |
-| Email              | humanethics@unsw.edu.au           |
-| HC Reference Number| HC200108                          |
-
-### What should I do if I have further questions about my involvement in the research study?
-
-The person you may need to contact will depend on the nature of your query. If you require further information regarding this study or if you have any problems which may be related to your involvement in the study, you can contact the following member/s of the research team:
-
-| Research Team Contact |                                                                        |
-|-----------------------|------------------------------------------------------------------------|
-| Name                  | Dr Scherazad Kootar                                                    |
-| Position              | Postdoctoral Fellow                                                    |
-| Telephone             | +61 2 9399 1043                                                        |
-| Email                 | s.kootar@unsw.edu.au                                                   |
-
-| Research Team Contact |                                                                        |
-|-----------------------|------------------------------------------------------------------------|
-| Name                  | Prof. Kaarin Anstey                                                    |
-| Position              | Scientia Professor (UNSW) and Senior Principal Research Scientist (NeuRA) |
-| Telephone             | +61 2 9399 1019                                                        |
-| Email                 | k.anstey@unsw.edu.au                                                   |
-
-If you would like to receive a copy of the results, you can let the research team know by inserting your email or mailing address in the consent form. We will only use these details to send you the results of the research.
+# 12. **What if I have a complaint or any concerns?**  
+  **Human Research Ethics Coordinator**  
+  - **Position:** Human Research Ethics Coordinator  
+  - **Telephone:** +61 2 9385 6222  
+  - **Email:** humanethics@unsw.edu.au  
+  - **HC Reference Number:** [INSERT HC reference number]

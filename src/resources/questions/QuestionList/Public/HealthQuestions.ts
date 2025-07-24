@@ -12,24 +12,60 @@ export const HealthQuestions = [
         "Have you been told by a doctor or a health professional that you have high cholesterol levels in the past 2 years, or your cholesterol level is higher than 6.5mmol/L?",
         ["Yes", "No", "Don’t know"]
     ),
-    new NumberQuestion(19, "What is your HDL cholesterol level?", ["mmol/L"], true, 0, 20, 1.5, true, undefined, true, 0.1),
-    new NumberQuestion(20, "What is your LDL cholesterol level?", ["mmol/L"], true, 0, 20, 3.5, true, undefined, true, 0.1),
-    new NumberQuestionV2(21, 
+    new NumberQuestionV2(19, "What is your HDL cholesterol level?",
+        ["mmol/L", "mg/dL"], true, {
+        "mmol/L": {
+            min: 0.3,       // Low extreme (~12 mg/dL)
+            max: 3.0,       // High extreme (~116 mg/dL)
+            defaultValue: 1.3, // Typical “desirable” (~50 mg/dL)
+            step: 0.1
+        },
+        "mg/dL": {
+            min: 20,        // Very low HDL
+            max: 100,       // Upper range
+            defaultValue: 50,
+            step: 1
+        }
+    },
+        true,
+        undefined,
+        true
+    ),
+    new NumberQuestionV2(20, "What is your LDL cholesterol level?",
+        ["mmol/L", "mg/dL"], true, {
+        "mmol/L": {
+            min: 0.5,       // Low extreme (~19 mg/dL)
+            max: 6.0,       // Severe hypercholesterolemia (~232 mg/dL)
+            defaultValue: 2.6, // Typical treatment threshold (~100 mg/dL)
+            step: 0.1
+        },
+        "mg/dL": {
+            min: 20,        // Very low LDL
+            max: 250,       // Upper extreme
+            defaultValue: 100,
+            step: 1
+        }
+    },
+        true,
+        undefined,
+        true
+    ),
+    new NumberQuestionV2(21,
         "What are your triglyceride levels?",
         ["mmol/L", "mg/dL"], true, {
-            "mmol/L": {
-                min: 0.1,       // Avoid 0 as triglycerides cannot be zero
-                max: 10,        // Upper bound for severe cases
-                defaultValue: 1.5,
-                step: 0.1
-            },
-            "mg/dL": {
-                min: 10,        // Avoid 0; start from a reasonable minimum
-                max: 900,       // Upper limit for extreme conditions
-                defaultValue: 150,
-                step: 1
-            }
-        }, true, undefined, true),
+        "mmol/L": {
+            min: 0.1,       // Avoid 0 as triglycerides cannot be zero
+            max: 10,        // Upper bound for severe cases
+            defaultValue: 1.5,
+            step: 0.1
+        },
+        "mg/dL": {
+            min: 10,        // Avoid 0; start from a reasonable minimum
+            max: 900,       // Upper limit for extreme conditions
+            defaultValue: 150,
+            step: 1
+        }
+    }, true, undefined, true),
     new MultipleChoiceQuestion(22, "Have you ever been told by a doctor or other health professional that you have diabetes?", ["Yes", "No", "Don’t know"]),
     new MultipleChoiceQuestion(23, "Have you been found to have high blood glucose (sugar) (for example, in a health examination, during an illness, during pregnancy) or fasting glucose above 7 mmol/L?", ["Yes", "No", "Don’t know"]),
     new MultipleChoiceQuestion(24,
@@ -64,10 +100,8 @@ export const HealthQuestions = [
     ),
     new MultipleChoiceQuestion(29, "Are you currently taking medications for controlling your high blood pressure?",
         ["Yes", "No"], true,
-        [{
-            question: 27,
-            answer: "Yes"
-        }]
+        [
+        ]
     ),
     new NumberQuestion(30,
         "Could you please specify at what age you started taking medications for high blood pressure?",
@@ -92,7 +126,12 @@ export const HealthQuestions = [
         ],
     ),
     new MultipleChoiceQuestion(37, "Do you feel that your hearing is adequate for all purposes?",
-        ["Yes", "Cannot hear speech in groups.", "Words are missed in coversation", "Hearing is a serious problem"],
+        [
+            "Yes", 
+            "Cannot hear speech in groups.", 
+            "Words are missed in conversation", 
+            "Hearing is a serious problem for me"
+        ],
         true,
         [{
             question: 36,

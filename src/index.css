@@ -1,3 +1,7 @@
+html, body {
+  background-color: white;
+}
+
 :root {
   font-family: "Montserrat", sans-serif, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -5,12 +9,14 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* background-color: #242424; */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --bulma-skeleton-background: white;
+  --bulma-body-background-color: white;
 }
 
 #root {
@@ -22,8 +28,18 @@
   width: 100vw;
   overflow-x: hidden;
   padding: 0;
-  background-color: aliceblue;
+  background-color: white;
   position: relative;
+}
+
+:is(div,body):has(#printer-friendly) {
+  height: -webkit-fill-available;
+  width: 100%;
+  background-color: white;
+}
+
+#accessibility-toolbar:has(+section #printer-friendly) {
+  display: none;
 }
 
 a {
@@ -42,5 +58,9 @@ body {
   height: 100vh;
   overflow: hidden;
   width: 100vw;
+}
+
+strong {
+  color: initial;
 }
 

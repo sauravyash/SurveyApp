@@ -58,6 +58,7 @@ const Accessibility: React.FC = () => {
         boxShadow: 3,
         zIndex: 9000,
       }}
+      id="accessibility-toolbar"
     >
       <Tooltip title="Increase Font Size">
         <IconButton onClick={increaseFontSize}>

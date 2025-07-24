@@ -22,21 +22,13 @@ const QuestionWrapper = styled.div`
   height:100%;
 `;
 
-// const RadioGroupWrapper = styled.div`
-//   font-size: 1.5em;
-// `
-
 const LikertScaleSection = (props: {
   question: LikertScaleQuestion
 }) => {
   const { question } = props;
   const { state, dispatch } = useAnswerData();
   const [defaultLikertAnswers, setDefaultLikertAnswers] = useState<{ [key: string]: string }>({});
-  // const defaultAnswer = "";
-  // const [selectedValue, setSelectedValue] = useState(defaultAnswer);
-  // useEffect(() => {
-  //   setSelectedValue(state.data[question.getQuestionNumber()] || defaultAnswer);
-  // }, [question, state]);
+ 
 
   useEffect(() => {
     const [min, max] = [question.getQuestionNumber(), question.getQuestionNumber() + question.getQuestionList().length];
@@ -80,27 +72,6 @@ const LikertScaleSection = (props: {
         }}
         defaultAnswers={defaultLikertAnswers}
       />
-      {/* <SurveyH2>{question.getQuestion()}</SurveyH2> */}
-      {/* <RadioGroupWrapper>
-        <RadioGroup name={`question-${question.getQuestionNumber()}`} orientation="vertical"
-          onChange={(value) => {
-            setSelectedValue(value);
-            dispatch({
-              type: "add_answer",
-              payload: {
-                questionNumber: question.getQuestionNumber(),
-                answer: value
-              }
-            })
-          }}
-          defaultValue={selectedValue || defaultAnswer}
-          value={selectedValue}
-        >
-        {Object.entries(question.getOptions()).map((option) => (
-          <Radio key={option[0]} value={option[0]} aria-label={`${option} for question ${question.getQuestionNumber()}`}>{option[1]}</Radio>
-        ))}
-      </RadioGroup>
-      </RadioGroupWrapper> */}
     </QuestionWrapper>
   );
 };

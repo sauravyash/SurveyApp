@@ -11,7 +11,7 @@ const hourMinsBounds = {
     minutes: {
         min: 0,
         max: 59,
-        defaultValue: 0,
+        defaultValue: 1,
         step: 1
     }
 };
@@ -27,7 +27,7 @@ export const PhysicalActivityQuestions = [
         "How much time did you usually spend doing vigorous physical activities on one of those days?",
         ["hours / minutes"], true, hourMinsBounds, true,
         [{
-            question: 30,
+            question: 56,
             answer: 0,
             modifier: "not"
         }], true),
@@ -37,7 +37,7 @@ export const PhysicalActivityQuestions = [
         ["hours / minutes"], true, hourMinsBounds, true,
         [
             {
-                question: 32,
+                question: 58,
                 answer: 0,
                 modifier: "not"
             },
@@ -48,7 +48,7 @@ export const PhysicalActivityQuestions = [
         ["hours / minutes"], true, hourMinsBounds, true, 
         [
             {
-                question: 34,
+                question: 60,
                 answer: 0,
                 modifier: "not"
             }

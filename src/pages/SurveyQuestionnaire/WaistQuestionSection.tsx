@@ -58,16 +58,19 @@ const WaistQuestionSection = (props: {
 
   return (
     <>
-      <p>Gender: {gender}</p>
-      {
-        conditions.map((condition) => {
-          return (
-            <div key={condition.question}>
-              <p>{AllQuestions.find(q => q.getQuestionNumber() === condition.question)?.getQuestion()} {condition.answer}</p>
-            </div>
-          )
-        })
-      }
+      <div style={{display: "none"}}>
+        <p>Gender: {gender}</p>
+        {
+          conditions.map((condition) => {
+            return (
+              <div key={condition.question}>
+                <p>{AllQuestions.find(q => q.getQuestionNumber() === condition.question)?.getQuestion()} {condition.answer}</p>
+              </div>
+            )
+          })
+        }
+      </div>
+      
       <MultipleChoiceQuestionSection
         question={
           new MultipleChoiceQuestion(

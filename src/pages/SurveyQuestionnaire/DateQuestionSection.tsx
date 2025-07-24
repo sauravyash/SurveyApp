@@ -26,7 +26,7 @@ const DateQuestionSection = ({ question }: {
     }
   }, [question]);
 
-  const setDate = (value: CalendarDate) => {
+  const setDate = (value: CalendarDate | null) => {
     if (value) {
       setSelectedDate(value);
       if (value.compare(minDate) > 0 && value.compare(maxDate) <= 0) {

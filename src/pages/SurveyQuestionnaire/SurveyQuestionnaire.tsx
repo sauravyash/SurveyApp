@@ -171,6 +171,11 @@ const SurveyQuestionnaire = () => {
         }
         setAnswerValidated(true);
       } else if (questionData) {
+        if (questionData instanceof Object) {
+          if (Object.values(questionData).length < 1) {
+            return setAnswerValidated(false);
+          }
+        }
         setAnswerValidated(true);
       } else {
         setAnswerValidated(false);
@@ -317,6 +322,7 @@ const SurveyQuestionnaire = () => {
       question = (
         <NumberQuestionSection2
           question={currentQuestion as NumberQuestionV2}
+          key={currentQuestion.getQuestionNumber()}
         />
       )
       break;
@@ -351,6 +357,11 @@ const SurveyQuestionnaire = () => {
       break;
   }
 
+  const likertTitlePart = currentQuestion.getType() === "likert-scale" ? ` - ${
+    (currentQuestion as LikertScaleQuestion).getQuestionList().length
+    + currentQuestion.getQuestionNumber() - 1 
+  }` : null;
+
   return (
     <Provider>
       <SurveyPage style={{
@@ -369,7 +380,7 @@ const SurveyQuestionnaire = () => {
             currentQuestion.getType() === "section-intro" ? (
               <SurveyH1>{sectiontitle}</SurveyH1>
             ) : (
-              <SurveyH1>{sectiontitle}: Question {currentQuestion.getQuestionNumber()}</SurveyH1>
+              <SurveyH1>{sectiontitle}: Question {currentQuestion.getQuestionNumber()}{likertTitlePart}</SurveyH1>
             )
           }
           <AnswerColWrapper>

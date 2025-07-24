@@ -76,6 +76,7 @@ const reducer = (state: AnswerData, action: any) => {
       if (action.payload.answer === null) {
         console.error(`Adding Answer ${action.payload.questionNumber} is null`);
       }
+      
       state = {
         ...state,
         data: {

@@ -97,18 +97,31 @@ const MCPicker = (props: MCPickerProps) => {
   }, [selectedKey, otherText]);
 
 
+  const longestOption = question.getOptions()
+    .reduce((pV: string, cV: string) => {
+    return pV.length < cV.length ? cV : pV;
+  }, "");
+
+  const width = longestOption.length > 50 ? 500 : undefined;
+
+  const items = question.getOptions().map(answer => ({
+    id: `q${question.getQuestionNumber()}:${answer}`,
+    name: answer
+  }));
+  
+
   return (
     <>
       <Picker
-        items={question.getOptions().map((answer, index) => ({ answer, index }))}
-        onSelectionChange={setSelectedKey}
+        width={width}
+        items={items}
+        onSelectionChange={k => setSelectedKey(k as string)}
         selectedKey={selectedKey}
+        autoFocus={true}
         aria-label={"Question " + question.getQuestion() + " Options"}
       >
         {
-          (item) => <Item key={`${question.getQuestionNumber()}: ${item.answer}`}>
-            {item.answer}
-          </Item>
+          (item) => <Item key={item.id}>{item.name}</Item>
         }
       </Picker>
       {
@@ -243,14 +256,19 @@ const MCSelector = (props: MCSelectorProps) => {
   if (selected === "all") { return; }
 
   return (
-    <>
+    <div
+      style={{
+        margin: "1rem 2rem"
+      }}
+    >
       <ListView
         minWidth="size-6000"
+        right={1}
         density={question.getOptions().length > 4 ? "compact" : "spacious"}
         overflowMode="wrap"
-        aria-label={question.getQuestion() + " options"}
+        aria-label={`Question ${question.getQuestionNumber()} Options`}
         selectionMode="single"
-        selectionStyle="checkbox"
+        selectionStyle="highlight"
         items={question.getOptions().map((answer, index) => ({ answer, index }))}
         selectedKeys={selected}
         onSelectionChange={(keys: Selection) => setSelected(keys)}
@@ -270,7 +288,7 @@ const MCSelector = (props: MCSelectorProps) => {
           />
         ) : null
       }
-    </>
+    </div>
   )
 }
 

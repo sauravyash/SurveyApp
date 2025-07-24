@@ -11,17 +11,17 @@ import {
   categorizeHearingLoss,
   calculateExercise,
   categorizeSmoking,
-  categorizeAlcohol,
   calculateFruitVeg,
   calculateFishIntake,
   categoryMapper
 } from '../processSurveyData';
 import { categoriseQ6 } from "./categoriseQ6";
+import { categorizeAlcoholGP } from "./processGPData";
 
 export const mapGPDataInputs = (data: Record<string, any>) => {
   const q6Result = categoriseQ6(data["6"]);
   // console.log("data", q6Result);
-   const gender = categorizeGender(data["2"]);
+  const gender = categorizeGender(data["2"]);
   const inputs: Inputs = {
     // From new Q1 (Age)
     age_cat: categorizeAge(data["1"]),
@@ -36,14 +36,14 @@ export const mapGPDataInputs = (data: Record<string, any>) => {
     bmi: calculateBMI(data["5"], data["4"]),
 
     // force categorization to only use high cholesterol if it's true
-    cholesterol: categorizeCholesterol({"mmol/L": 3}, q6Result.highCholesterol? "yes" : "no"),
+    cholesterol: categorizeCholesterol({ "mmol/L": 3 }, q6Result.highCholesterol ? "yes" : "no"),
     // Low-HDL and high-LDL, updated to use new Q2 for gender & Q7/8 for HDL/LDL
     low_hdl: categorizeLDL(data["8"], data["7"], gender),
     high_ldl: categorizeHDL(data["7"], data["8"], gender),
 
-    diabetes: q6Result.diabetes? "yes" : "no",
+    diabetes: q6Result.diabetes ? "yes" : "no",
     hbp: q6Result.hbp ? "yes" : "no",
-    tbi: q6Result.tbi ? "yes" : "no",      // head injury
+    tbi: q6Result.tbi ? "yes" : "no", 
     stroke: q6Result.stroke ? "yes" : "no",
     afib: q6Result.afib ? "yes" : "no",
     heartattack: q6Result.heartattack ? "yes" : "no",
@@ -112,7 +112,7 @@ export const mapGPDataInputs = (data: Record<string, any>) => {
     fruitveg: calculateFruitVeg(data["53"], data["54"], data["56"]),
 
     // ---- Alcohol & Smoking ----
-    alcohol: categorizeAlcohol(data["57"], data["58"]),
+    alcohol: categorizeAlcoholGP(data["57"], data["58"]),
     smoking: categorizeSmoking(data["59"])
   };
 

@@ -12,11 +12,11 @@
     "preview": "vite preview",
     "deploy:public:dev": "VITE_SURVEY_TYPE=public yarn build --mode staging && VITE_SURVEY_TYPE=public serverless deploy --stage dev",
     "deploy:gp:dev": "VITE_SURVEY_TYPE=gp yarn build --mode staging && VITE_SURVEY_TYPE=gp serverless deploy --stage dev",
-    "deploy:prod": "yarn build --mode prod && serverless deploy --stage prod",
+    "deploy:prod": "yrn build --mode prod && srverless deploy --stage prod",
     "deploy:dev": "yarn deploy:public:dev && yarn deploy:gp:dev"
   },
   "dependencies": {
-    "@adobe/react-spectrum": "^3.35.1",
+    "@adobe/react-spectrum": "^3.42.2",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^6.1.7",

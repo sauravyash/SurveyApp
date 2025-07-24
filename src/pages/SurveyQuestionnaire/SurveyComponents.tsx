@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { ContextOptions } from "../../resources/questions/QuestionTypes/NumberQuestion";
+import Markdown from "react-markdown";
 
 const SurveyH2 = styled.h2`
   font-size: 2em;
@@ -7,7 +9,7 @@ const SurveyH2 = styled.h2`
   color: #000;
 `;
 
-const ContextSection = (props: any) => {
+const ContextSection = (props: { options?: ContextOptions, children: any}) => {
   if (props.children === undefined || props.children.length === 0) {
     return null;
   }
@@ -24,7 +26,9 @@ const ContextSection = (props: any) => {
     )
   }
   return (
-    <span className="is-size-5 my-4">{props.children}</span>
+    <span className="is-size-5 my-4 content" style={{
+      color: props.options?.textColour || "#000",
+    }}><Markdown>{props.children}</Markdown></span>
   )
 }
 
