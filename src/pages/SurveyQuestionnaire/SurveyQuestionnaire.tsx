@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { useAnswerData } from "../../reducers/AnswerDataProvider";
 import { useNavigate } from "react-router-dom";
 import MultipleChoiceQuestionSection from "./MultipleChoiceQuestion";
+import MultipleSelectQuestionSection from "./MultipleSelectQuestion";
 import WaistQuestionSection from "./WaistQuestionSection";
 import NumberQuestionSection from "./NumberQuestionSection";
 import LikertScaleSection from "./LikertScaleSection";
@@ -15,7 +16,7 @@ import Markdown from "react-markdown";
 import RestoreProgressModal from "../../components/RestoreProgressModal";
 import imageListWebP from "../../resources/stockImageList";
 import TextQuestionSection from "./TextQuestionSection";
-import { LikertScaleQuestion, MultipleChoiceQuestion, TextQuestion, NumberQuestion, DateQuestion, WaistMeasurementQuestion } from "../../resources/questions/QuestionTypes";
+import { LikertScaleQuestion, MultipleChoiceQuestion, TextQuestion, NumberQuestion, DateQuestion, WaistMeasurementQuestion, MultipleSelectQuestion, BaseQuestionObject } from "../../resources/questions/QuestionTypes";
 import { NumberQuestionV2 } from "../../resources/questions/QuestionTypes/NumberQuestion";
 import NumberQuestionSection2 from "./NumberQuestionSection2";
 
@@ -30,6 +31,7 @@ const SurveyPage = styled.section`
   width: 100vw;
   background: #fff;
   position: relative;
+  paddiing: 2rem;
 `;
 
 const SurveyWrapper = styled.div`
@@ -37,7 +39,6 @@ const SurveyWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 0;
   text-align: center;
   position: relative;
   background: #fff;
@@ -53,7 +54,7 @@ const SurveyWrapper = styled.div`
 `;
 
 const SurveyH1 = styled.h1`
-  font-size: 3em;
+  font-size: 2.5em;
   text-align: center;
   margin: 1rem 0 0;
   color: #000;
@@ -100,7 +101,7 @@ const SurveyQuestionnaire = () => {
   const [bgImage, setBgImage] = useState(imageListWebP[0]);
   const { state, dispatch } = useAnswerData();
   const navigate = useNavigate();
-  
+
 
   const sectiontitle = questionSections[currentSection]?.title;
 
@@ -303,6 +304,16 @@ const SurveyQuestionnaire = () => {
         />
       )
       break;
+    case "multiple-select":
+      question = (
+        <MultipleSelectQuestionSection
+          question={currentQuestion as MultipleSelectQuestion}
+          action={(): void => {
+            // handleNextQuestion();
+          }}
+        />
+      )
+      break;
 
     case "text":
       question = (
@@ -357,10 +368,21 @@ const SurveyQuestionnaire = () => {
       break;
   }
 
-  const likertTitlePart = currentQuestion.getType() === "likert-scale" ? ` - ${
-    (currentQuestion as LikertScaleQuestion).getQuestionList().length
-    + currentQuestion.getQuestionNumber() - 1 
-  }` : null;
+  const likertTitlePart = currentQuestion.getType() === "likert-scale" ? ` - ${(currentQuestion as LikertScaleQuestion).getQuestionList().length
+    + currentQuestion.getQuestionNumber() - 1
+    }` : null;
+
+
+  const questionCount = AllQuestions.reduce((previousValue: number, currentValue: BaseQuestionObject) => {
+    if (currentValue.getType() == "likert-scale") {
+      let qLength = (currentValue as LikertScaleQuestion).getQuestionList().length
+      return previousValue += qLength;
+    }
+    if (currentValue.getType() == "section-intro") {
+      return previousValue
+    }
+    return previousValue += 1;
+  }, 0)
 
   return (
     <Provider>
@@ -368,13 +390,13 @@ const SurveyQuestionnaire = () => {
         fontSize: state.fontSize,
       }}>
         <BackgroundImage src={bgImage} />
-        <SurveyWrapper>
+        <SurveyWrapper className="">
           <ProgressBar
             label="Progress"
             labelPosition="side"
             marginTop={"1rem"}
             marginBottom={"1rem"}
-            value={100 * (currentQuestion.getQuestionNumber() / (AllQuestions.length + 3))}
+            value={100 * (Math.floor(currentQuestion.getQuestionNumber()) / (questionCount + 1))}
           />
           {
             currentQuestion.getType() === "section-intro" ? (
@@ -383,7 +405,7 @@ const SurveyQuestionnaire = () => {
               <SurveyH1>{sectiontitle}: Question {currentQuestion.getQuestionNumber()}{likertTitlePart}</SurveyH1>
             )
           }
-          <AnswerColWrapper>
+          <AnswerColWrapper className="pb-4">
             {question}
           </AnswerColWrapper>
           <ButtonGroup>
@@ -396,6 +418,7 @@ const SurveyQuestionnaire = () => {
             <AdobeButton
               variant="accent"
               onPress={handleNextQuestion}
+              // onKeyDown={e => e.key === 'Enter' && isAnswerValidated ? handleNextQuestion : ''}
               isDisabled={!isAnswerValidated}
             >
               Next Question

@@ -13,17 +13,20 @@ export interface AnswerData {
   current_question: number;
 }
 
-export const cleanAnswerData = (data: any) : any => {
+export const cleanAnswerData = (data: any): any => {
   for (const key in data) {
     if (!data[key]) {
       delete data[key];
     }
     if (data[key] instanceof Set) {
       // console.log('converting set to array', data[key]);
-      if (!!(data[key] as any)?.currentKey) {
-        data[key] = (data[key] as any).currentKey;
-      } else if (data[key].size > 1) {
+      // if (data[key]) {
+
+      // } else 
+      if (data[key].size > 1) {
         data[key] = Array.from(data[key]);
+      } else if (!!(data[key] as any)?.currentKey) {
+        data[key] = (data[key] as any).currentKey;
       } else {
         data[key] = (data[key] as any).values().next().value;
       }
@@ -42,7 +45,8 @@ const storeInSessionStorage = (state: AnswerData) => {
 
   const cleanedState = { ...state, data };
   // console.log('storing in session storage', cleanedState, state);
-  
+
+
   sessionStorage.setItem('answerData', JSON.stringify(cleanedState));
 }
 
@@ -61,7 +65,7 @@ const reducer = (state: AnswerData, action: any) => {
     case "set_data":
       state = { ...action.payload };
       console.log('setting data', state);
-      
+
       break;
 
     case "set_local_data":
@@ -76,7 +80,7 @@ const reducer = (state: AnswerData, action: any) => {
       if (action.payload.answer === null) {
         console.error(`Adding Answer ${action.payload.questionNumber} is null`);
       }
-      
+
       state = {
         ...state,
         data: {
@@ -84,6 +88,9 @@ const reducer = (state: AnswerData, action: any) => {
           [action.payload.questionNumber]: action.payload.answer
         }
       };
+
+      // console.log("action.payload.answer", action.payload.answer);
+
       break;
 
     case 'remove_answer':
@@ -132,8 +139,8 @@ const reducer = (state: AnswerData, action: any) => {
 // Create the context
 const AnswerDataContext = createContext<any>(initialState);
 const useAnswerData: () => {
-  state: AnswerData, 
-  dispatch: (data: {type: string, payload?: any}) => void
+  state: AnswerData,
+  dispatch: (data: { type: string, payload?: any }) => void
 } = () => React.useContext(AnswerDataContext);
 
 interface AnswerDataProviderProps {

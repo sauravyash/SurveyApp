@@ -1,4 +1,5 @@
 import { BaseQuestionObject } from "./BaseQuestionType";
+import { ContextOptions } from "./ContextOptions";
 
 export class NumberQuestion extends BaseQuestionObject {
     private minValue: number;
@@ -81,19 +82,14 @@ type Bounds = {
     }
 }
 
-export type ContextOptions = {
-    location?: "above" | "below",
-    textColour?: string,
-    text?: string
-}
-
 export class NumberQuestionV2 extends BaseQuestionObject {
     private bounds: Bounds;
     private units: string[];
     private scientific_unit: boolean;
     private showNoneCheckbox: boolean | string = false;
-    private contextLocation: "above" | "below" = "above";
+    private contextLocation: "above" | "below" | "below-question" = "above";
     private contextTextColour: string = "#000";
+    private contextTextSize: string = "1.5em";
 
     constructor(
         id: number,
@@ -154,28 +150,28 @@ export class NumberQuestionV2 extends BaseQuestionObject {
             ...super.getAttributes(),
             options: this.units,
             scientific_unit: this.scientific_unit,
-            contextLocation: this.contextLocation,
-            contextTextColour: this.contextTextColour
+            contextOptions: this.getContextOptions()
         };
     }
 
-    public getContextOptions() : ContextOptions {
+    public getContextOptions(): ContextOptions {
         return {
             location: this.contextLocation,
-            textColour: this.contextTextColour
+            textColour: this.contextTextColour,
+            textSize: this.contextTextSize
         }
     }
 
     public getUnits() {
         return this.units;
     }
-    
+
 
     public setDisplayNoneCheckbox(value: boolean | string) {
         this.showNoneCheckbox = value;
     }
 
-    public setContextLocation(location: "above" | "below") {
+    public setContextLocation(location: "above" | "below" | "below-question") {
         this.contextLocation = location
     }
 
@@ -188,8 +184,12 @@ export class NumberQuestionV2 extends BaseQuestionObject {
             this.contextTextColour = options.textColour;
         }
 
+        if (options.textSize) {
+            this.contextTextSize = options.textSize;
+        }
+
         if (options.text) {
-            super.setContext(options.text); 
+            super.setContext(options.text);
         }
     }
 

@@ -22,6 +22,10 @@ export const parseAnswerData: (arr: [string, any]) => string = (arr) => {
     return val;
   }
 
+  if (Array.isArray(arr[1])) {
+    return arr[1].map(val => val.split(": ")[1]).join("\n")
+  }
+
   if (typeof arr[1] === "object") {
     if (arr[1].currentKey) {
       let val = arr[1].currentKey;

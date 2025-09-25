@@ -206,7 +206,7 @@ const NumberPicker: React.FC<NumberPickerProps> = ({
             padding: "0 0.5em",
             fontSize: "0.95em",
             color: colourStyles.default.color,
-            zIndex: 100,
+            zIndex: 35,
           }}
         >
           {label}

@@ -17,6 +17,7 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   --bulma-skeleton-background: white;
   --bulma-body-background-color: white;
+  overflow-y: auto;
 }
 
 #root {

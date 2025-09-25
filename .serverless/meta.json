@@ -1,6 +1,6 @@
 {
   "/Users/yashagasti/Documents/Arludo/repos/LEAD_survey_app/serverless.yml": {
-    "versionFramework": "4.17.1",
+    "versionFramework": "4.18.1",
     "servicePath": "/Users/yashagasti/Documents/Arludo/repos/LEAD_survey_app/serverless.yml",
     "serviceConfigFileName": "serverless.yml",
     "service": {
@@ -12,7 +12,7 @@
         "stage": "dev",
         "environment": {
           "S3_BUCKET_NAME": "lead-survey-frontend-gp-dev",
-          "SURVEY_BACKEND_URL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev"
+          "VITE_SURVEY_BACKEND_URL": "https://agl454ht0d.execute-api.ap-southeast-2.amazonaws.com/dev"
         },
         "versionFunctions": true,
         "compiledCloudFormationTemplate": {
@@ -115,7 +115,7 @@
       },
       "stages": {
         "default": {
-          "SURVEY_BACKEND_URL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev"
+          "VITE_SURVEY_BACKEND_URL": "https://agl454ht0d.execute-api.ap-southeast-2.amazonaws.com/dev"
         }
       },
       "plugins": [
@@ -126,7 +126,11 @@
         "surveyType": "gp",
         "s3BucketName": "lead-survey-frontend-gp-dev",
         "distributionFolder": "dist",
-        "serverURL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev",
+        "serverURL": {
+          "public": "hkpuibjldd.execute-api.ap-southeast-2.amazonaws.com/dev",
+          "gp": "agl454ht0d.execute-api.ap-southeast-2.amazonaws.com/dev"
+        },
+        "selectedServerURL": "https://agl454ht0d.execute-api.ap-southeast-2.amazonaws.com/dev",
         "cloudFrontDistributionId": {
           "public": {
             "dev": "ER6PYB0KUZTQN",
@@ -151,6 +155,14 @@
             ]
           }
         ]
+      },
+      "build": {
+        "esbuild": {
+          "define": {
+            "process.env.SURVEY_BACKEND_URL": "\"agl454ht0d.execute-api.ap-southeast-2.amazonaws.com/dev\"",
+            "process.env.SURVEY_TYPE": "\"gp\""
+          }
+        }
       },
       "resources": {
         "Resources": {
@@ -248,7 +260,7 @@
       "stage": "dev",
       "environment": {
         "S3_BUCKET_NAME": "lead-survey-frontend-gp-dev",
-        "SURVEY_BACKEND_URL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev"
+        "VITE_SURVEY_BACKEND_URL": "https://agl454ht0d.execute-api.ap-southeast-2.amazonaws.com/dev"
       },
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
@@ -358,7 +370,7 @@
       "serviceProvider": null,
       "instanceParameters": null
     },
-    "serviceRawFile": "service: lead-survey-frontend-${env:VITE_SURVEY_TYPE}\n\nprovider:\n  name: aws\n  runtime: nodejs20.x\n  region: ap-southeast-2\n  stage: ${opt:stage, 'dev'}\n  environment:\n    S3_BUCKET_NAME: ${self:custom.s3BucketName}\n    SURVEY_BACKEND_URL: ${self:custom.serverURL}\n\nstages:\n  default:\n    SURVEY_BACKEND_URL: ${self:custom.serverURL}\n\nplugins:\n  - serverless-s3-sync\n  - serverless-cloudfront-invalidate\n\ncustom:\n  surveyType: ${env:VITE_SURVEY_TYPE}\n  s3BucketName: ${self:service}-${self:provider.stage}\n  distributionFolder: dist\n  serverURL: rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/${self:provider.stage}\n  cloudFrontDistributionId:\n    public:\n      dev: ER6PYB0KUZTQN\n      prod: YOUR_PROD_DISTRIBUTION_ID_SET_ME\n    gp:\n      dev: E1DZEVASJ2KRI1\n      prod: YOUR_PROD_DISTRIBUTION_ID_SET_ME\n  s3Sync:\n    - bucketName: ${self:custom.s3BucketName}\n      localDir: ${self:custom.distributionFolder}\n  cloudfrontInvalidate:\n    - distributionId: ${self:custom.cloudFrontDistributionId.${self:custom.surveyType}.${self:provider.stage}}\n      items:\n        - \"/*\"\n\n\nresources:\n  Resources:\n    WebsiteBucket:\n      Type: AWS::S3::Bucket\n      Properties:\n        BucketName: ${self:custom.s3BucketName}\n        WebsiteConfiguration:\n          IndexDocument: index.html\n          ErrorDocument: index.html\n        PublicAccessBlockConfiguration:\n          BlockPublicAcls: false\n          BlockPublicPolicy: false\n          IgnorePublicAcls: false\n          RestrictPublicBuckets: false\n\n    WebsiteBucketPolicy:\n      Type: AWS::S3::BucketPolicy\n      Properties:\n        Bucket: !Ref WebsiteBucket\n        PolicyDocument:\n          Version: \"2012-10-17\"\n          Statement:\n            - Effect: Allow\n              Principal: \"*\"\n              Action:\n                - s3:GetObject\n              Resource: arn:aws:s3:::${self:custom.s3BucketName}/*\n\n    CloudFrontDistribution:\n      Type: AWS::CloudFront::Distribution\n      Properties:\n        DistributionConfig:\n          Origins:\n            - DomainName: ${self:custom.s3BucketName}.s3.${self:provider.region}.amazonaws.com\n              Id: S3Origin\n              S3OriginConfig: {}\n          Enabled: true\n          DefaultRootObject: index.html\n          DefaultCacheBehavior:\n            Compress: true\n            AllowedMethods:\n              - GET\n              - HEAD\n            TargetOriginId: S3Origin\n            ForwardedValues:\n              QueryString: false\n              Cookies:\n                Forward: none\n            ViewerProtocolPolicy: redirect-to-https\n          ViewerCertificate:\n            CloudFrontDefaultCertificate: true\n          CustomErrorResponses:\n            - ErrorCode: 403\n              ResponseCode: 200\n              ResponsePagePath: /index.html\n            - ErrorCode: 404\n              ResponseCode: 200\n              ResponsePagePath: /index.html\n",
+    "serviceRawFile": "service: lead-survey-frontend-${env:VITE_SURVEY_TYPE}\n\nprovider:\n  name: aws\n  runtime: nodejs20.x\n  region: ap-southeast-2\n  stage: ${opt:stage, 'dev'}\n  environment:\n    S3_BUCKET_NAME: ${self:custom.s3BucketName}\n    VITE_SURVEY_BACKEND_URL: ${self:custom.selectedServerURL}\n\nstages:\n  default:\n    VITE_SURVEY_BACKEND_URL: ${self:custom.selectedServerURL}\n\nplugins:\n  - serverless-s3-sync\n  - serverless-cloudfront-invalidate\n\ncustom:\n  surveyType: ${env:VITE_SURVEY_TYPE}\n  s3BucketName: ${self:service}-${self:provider.stage}\n  distributionFolder: dist\n  serverURL:\n    public: hkpuibjldd.execute-api.ap-southeast-2.amazonaws.com/${self:provider.stage}\n    gp: agl454ht0d.execute-api.ap-southeast-2.amazonaws.com/${self:provider.stage}\n  selectedServerURL: https://${self:custom.serverURL.${self:custom.surveyType}}\n  cloudFrontDistributionId:\n    public:\n      dev: ER6PYB0KUZTQN\n      prod: YOUR_PROD_DISTRIBUTION_ID_SET_ME\n    gp:\n      dev: E1DZEVASJ2KRI1\n      prod: YOUR_PROD_DISTRIBUTION_ID_SET_ME\n  s3Sync:\n    - bucketName: ${self:custom.s3BucketName}\n      localDir: ${self:custom.distributionFolder}\n  cloudfrontInvalidate:\n    - distributionId: ${self:custom.cloudFrontDistributionId.${self:custom.surveyType}.${self:provider.stage}}\n      items:\n        - \"/*\"\n\nbuild:\n  esbuild:\n    define:\n      \"process.env.SURVEY_BACKEND_URL\": '\"${self:custom.serverURL.${self:custom.surveyType}}\"'\n      \"process.env.SURVEY_TYPE\": '\"${self:custom.surveyType}\"'\n\nresources:\n  Resources:\n    WebsiteBucket:\n      Type: AWS::S3::Bucket\n      Properties:\n        BucketName: ${self:custom.s3BucketName}\n        WebsiteConfiguration:\n          IndexDocument: index.html\n          ErrorDocument: index.html\n        PublicAccessBlockConfiguration:\n          BlockPublicAcls: false\n          BlockPublicPolicy: false\n          IgnorePublicAcls: false\n          RestrictPublicBuckets: false\n\n    WebsiteBucketPolicy:\n      Type: AWS::S3::BucketPolicy\n      Properties:\n        Bucket: !Ref WebsiteBucket\n        PolicyDocument:\n          Version: \"2012-10-17\"\n          Statement:\n            - Effect: Allow\n              Principal: \"*\"\n              Action:\n                - s3:GetObject\n              Resource: arn:aws:s3:::${self:custom.s3BucketName}/*\n\n    CloudFrontDistribution:\n      Type: AWS::CloudFront::Distribution\n      Properties:\n        DistributionConfig:\n          Origins:\n            - DomainName: ${self:custom.s3BucketName}.s3.${self:provider.region}.amazonaws.com\n              Id: S3Origin\n              S3OriginConfig: {}\n          Enabled: true\n          DefaultRootObject: index.html\n          DefaultCacheBehavior:\n            Compress: true\n            AllowedMethods:\n              - GET\n              - HEAD\n            TargetOriginId: S3Origin\n            ForwardedValues:\n              QueryString: false\n              Cookies:\n                Forward: none\n            ViewerProtocolPolicy: redirect-to-https\n          ViewerCertificate:\n            CloudFrontDefaultCertificate: true\n          CustomErrorResponses:\n            - ErrorCode: 403\n              ResponseCode: 200\n              ResponsePagePath: /index.html\n            - ErrorCode: 404\n              ResponseCode: 200\n              ResponsePagePath: /index.html\n",
     "command": [
       "deploy"
     ],

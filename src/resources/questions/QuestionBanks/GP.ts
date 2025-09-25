@@ -1,4 +1,5 @@
 import { PersonalInformationQuestions, HealthQuestions, SleepQuestions, FeelingsQuestions, PhysicalActivityQuestions, LeisureActivityQuestions, CompanionshipQuestions, FoodAndHabitsQuestions } from "../QuestionList/GP";
+import { AlcoholAndSmokingQuestions } from "../QuestionList/GP/AlcoholAndSmokingQuestions";
 import { BaseQuestionObject } from "../QuestionTypes";
 
 export const GPQuestionSections: {
@@ -37,6 +38,11 @@ export const GPQuestionSections: {
       title: "Food and Habits Questions",
       questions: FoodAndHabitsQuestions
     },
+    {
+      title: "Alcohol And Smoking Questions",
+      questions: AlcoholAndSmokingQuestions
+    },
+    
   ]
 
 export const AllQuestions: BaseQuestionObject[] = [
@@ -48,6 +54,7 @@ export const AllQuestions: BaseQuestionObject[] = [
   ...LeisureActivityQuestions,
   ...CompanionshipQuestions,
   ...FoodAndHabitsQuestions,
+  ...AlcoholAndSmokingQuestions
 ]
 
 export default GPQuestionSections;

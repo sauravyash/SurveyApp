@@ -7,11 +7,11 @@ provider:
   stage: ${opt:stage, 'dev'}
   environment:
     S3_BUCKET_NAME: ${self:custom.s3BucketName}
-    SURVEY_BACKEND_URL: ${self:custom.serverURL}
+    VITE_SURVEY_BACKEND_URL: ${self:custom.selectedServerURL}
 
 stages:
   default:
-    SURVEY_BACKEND_URL: ${self:custom.serverURL}
+    VITE_SURVEY_BACKEND_URL: ${self:custom.selectedServerURL}
 
 plugins:
   - serverless-s3-sync
@@ -21,7 +21,10 @@ custom:
   surveyType: ${env:VITE_SURVEY_TYPE}
   s3BucketName: ${self:service}-${self:provider.stage}
   distributionFolder: dist
-  serverURL: rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/${self:provider.stage}
+  serverURL:
+    public: hkpuibjldd.execute-api.ap-southeast-2.amazonaws.com/${self:provider.stage}
+    gp: agl454ht0d.execute-api.ap-southeast-2.amazonaws.com/${self:provider.stage}
+  selectedServerURL: https://${self:custom.serverURL.${self:custom.surveyType}}
   cloudFrontDistributionId:
     public:
       dev: ER6PYB0KUZTQN
@@ -37,6 +40,11 @@ custom:
       items:
         - "/*"
 
+build:
+  esbuild:
+    define:
+      "process.env.SURVEY_BACKEND_URL": '"${self:custom.serverURL.${self:custom.surveyType}}"'
+      "process.env.SURVEY_TYPE": '"${self:custom.surveyType}"'
 
 resources:
   Resources:

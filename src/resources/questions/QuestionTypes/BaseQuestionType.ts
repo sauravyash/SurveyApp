@@ -46,6 +46,10 @@ export class BaseQuestionObject {
       return this.conditions;
   }
 
+  public getContext() {
+    return this.context;
+  }
+
   protected setContext(context: string) {
     this.context = context;
   }

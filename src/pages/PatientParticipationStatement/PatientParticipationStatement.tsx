@@ -21,6 +21,7 @@ import { useEffect, useState } from 'react';
 import { useAnswerData } from '../../reducers/AnswerDataProvider';
 
 import "./style.scss";
+import { sendConsentData } from '../../actions/sendConsentData';
 
 const agree_statements: {
   icon: React.FC<any>,
@@ -84,6 +85,7 @@ const PatientParticipationStatement: React.FC<Props> = () => {
   const lastPage = 2;
   const handleNextPage = () => {
     if (page === lastPage) {
+      if (data.emailConsentForm) sendConsentData(data.email);
       navigate('/survey');
       return;
     }

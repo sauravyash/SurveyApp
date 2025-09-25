@@ -41,7 +41,11 @@ const SummaryTable = (props: Props) => {
         {(item: any) => {
           return (
             <Row key={JSON.stringify(item)}>
-              {columnKey => <Cell>{item[columnKey]}</Cell>}
+              {columnKey => <Cell><p style={{
+                whiteSpace: "pre-wrap",
+                overflow: "auto",
+                maxHeight: "40px"
+              }}>{item[columnKey]}</p></Cell>}
             </Row>
           )
         }}

@@ -8,6 +8,7 @@ import { GPScoring } from './gp/index.ts';
 import { mapGPDataInputs  } from './gp/mapDataInputs.ts';
 
 export function processSurveyResponse(data: Record<string, any>): { scores: Scores, inputs: Inputs } {
+  
   const inputs: Inputs = IS_SURVEY_TYPE_GP ? mapGPDataInputs(data) : mapPublicDataInputs(data);
 
   const res: OutputResult = {

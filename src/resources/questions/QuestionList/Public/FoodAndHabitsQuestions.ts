@@ -148,21 +148,12 @@ export const FoodAndHabitsQuestions = [
   new MultipleChoiceQuestion(104, "How much coffee do you drink each day?",
       ["I never drink coffee", "< 1 cup", "1 cup", "2 cups", "3 cups", "4 cups", "More than 4 cups per day"], true),
   new MultipleChoiceQuestion(105, "How many caffeinated tea (e.g., black tea, green tea) do you drink each day?",
-      ["I never drink tea", "< 1 cup", "1 cup", "2 cups", "3 cups", "4 cups", "More than 4 cups per day"], true),
-  new SectionIntroScreen(106.1,
-      `The next questions are about your alcohol consumption and smoking habits.`),
-  new MultipleChoiceQuestion(106, "How often do you have a drink containing alcohol?",
-      ["Never", "Monthly or less", "2-4 times a month", "2-3 times a week", "4 or more times a week"], true),
-  new MultipleChoiceQuestion(107, "How many standard drinks do you have on a typical day when you are drinking?",
-      ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "More than 20"], true, undefined, "link://images/drink-standards.png"),
-  new MultipleChoiceQuestion(108, "Do you, or have you ever, smoked cigarettes, cigars, pipes or any other tobacco products?",
-      ["Yes, currently", "Yes, not currently", "Never"], true),
+      ["I never drink tea", "< 1 cup", "1 cup", "2 cups", "3 cups", "4 cups", "More than 4 cups per day"], true)
 ];
 
 FoodAndHabitsQuestions.filter(q => 
-  (q.getQuestionNumber() >= 84 && q.getQuestionNumber() <= 87) || q.getQuestionNumber() === 103).forEach(q => 
+  (q.getQuestionNumber() >= 84 && q.getQuestionNumber() <= 87) 
+  || q.getQuestionNumber() === 103
+).forEach(q => 
     (q as NumberQuestionV2).setDisplayNoneCheckbox("Rarely/Never")
 );
-
-(FoodAndHabitsQuestions.find(q => q.getQuestionNumber() === 87) as NumberQuestionV2).setContextLocation("below");
-(FoodAndHabitsQuestions.find(q => q.getQuestionNumber() === 86) as NumberQuestionV2).setContextLocation("below");

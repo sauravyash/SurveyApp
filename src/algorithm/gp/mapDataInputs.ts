@@ -116,6 +116,8 @@ export const mapGPDataInputs = (data: Record<string, any>) => {
     smoking: categorizeSmoking(data["59"])
   };
 
+  
+
   if (categoryMapper("frequency", data["71"]) === 5) {
     inputs.other_freq = 5;
   }

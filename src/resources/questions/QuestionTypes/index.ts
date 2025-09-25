@@ -6,6 +6,7 @@ import { NumberQuestion } from './NumberQuestion';
 import { TextQuestion } from './TextQuestion';
 import { SectionIntroScreen } from './SectionIntro';
 import { WaistMeasurementQuestion } from './WeightMeasurementQuestion';
+import { MultipleSelectQuestion } from "./MultipleSelectQuestion"
 
 export {
   BaseQuestionObject,
@@ -16,4 +17,5 @@ export {
   TextQuestion,
   SectionIntroScreen,
   WaistMeasurementQuestion,
+  MultipleSelectQuestion
 }

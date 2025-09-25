@@ -20,7 +20,11 @@ const objectifySurveyData = (data: any) => {
   return Object.entries(data)
     .reduce((obj, item: [string, any]) => {
       try {
-        if (typeof item[1] === "string" && item[1].startsWith(item[0] + ": ")) {
+        
+        if (typeof item[1] === "string" && (
+          item[1].startsWith("q" + item[0] + ": ") ||
+          item[1].startsWith(item[0] + ": ")
+        )) {
           item[1] = item[1].split(item[0] + ": ")[1];
         }
         obj[item[0]] = item[1];
@@ -58,7 +62,7 @@ const SurveyTester: React.FC = () => {
       if (Object.entries(data).length < numQuestions) {
         throw new IncompleteError(`Question list is not complete. \nQuestions answered: ${Object.entries(data).length} \nQuestions Existing: ${Object.entries(questionList).length - 5}`);
       }
-
+      
       const calculationData = processSurveyResponse(data);
       setCalculatedData(calculationData);
     } catch (error) {

@@ -35,5 +35,6 @@ export const handleGenerateReport = async (props: Props) => {
       window.location.href = res.data.URL;
     }
   }
+  
   setLoadingPDF(false);
 }

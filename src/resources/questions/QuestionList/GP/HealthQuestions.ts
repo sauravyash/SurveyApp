@@ -1,4 +1,4 @@
-import { SectionIntroScreen, MultipleChoiceQuestion } from "../../QuestionTypes";
+import { SectionIntroScreen, MultipleChoiceQuestion, MultipleSelectQuestion } from "../../QuestionTypes";
 import { NumberQuestionV2 } from "../../QuestionTypes/NumberQuestion";
 
 const healthConditions = [
@@ -29,7 +29,7 @@ const relativeHealthConditions = [
 export const HealthQuestions = [
   new SectionIntroScreen(6.1,
     `The next few questions will be related to your health.`),
-  new MultipleChoiceQuestion(6,
+  new MultipleSelectQuestion(6,
     "Have you ever been told by a doctor or other health professional that you have one of the following?",
     healthConditions, true, undefined, undefined),
   new NumberQuestionV2(7, "What is your HDL cholesterol level?",
@@ -82,7 +82,7 @@ export const HealthQuestions = [
       "Don’t know"
     ],
   ),
-  new MultipleChoiceQuestion(12,
+  new MultipleSelectQuestion(12,
     "Have either of your parents, or any of your brothers or sisters been diagnosed with any of the following?",
     relativeHealthConditions, true, undefined, undefined),
 ];

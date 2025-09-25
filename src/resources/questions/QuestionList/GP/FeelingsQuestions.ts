@@ -10,7 +10,7 @@ const commonOptions = {
 export const FeelingsQuestions = [
   new SectionIntroScreen(20.1,
       `The next section asks you about your **feelings**. For each of the following statements, please say if you felt that way **during the past week.**`),
-  new LikertScaleQuestion(20, "Feeling", commonOptions, [
+  new LikertScaleQuestion(20, "", commonOptions, [
       "I was bothered by things that usually don't bother me.",
       "I had trouble keeping my mind on what I was doing.",
       "I felt depressed.",

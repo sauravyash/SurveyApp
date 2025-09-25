@@ -24,9 +24,8 @@ const sleepUnsatisfiedConditions = [{
 export const SleepQuestions = [
     new SectionIntroScreen(13.1,
         `The next group of questions ask about your sleep habits and any problems you may have with sleep.\n
-For each question, please select the option that best describes your answer.\n
-Please rate the current (i.e., last 2 weeks) severity of your insomnia problem(s).`),
-    new LikertScaleQuestion(13, "Difficulty falling asleep", sleepQuestionOptions, [
+For each question, please select the option that best describes your answer.`),
+    new LikertScaleQuestion(13, "Please rate the current (i.e., last 2 weeks) severity of your insomnia problem(s).", sleepQuestionOptions, [
         "Difficulty falling asleep",
         "Difficulty staying asleep",
         "Problems waking up too early"

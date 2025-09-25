@@ -1,4 +1,5 @@
 import { PersonalInformationQuestions, HealthQuestions, SleepQuestions, FeelingsQuestions, PhysicalActivityQuestions, LeisureActivityQuestions, CompanionshipQuestions, FoodAndHabitsQuestions, EnvironmentalExposuresQuestions } from "../QuestionList/Public";
+import { AlcoholAndSmokingQuestions } from "../QuestionList/Public/AlcoholAndSmokingQuestions";
 import { BaseQuestionObject } from "../QuestionTypes";
 
 export const PublicQuestionSections: {
@@ -38,6 +39,10 @@ export const PublicQuestionSections: {
       questions: FoodAndHabitsQuestions
     },
     {
+      title: "Alcohol and Smoking Questions",
+      questions: AlcoholAndSmokingQuestions
+    },
+    {
       title: "Environmental Exposures Questions",
       questions: EnvironmentalExposuresQuestions
     }
@@ -52,6 +57,7 @@ export const AllQuestions: BaseQuestionObject[] = [
   ...LeisureActivityQuestions,
   ...CompanionshipQuestions,
   ...FoodAndHabitsQuestions,
+  ...AlcoholAndSmokingQuestions,
   ...EnvironmentalExposuresQuestions
 ]
 

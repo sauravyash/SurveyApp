@@ -6,6 +6,10 @@ function stripQIfPresent(str: string) {
 }
 
 export function categorizeAlcoholGP(alco_f: string, alco_q: string): number {
+  if (!alco_f) {
+    
+  }
+
   const alco_freq = parseInt(stripQIfPresent(alco_f));
   const alco_quant = parseInt(stripQIfPresent(alco_q));
   
@@ -17,10 +21,10 @@ export function categorizeAlcoholGP(alco_f: string, alco_q: string): number {
 
   // 2) Turn the remaining strings into a numeric frequency
   const freq = alco_freq;
-  if (!freq) {
-    
-  }
+
   if (Number.isNaN(freq)) {
+    console.log(alco_f, freq);
+    
     throw new Error(`Invalid alcohol frequency: ${alco_f}`);
   }
 

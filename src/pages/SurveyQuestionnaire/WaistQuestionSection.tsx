@@ -21,9 +21,8 @@ const WaistQuestionSection = (props: {
   };
   const gender = genderText().split(" ")[1] === "Female" ? "female" : "male";
 
-
   const options: string[] = [];
-  const conditions: {question: number, answer: string}[] = [];
+  const conditions: { question: number, answer: string }[] = [];
 
   question.getOptions().forEach((optionSet) => {
     if (options.length > 0) {
@@ -39,26 +38,35 @@ const WaistQuestionSection = (props: {
       if (typeof currentAnswer === "string" && currentAnswer.includes(": ")) {
         currentAnswer = currentAnswer.split(": ")[1];
       }
-      if (currentAnswer instanceof Set 
-        && (currentAnswer as any).currentKey 
+      if (currentAnswer instanceof Set
+        && (currentAnswer as any).currentKey
         && (currentAnswer as any).currentKey.includes(": ")) {
         currentAnswer = (currentAnswer as any).currentKey.split(": ")[1];
       }
-      conditions.push({question: condition.question, answer: currentAnswer});
+      conditions.push({ question: condition.question, answer: currentAnswer });
       if (condition.modifier && condition.modifier === "not") {
         return (currentAnswer !== condition.answer)
       }
       return (currentAnswer === condition.answer)
-    })   
-    
+    })
+
     if (passedAllConditions) {
       options.push(...optionSet[gender])
     }
+    options.push("Don't Know");
   })
+
+
+
+  const mcq = new MultipleChoiceQuestion(
+    question.getQuestionNumber(),
+    question.getQuestion(),
+    options
+  )
 
   return (
     <>
-      <div style={{display: "none"}}>
+      <div style={{ display: "none" }}>
         <p>Gender: {gender}</p>
         {
           conditions.map((condition) => {
@@ -70,15 +78,9 @@ const WaistQuestionSection = (props: {
           })
         }
       </div>
-      
+
       <MultipleChoiceQuestionSection
-        question={
-          new MultipleChoiceQuestion(
-            question.getQuestionNumber(),
-            question.getQuestion(),
-            options
-          )
-        }
+        question={mcq}
         action={(): void => { }}
       />
     </>

@@ -11,7 +11,7 @@
       "stage": "dev",
       "environment": {
         "S3_BUCKET_NAME": "lead-survey-frontend-gp-dev",
-        "SURVEY_BACKEND_URL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev"
+        "VITE_SURVEY_BACKEND_URL": "https://agl454ht0d.execute-api.ap-southeast-2.amazonaws.com/dev"
       },
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
@@ -116,7 +116,11 @@
       "surveyType": "gp",
       "s3BucketName": "lead-survey-frontend-gp-dev",
       "distributionFolder": "dist",
-      "serverURL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev",
+      "serverURL": {
+        "public": "hkpuibjldd.execute-api.ap-southeast-2.amazonaws.com/dev",
+        "gp": "agl454ht0d.execute-api.ap-southeast-2.amazonaws.com/dev"
+      },
+      "selectedServerURL": "https://agl454ht0d.execute-api.ap-southeast-2.amazonaws.com/dev",
       "cloudFrontDistributionId": {
         "public": {
           "dev": "ER6PYB0KUZTQN",
@@ -245,7 +249,7 @@
       },
       "stages": {
         "default": {
-          "SURVEY_BACKEND_URL": "rkuy4e6k61.execute-api.ap-southeast-2.amazonaws.com/dev"
+          "VITE_SURVEY_BACKEND_URL": "https://agl454ht0d.execute-api.ap-southeast-2.amazonaws.com/dev"
         }
       },
       "plugins": {
@@ -254,16 +258,27 @@
       "custom": {
         "$ref": "$[\"service\"][\"custom\"]"
       },
+      "build": {
+        "esbuild": {
+          "define": {
+            "process.env.SURVEY_BACKEND_URL": "\"agl454ht0d.execute-api.ap-southeast-2.amazonaws.com/dev\"",
+            "process.env.SURVEY_TYPE": "\"gp\""
+          }
+        }
+      },
       "resources": {
         "$ref": "$[\"service\"][\"resources\"]"
       }
     },
     "appId": null,
     "orgId": null,
+    "build": {
+      "$ref": "$[\"service\"][\"initialServerlessConfig\"][\"build\"]"
+    },
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/lead-survey-frontend-gp/dev/1751907000892-2025-07-07T16:50:00.892Z",
+    "artifactDirectoryName": "serverless/lead-survey-frontend-gp/dev/1755929472683-2025-08-23T06:11:12.683Z",
     "artifact": ""
   }
 }

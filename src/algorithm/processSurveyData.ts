@@ -27,7 +27,7 @@ export function categorizeGender(gender: string | unknown): ('male' | 'female' |
 
 export function categorizeAge(ageData: UnitData): string {
   const age = getUnitAndValue(ageData)[0].value;
-  if (isNaN(age)) return 'unknown';
+  if (!ageData || isNaN(age)) return 'unknown';
   if (age > 64 && age < 70) return '65-69';
   if (age > 69 && age < 75) return '70-74';
   if (age > 74 && age < 80) return '75-79';
@@ -118,10 +118,7 @@ export function categorizeCholesterol(totalCholesterol: UnitData, highCholestero
 
 export function categorizeHDL(hdlData: UnitData, ldlData: UnitData, gender: string): 'yes' | 'no' {
   const { value: ldlValue, unit: ldlUnit } = getUnitAndValue(ldlData)[0];
-  const { value: hdlValue, unit: hdlUnit } = getUnitAndValue(hdlData)[0];
-
-  console.log(ldlValue, ldlUnit, hdlValue, hdlUnit);
-  
+  const { value: hdlValue, unit: hdlUnit } = getUnitAndValue(hdlData)[0];  
 
   if (ldlUnit === "mmol/L" && ldlValue > 4.1) return 'yes';
   if (ldlUnit === "mg/dL" && ldlValue > 160) return 'yes';

@@ -1,12 +1,13 @@
 import styled from "styled-components";
-import { ContextOptions } from "../../resources/questions/QuestionTypes/NumberQuestion";
 import Markdown from "react-markdown";
+import { ContextOptions } from "../../resources/questions/QuestionTypes/ContextOptions";
 
 const SurveyH2 = styled.h2`
-  font-size: 2em;
+  font-size: 1.75em;
   text-align: center;
   margin: 0.5rem auto;
   color: #000;
+  // font-weight: 500;
 `;
 
 const ContextSection = (props: { options?: ContextOptions, children: any}) => {
@@ -21,13 +22,14 @@ const ContextSection = (props: { options?: ContextOptions, children: any}) => {
         height: "auto",
         objectFit: "contain",
         margin: "0",
-
       }} src={link} alt="context" className="" />
     )
   }
   return (
-    <span className="is-size-5 my-4 content" style={{
+    <span className="my-4 content" style={{
       color: props.options?.textColour || "#000",
+      fontSize: props.options?.textSize || "1rem",
+      fontStyle: props.options?.fontStyle || "italic"
     }}><Markdown>{props.children}</Markdown></span>
   )
 }

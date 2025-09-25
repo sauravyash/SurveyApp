@@ -5,6 +5,8 @@ import { useAnswerData } from '../../reducers/AnswerDataProvider';
 import { useEffect, useState } from 'react';
 import LikertComponent from '../../components/LikertComponent';
 import { LikertScaleQuestion } from '../../resources/questions/QuestionTypes';
+import { Subtitle, Title } from '../../components/Headings';
+import Markdown from 'react-markdown';
 
 const QuestionWrapper = styled.div`
   display: block;
@@ -19,7 +21,7 @@ const QuestionWrapper = styled.div`
   border-radius: 1em;
   margin: auto;
   padding: 1rem;
-  height:100%;
+  // height:100%;
 `;
 
 const LikertScaleSection = (props: {
@@ -64,6 +66,7 @@ const LikertScaleSection = (props: {
 
   return (
     <QuestionWrapper>
+      <Subtitle><Markdown>{question.getQuestion()}</Markdown></Subtitle>
       <LikertComponent
         setExternalData={setData}
         value={{

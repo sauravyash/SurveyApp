@@ -74,25 +74,26 @@ const NumberQuestionSection2 = (props: {
 
 
     if (storedData) {
-      console.log(Object.keys(storedData), storedData);
-
       if (Object.keys(storedData).length > 1) {
         const storedKeys = Object.keys(storedData);
         const storedMainKey = storedKeys.join(" / ");
-        console.log(storedMainKey, storedKeys);
         const index = question.getUnits().findIndex(unit => unit === storedMainKey);
         if (index < 0) {
-          console.error("main key not found in question")
-          return;
+          console.log(storedData);
+          if (storedData === "unsure") {
+            setAnswer(storedData);
+            return;
+          } else {
+            console.error("main key not found in question")
+            return;
+          }
         }
         setSelectedUnitIndex(index.toString());
 
         const ans: any = {};
         for (const key of storedKeys) {
           ans[key] = storedData[key] ?? question.getDefaultValue(key);
-          
         }
-
         setAnswer(ans);
         return;
       }
@@ -174,30 +175,25 @@ const NumberQuestionSection2 = (props: {
       }
 
       // autofill missing input if multiple inputs exist
-      const currentAnswerKeyList = Object.keys(answer);
-
-      console.log(question.getUnits(), currentAnswerKeyList, answer)
-
-      
-
       const ans: any = {};
-      const unitList = currentAnswerKeyList || currentUnitTypes;
-      if (Object.keys(answer).length > 1) {
-        for (const unit of unitList) {
+      if (currentUnitTypes.length > 1) {
+        for (const unit of currentUnitTypes) {
           if (!Object.keys(answer).includes(unit)) {
             ans[unit] = question.getDefaultValue(unit);
           } else {
             ans[unit] = answer[unit];
           }
         }
+        console.log("ans", ans);
+
       } else {
         const key = Object.keys(answer)[0];
         if (key) {
           ans[key] = answer[key];
         }
       }
-      console.log(ans);
-      
+
+
 
       dispatch({
         type: "add_answer",
@@ -240,10 +236,14 @@ const NumberQuestionSection2 = (props: {
   return (
     <NumberUnitsWrapper key={question.getQuestionNumber()}>
       {
-        question.getAttributes().context && question.getAttributes().contextLocation === "above" ?
+        question.getContext() && question.getAttributes().contextOptions.location === "above" ?
           contextSection : null
       }
       <SurveyH2>{question.getQuestion()}</SurveyH2>
+      {
+        question.getContext() && question.getAttributes().contextOptions.location === "below-question" ?
+          contextSection : null
+      }
       <AnswerRowWrapper>
         {
           currentUnitTypes.map((unit, index) => (
@@ -335,7 +335,7 @@ const NumberQuestionSection2 = (props: {
       }
 
       {
-        question.getAttributes().context && question.getAttributes().contextLocation === "below" ?
+        question.getAttributes().context && question.getContextOptions().location === "below" ?
           contextSection : null
       }
     </NumberUnitsWrapper>
