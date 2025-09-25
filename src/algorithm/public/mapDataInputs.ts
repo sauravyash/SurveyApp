@@ -20,7 +20,8 @@ import {
   categorizeAlcohol,
   calculateFruitVeg,
   calculateFishIntake,
-  categoryMapper
+  categoryMapper,
+  categorizePesticides
 } from '../processSurveyData';
 
 export const mapPublicDataInputs = (data: Record<string, any>) => {
@@ -78,7 +79,8 @@ export const mapPublicDataInputs = (data: Record<string, any>) => {
     fruitveg: calculateFruitVeg(data["80"], data["81"], data["83"]), // fruit freq not used
     fish_intake: calculateFishIntake(data["96"]),
     alcohol: categorizeAlcohol(data["106"], data["107"]),
-    smoking: categorizeSmoking(data["108"])
+    smoking: categorizeSmoking(data["108"]),
+    pesticides: categorizePesticides(data["109"])
   };
 
   if (categoryMapper("frequency", data["71"]) === 5) {

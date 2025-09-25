@@ -96,7 +96,7 @@ export function calculateBMI(weight: UnitData, height: UnitData): string {
   const bmi = normalisedWeight / (normalisedHeight * normalisedHeight);
 
   if (bmi < 18.5) return 'underweight';
-  if (bmi >= 18.5 && bmi < 25) return 'normal weight';
+  if (bmi >= 18.5 && bmi < 25) return 'normal';
   if (bmi >= 25 && bmi < 30) return 'overweight';
   return 'obese';
 }
@@ -244,6 +244,11 @@ export function categoryMapper(mapType: mapTypes, level: string | Set<string>): 
   // console.log(mapType, level, map[level]);
 
   return map[level] ?? SAFETY_VALUE;
+}
+
+export function categorizePesticides(pesticide_exposure: "Yes" | "No" | "Don't know") {
+  if (!pesticide_exposure || !["Yes", "No", "Don't know"].includes(pesticide_exposure)) return "Don't know";
+  return pesticide_exposure;
 }
 
 export function categorizeSmoking(smokeStatus: string): 'current' | 'non-smoker' | 'former' {

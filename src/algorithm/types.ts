@@ -54,6 +54,7 @@ export interface Inputs {
   fish_intake: number;
   alcohol: number;
   smoking: 'current' | 'non-smoker' | 'former';
+  pesticides: "Yes" | "No" | "Don't know";
 }
 
 export interface Scores {
