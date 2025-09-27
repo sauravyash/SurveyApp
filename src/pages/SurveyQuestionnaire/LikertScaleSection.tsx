@@ -5,7 +5,7 @@ import { useAnswerData } from '../../reducers/AnswerDataProvider';
 import { useEffect, useState } from 'react';
 import LikertComponent from '../../components/LikertComponent';
 import { LikertScaleQuestion } from '../../resources/questions/QuestionTypes';
-import { Subtitle, Title } from '../../components/Headings';
+import { Subtitle } from '../../components/Headings';
 import Markdown from 'react-markdown';
 
 const QuestionWrapper = styled.div`

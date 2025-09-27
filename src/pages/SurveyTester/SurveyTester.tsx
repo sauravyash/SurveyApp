@@ -11,6 +11,7 @@ import SummaryTable from '../Summary/SummaryTable';
 import { cleanSurveyData } from '../Summary/cleanSurveyData';
 import IncompleteError from './IncompleteError';
 import { loadJsonFile } from './loadJsonFile';
+import { downloadDataAsCsv } from '../../actions/downloadDataAsCSV';
 
 const tabbedSectionStyle = {
   width: "-webkit-fill-available",
@@ -97,6 +98,20 @@ const SurveyTester: React.FC = () => {
     }
   }
 
+  const handleCSVDownloadAnswers = () => {
+    try {
+      if (state.data === undefined || Object.entries(state.data).length < 2) {
+        alert("No data to download.");
+        return;
+      }
+      const dataClone = cleanSurveyData(state.data)
+      console.log("dl", dataClone);
+      downloadDataAsCsv(dataClone, 'survey-data')
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const handleDeleteAnswers = () => {
     dispatch({ type: 'remove_session_data' });
   }
@@ -108,7 +123,8 @@ const SurveyTester: React.FC = () => {
       <ButtonGroup variant="outlined" aria-label="Basic button group" className='py-5'>
         <Button onClick={handleDeleteAnswers}>Delete Answers</Button>
         <Button onClick={handleUploadAnswers}>Upload</Button>
-        <Button onClick={handleDownloadAnswers}>Download Answers</Button>
+        <Button onClick={handleDownloadAnswers}>Download Raw JSON Answers</Button>
+        <Button onClick={handleCSVDownloadAnswers}>Download CSV Answers</Button>
         <Button onClick={() => { document.getElementById('survey-tester-feedback')?.scrollIntoView() }}>Jump To Feedback</Button>
       </ButtonGroup>
       <Tabs

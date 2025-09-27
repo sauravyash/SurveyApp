@@ -38,8 +38,8 @@ export const mapGPDataInputs = (data: Record<string, any>) => {
     // force categorization to only use high cholesterol if it's true
     cholesterol: categorizeCholesterol({ "mmol/L": 3 }, q6Result.highCholesterol ? "yes" : "no"),
     // Low-HDL and high-LDL, updated to use new Q2 for gender & Q7/8 for HDL/LDL
-    low_hdl: categorizeLDL(data["8"], data["7"], gender),
-    high_ldl: categorizeHDL(data["7"], data["8"], gender),
+    high_ldl: categorizeHDL(data["7"], gender),
+    low_hdl: categorizeLDL(data["8"]),
 
     diabetes: q6Result.diabetes ? "yes" : "no",
     hbp: q6Result.hbp ? "yes" : "no",

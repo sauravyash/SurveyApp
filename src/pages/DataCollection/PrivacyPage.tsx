@@ -86,18 +86,16 @@ const Subtitle = styled.h2`
   text-transform: uppercase;
 `;
 
-const ButtonLikeBox = styled.span.attrs(({ className }) => ({ className: `button is-outlined ${className}` }))`
+const ButtonLikeBox = styled.span`
   font-size: 2em;
   font-weight: 700;
   border-width: 4px;
-  &:hover {
-    --bulma-button-border-width: 1px !important;
-  }
-`
+  &:hover { --bulma-button-border-width: 1px !important; }
+`;
 
-const ContinueButton = styled.span.attrs(({ className }) => ({ className: `button is-large ${className}` }))`
+const ContinueButton = styled.span`
   margin-top: 1.5rem;
-`
+`;
 
 const PrivacyPage: React.FC = () => {
   let navigate = useNavigate();
@@ -133,9 +131,9 @@ const PrivacyPage: React.FC = () => {
             <Subtitle>I wish to</Subtitle>
             <Title>TAKE THE ASSESSMENT</Title>
             <Subtitle>AND</Subtitle>
-            <ButtonLikeBox className="is-success">Participate</ButtonLikeBox>
+            <ButtonLikeBox className={`button is-large is-success`}>Participate</ButtonLikeBox>
             <Title>IN RESEARCH</Title>
-            <ContinueButton className='is-success'>
+            <ContinueButton className={`button is-large is-success`}>
               <span>Continue</span>
               <span className={'icon ' + (collectData !== "yes" && 'is-hidden')}>
                 <CheckMark aria-label='Not participated is Selected' />
@@ -149,9 +147,9 @@ const PrivacyPage: React.FC = () => {
             <Subtitle>I wish to</Subtitle>
             <Title>TAKE THE ASSESSMENT</Title>
             <Subtitle>AND</Subtitle>
-            <ButtonLikeBox className="is-dark">Not Participate</ButtonLikeBox>
+            <ButtonLikeBox className={`button is-large is-dark`}>Not Participate</ButtonLikeBox>
             <Title>IN RESEARCH</Title>
-            <ContinueButton className='is-dark'>
+            <ContinueButton className={`button is-large is-dark`}>
               <span>Continue</span>
               <span className={'icon ' + (collectData !== "no" && 'is-hidden')}>
                 <CheckMark aria-label='Not participated is Selected' />

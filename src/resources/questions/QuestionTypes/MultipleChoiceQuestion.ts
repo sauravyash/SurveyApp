@@ -3,7 +3,7 @@ import { ContextOptions } from "./ContextOptions";
 
 export class MultipleChoiceQuestion extends BaseQuestionObject {
     private options: string[];
-    private contextLocation: "above" | "below" = "above";
+    private contextLocation: "above" | "below" | "below-question" = "above";
     private contextTextColour: string = "#000";
     private contextTextSize: string = "1.5em";
 
@@ -27,7 +27,7 @@ export class MultipleChoiceQuestion extends BaseQuestionObject {
     public getAttributes() {
         return {
             ...super.getAttributes(),
-            contextOptions: this.getContextOptions() 
+            contextOptions: this.getContextOptions()
         };
     }
 
@@ -53,7 +53,7 @@ export class MultipleChoiceQuestion extends BaseQuestionObject {
         }
     }
 
-    public getContextOptions() : ContextOptions {
+    public getContextOptions(): ContextOptions {
         return {
             location: this.contextLocation,
             textColour: this.contextTextColour,

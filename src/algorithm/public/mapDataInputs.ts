@@ -32,8 +32,8 @@ export const mapPublicDataInputs = (data: Record<string, any>) => {
     edu_cat: categorizeEducation(data["8"]), // Uses education data from key "8"
     bmi: calculateBMI(data["11"], data["10"]),
     cholesterol: categorizeCholesterol(data["17"], data["18"]),
-    low_hdl: categorizeHDL(data["19"], data["20"], categorizeGender(data["3"])),
-    high_ldl: categorizeLDL(data["20"], data["19"], categorizeGender(data["3"])),
+    low_hdl: categorizeHDL(data["19"], categorizeGender(data["3"])),
+    high_ldl: categorizeLDL(data["20"]),
     diabetes: categorizeDiabetes(data["22"], data["23"]), // Diabetes diagnosis from key "22" and glucose value from key "23"
     hbp: categorizeHBP(data["26"], data["27"], data["29"]), // Systolic value from key "28", HBP diagnosis from key "27", and medication status from key "26"
     tbi: categorizeTBI(data["25"]),

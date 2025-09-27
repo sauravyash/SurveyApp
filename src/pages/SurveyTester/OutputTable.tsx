@@ -4,6 +4,7 @@ import { Inputs, OutputResult, Scores } from '../../algorithm/types';
 import { handleGenerateReport } from '../Summary/handleGenerateReport';
 import { useAnswerData } from '../../reducers/AnswerDataProvider';
 import Loading from '../../components/Loading';
+import { downloadObjectAsJson } from '../../actions/downloadObjectAsJson';
 
 interface ScoresProps {
   scores: Scores;
@@ -81,6 +82,12 @@ const OutputResultTable: React.FC<OutputResultTableProps> = ({ data }) => {
       {loadingPDF && <Loading />}
       <ButtonGroup variant="outlined" aria-label="Basic button group" className='py-5'>
         <Button onClick={() => handleGenerateReport({state, setLoadingPDF})}>Generate PDF</Button>
+        <Button onClick={() => {
+          downloadObjectAsJson({
+            scores,
+            inputs
+          }, "survey-scores")
+        }}>Download Scores</Button>
       </ButtonGroup>
       <Typography variant="h5">Output Results</Typography>
       <Typography variant="h6">Scores</Typography>

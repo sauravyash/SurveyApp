@@ -1,4 +1,4 @@
-import { NumberQuestion, SectionIntroScreen } from "../../QuestionTypes";
+import { SectionIntroScreen } from "../../QuestionTypes";
 import { ContextOptions } from "../../QuestionTypes/ContextOptions";
 import { NumberQuestionV2 } from "../../QuestionTypes/NumberQuestion";
 

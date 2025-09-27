@@ -1,39 +1,35 @@
+import { UnitDatum, YesNoInput } from "./helpers";
 import { UnitData } from "./types";
 
-export function getUnitAndValue(value: UnitData): { unit: string, value: any }[] {
-  if (typeof value === 'object' && value !== null) {
-    return Object.keys(value).map(unit => ({
+export function getUnitAndValue(value: UnitData): UnitDatum[] {
+  if (value && typeof value === 'object') {
+    return Object.keys(value).map((unit) => ({
       unit,
-      value: value[unit]
+      value: (value as Record<string, number>)[unit],
     }));
   }
-
-  return [{
-    unit: "none",
-    value: value
-  }];
+  if (typeof value === 'number') return [{ unit: 'none', value }];
+  return [{ unit: 'none', value: Number(value) }]; // may be NaN; callers should guard
 }
 
-export function categorizeGender(gender: string | unknown): ('male' | 'female' | 'other') {
-  if (typeof gender !== 'string') {
-    gender = ((gender as any).currentKey as string);
-    if (!gender) return 'other';
-  }
+export function categorizeGender(gender: string | unknown): 'male' | 'female' | 'other' {
+  let g: string | undefined;
+  if (typeof gender === 'string') g = gender;
+  else if (gender && typeof (gender as any).currentKey === 'string') g = (gender as any).currentKey;
 
-  gender = (gender as string).toLowerCase();
-  if (gender === 'male' || gender === 'female') return gender;
-  return 'other';
+  g = (g ?? '').toLowerCase();
+  return g === 'male' || g === 'female' ? (g as 'male' | 'female') : 'other';
 }
 
 export function categorizeAge(ageData: UnitData): string {
-  const age = getUnitAndValue(ageData)[0].value;
-  if (!ageData || isNaN(age)) return 'unknown';
-  if (age > 64 && age < 70) return '65-69';
-  if (age > 69 && age < 75) return '70-74';
-  if (age > 74 && age < 80) return '75-79';
-  if (age > 79 && age < 85) return '80-84';
-  if (age > 84 && age < 90) return '85-89';
-  if (age > 89) return '90+';
+  const { value: age } = getUnitAndValue(ageData)[0] ?? { value: NaN };
+  if (ageData == null || Number.isNaN(age)) return 'unknown';
+  if (age >= 65 && age <= 69) return '65-69';
+  if (age >= 70 && age <= 74) return '70-74';
+  if (age >= 75 && age <= 79) return '75-79';
+  if (age >= 80 && age <= 84) return '80-84';
+  if (age >= 85 && age <= 89) return '85-89';
+  if (age >= 90) return '90+';
   return '<64';
 }
 
@@ -43,7 +39,10 @@ function stripQIfPresent(str: string) {
   }
   return str;
 }
-export function categorizeEducation(education: string): string {
+
+export type EducationCategories = 'less than secondary' | 'upper secondary' | 'tertiary' | 'unknown';
+
+export function categorizeEducation(education: string): EducationCategories {
   education = stripQIfPresent(education);
 
   if (["Partially completed primary/elementary school (or equivalent)",
@@ -62,116 +61,110 @@ export function categorizeEducation(education: string): string {
 }
 
 export function calculateBMI(weight: UnitData, height: UnitData): string {
-  const weightData = getUnitAndValue(weight);
-  const heightData = getUnitAndValue(height)[0];
+  const weightParts = getUnitAndValue(weight);
+  const { unit: hUnit, value: hValRaw } = getUnitAndValue(height)[0] ?? { unit: 'none', value: NaN };
 
-  if (!heightData || heightData.value === undefined) {
-    console.info("Height data is undefined:", heightData);
-    return 'unknown';
+  if (!Number.isFinite(hValRaw) || hValRaw <= 0) return 'unknown';
+
+  // Height normalization to meters
+  let hMeters = NaN;
+  const u = (hUnit || '').toLowerCase();
+  if (u === 'cm' || u === 'centimeter' || u === 'centimeters') hMeters = hValRaw / 100;
+  else if (u === 'm' || u === 'meter' || u === 'meters') hMeters = hValRaw;
+  else if (u === 'in' || u === 'inch' || u === 'inches') hMeters = hValRaw * 0.0254;
+  else if (u === 'ft' || u === 'feet') hMeters = hValRaw * 0.3048;
+  else hMeters = hValRaw; // fallback best-effort (assume meters)
+
+  if (!Number.isFinite(hMeters) || hMeters <= 0) return 'unknown';
+
+  // Weight normalization to kilograms
+  let wKg = 0;
+  for (const { unit, value } of weightParts) {
+    const wu = (unit || '').toLowerCase();
+    if (!Number.isFinite(value)) continue;
+    if (wu === 'kg' || wu === 'kilogram' || wu === 'kilograms') wKg += value;
+    else if (wu === 'lb' || wu === 'lbs' || wu === 'pound' || wu === 'pounds') wKg += value * 0.45359237;
+    else if (wu === 'stone' || wu === 'st') wKg += value * 6.35029318;
+    else wKg += value; // fallback assume kg
   }
-  if (!weightData || weightData.length === 0) {
-    console.info("Weight data is undefined:", weightData);
-    return 'unknown';
-  }
+  if (!Number.isFinite(wKg) || wKg <= 0) return 'unknown';
 
-  const normalisedHeight = heightData.unit === 'cm' ? heightData.value / 100 : heightData.value * 0.0254;
-
-  let normalisedWeight = 0;
-
-  if (weightData[0].unit === 'kg') {
-    normalisedWeight = weightData[0].value;
-  } else if (weightData[0].unit === 'lb') {
-    normalisedWeight = weightData[0].value * 2.205;
-  } else if (["stone", "pounds"].includes(weightData[0].unit)) {
-    weightData.forEach(({ unit, value }) => {
-      if (unit === 'stone') {
-        normalisedWeight += value * 6.35;
-      }
-      if (unit === 'pounds') {
-        normalisedWeight += value * 2.205;
-      }
-    });
-  }
-
-  const bmi = normalisedWeight / (normalisedHeight * normalisedHeight);
+  const bmi = wKg / (hMeters * hMeters);
 
   if (bmi < 18.5) return 'underweight';
-  if (bmi >= 18.5 && bmi < 25) return 'normal';
-  if (bmi >= 25 && bmi < 30) return 'overweight';
+  if (bmi < 25) return 'normal';
+  if (bmi < 30) return 'overweight';
   return 'obese';
 }
 
 export function categorizeCholesterol(totalCholesterol: UnitData, highCholesterol: string): 'high' | 'normal' {
-  const totalCholesterolData = getUnitAndValue(totalCholesterol)[0].value;
-  if (highCholesterol === undefined || highCholesterol === null) {
-    console.error("High cholesterol is undefined or null:", highCholesterol);
-    return 'high';
-  }
-  if (typeof highCholesterol !== 'string') {
-    highCholesterol = (highCholesterol as any).currentKey;
-    if (!highCholesterol) return 'high';
-  }
+  const { unit: tcUnit, value: tcValRaw } = getUnitAndValue(totalCholesterol)[0] ?? { unit: 'none', value: NaN };
 
-  if (totalCholesterolData > 5.5 || highCholesterol.toLowerCase() === 'yes') return 'high';
-  return 'normal';
+  let flag: string | undefined;
+  if (typeof highCholesterol === 'string') flag = highCholesterol;
+  else if (highCholesterol && typeof (highCholesterol as any).currentKey === 'string') flag = (highCholesterol as any).currentKey;
+
+  const flagNorm = (flag ?? '').toLowerCase();
+  if (flagNorm === 'yes') return 'high';
+  if (flagNorm === 'unsure' || flagNorm === "don't know" || flagNorm === 'dont know') return 'high'; // <-- conservative
+
+  let tcMmol = Number(tcValRaw);
+  const u = (tcUnit || '').toLowerCase();
+  if (u === 'mg/dl' || u === 'mgdl') tcMmol = tcMmol / 38.67;
+
+  if (Number.isFinite(tcMmol)) return tcMmol > 5.5 ? 'high' : 'normal';
+  return 'high'; // also conservative fallback if no numeric value
 }
 
-export function categorizeHDL(hdlData: UnitData, ldlData: UnitData, gender: string): 'yes' | 'no' {
-  const { value: ldlValue, unit: ldlUnit } = getUnitAndValue(ldlData)[0];
-  const { value: hdlValue, unit: hdlUnit } = getUnitAndValue(hdlData)[0];  
+// ---- HDL: ONLY check HDL (gender thresholds) ----
+export function categorizeHDL(hdlData: UnitData, gender: string): 'yes' | 'no' {
+  const { unit, value } = getUnitAndValue(hdlData)[0] ?? { unit: 'none', value: NaN };
+  const g = categorizeGender(gender);
 
-  if (ldlUnit === "mmol/L" && ldlValue > 4.1) return 'yes';
-  if (ldlUnit === "mg/dL" && ldlValue > 160) return 'yes';
+  if (!Number.isFinite(value)) return 'no'; // unknown → default 'no'
 
-  if (gender === 'female') {
-    if (hdlUnit === "mmol/L" && hdlValue < 1.3) return 'yes';
-    if (hdlUnit === "mg/dL" && hdlValue < 50) return 'yes';
-  } else {
-    if (hdlUnit === "mmol/L" && hdlValue < 1.0) return 'yes';
-    if (hdlUnit === "mg/dL" && hdlValue < 40) return 'yes';
+  const u = (unit || '').toLowerCase();
+  if (u === 'mmol/l' || u === 'mmoll') {
+    if (g === 'female') return value < 1.3 ? 'yes' : 'no';
+    return value < 1.0 ? 'yes' : 'no';
   }
-
-  return 'no';
+  if (u === 'mg/dl' || u === 'mgdl') {
+    if (g === 'female') return value < 50 ? 'yes' : 'no';
+    return value < 40 ? 'yes' : 'no';
+  }
+  // Unknown unit → assume mmol/L thresholds
+  if (g === 'female') return value < 1.3 ? 'yes' : 'no';
+  return value < 1.0 ? 'yes' : 'no';
 }
 
-export function categorizeLDL(ldlData: UnitData, hdlData: UnitData, gender: string): 'yes' | 'no' {
-  const { value: ldlValue, unit: ldlUnit } = getUnitAndValue(ldlData)[0];
-  const { value: hdlValue, unit: hdlUnit } = getUnitAndValue(hdlData)[0];
+export function categorizeLDL(ldlData: UnitData): 'yes' | 'no' {
+  const { unit, value } = getUnitAndValue(ldlData)[0] ?? { unit: 'none', value: NaN };
+  if (!Number.isFinite(value)) return 'no';
 
-  if (gender === 'female') {
-    if (hdlUnit === "mmol/L" && hdlValue < 1.3) return 'yes';
-    if (hdlUnit === "mg/dL" && hdlValue < 50) return 'yes';
-  } else {
-    if (hdlUnit === "mmol/L" && hdlValue < 1.0) return 'yes';
-    if (hdlUnit === "mg/dL" && hdlValue < 40) return 'yes';
-  }
+  const u = (unit || '').toLowerCase();
+  if (u === 'mmol/l' || u === 'mmoll') return value >= 4.1 ? 'yes' : 'no'; // inclusive
+  if (u === 'mg/dl' || u === 'mgdl') return value >= 160 ? 'yes' : 'no';   // inclusive
 
-  if (ldlUnit === "mmol/L" && ldlValue > 4.1) return 'yes';
-  if (ldlUnit === "mg/dL" && ldlValue > 160) return 'yes';
-  return 'no';
+  // Unknown unit → assume mmol/L
+  return value >= 4.1 ? 'yes' : 'no';
 }
 
-type YesNoInput = "Yes" | "No" | "Don’t know";
 
 export function categorizeDiabetes(diabetes_diag: YesNoInput, glucose: YesNoInput): 'yes' | 'no' {
   return diabetes_diag === 'Yes' || glucose === 'Yes' ? 'yes' : 'no';
 }
 
 export function categorizeHBP(systolicData: UnitData, hbp_diag: YesNoInput, hbp_meds: YesNoInput): 'yes' | 'no' {
-  const systolic = getUnitAndValue(systolicData)[0].value;
-  if (systolic > 140 || hbp_diag === 'Yes' || hbp_meds === 'Yes') return 'yes';
+  const { value } = getUnitAndValue(systolicData)[0] ?? { value: NaN };
+  if ((Number.isFinite(value) && value >= 140) || hbp_diag === 'Yes' || hbp_meds === 'Yes') return 'yes';
   return 'no';
 }
 
 export function categorizeTBI(tbi: string | undefined): 'yes' | 'no' {
-  if (!tbi) return 'no';
-  if (typeof tbi !== 'string') {
-    tbi = (tbi as any).currentKey;
-    if (!tbi) return 'no';
-  }
-  if (tbi.includes("Yes")) return 'yes';
-  return 'no';
+  const s = (typeof tbi === 'string' ? tbi : (tbi as any)?.currentKey || '').toLowerCase();
+  return /yes/.test(s) ? 'yes' : 'no';
 }
+
 
 export function categorizeStroke(stroke_diag: string): 'yes' | 'no' {
   if (stroke_diag === 'Yes') return 'yes';
@@ -187,13 +180,20 @@ export function categorizeHeartAttack(heartattack_diag: string): 'yes' | 'no' {
 }
 
 export function categorizeHearingLoss(hearing_problem: string, hearing_adequate: string): 'yes' | 'no' {
-  if ([
-    "Yes, I was prescribed hearing aids/implant and wear them",
-    "Yes, I was prescribed hearing aids but do not wear them"
-  ].includes(hearing_problem)) return 'yes';
-  if (hearing_adequate === "Cannot hear speech in groups.") return 'yes';
+  const hp = (hearing_problem ?? '').toLowerCase();
+  const ha = (hearing_adequate ?? '').toLowerCase();
+
+  if (
+    hp.includes('prescribed hearing aids') || // covers wear / don’t wear
+    ha.includes('serious problem') ||
+    ha.includes('hearing is a problem') ||
+    ha.includes('cannot hear speech in groups')
+  ) {
+    return 'yes';
+  }
   return 'no';
 }
+
 
 const sleep = ["None", "Mild", "Moderate", "Severe", "Very Severe"];
 const satisfied = ["Very Satisfied", "Satisfied", "Moderately Satisfied", "Dissatisfied", "Very Dissatisfied"];
@@ -267,37 +267,20 @@ export function categorizeSmoking(smokeStatus: string): 'current' | 'non-smoker'
 }
 
 export function categorizeAlcohol(alco_freq: string, alco_quant: number): number {
-  if (alco_freq === undefined || alco_freq === null) {
-    console.info("Alcohol frequency is undefined or null:", alco_freq);
-    return 1;
-  }
+  if (!alco_freq) return 0; // safest for unknown → treat as 'never' per strict read
+  const f = (typeof alco_freq === 'string' ? alco_freq : (alco_freq as any)?.currentKey || '').toLowerCase();
+  const q = Number(alco_quant) || 0;
 
-  if (typeof alco_freq !== 'string') {
-    alco_freq = (alco_freq as any).currentKey;
-    if (!alco_freq) return 1;
-  }
+  if (f === 'never') return 0;
+  if (f === 'monthly or less') return 1;
+  if (f === '2-4 times a month') return q < 14 ? 1 : 2;
+  if (f === '2-3 times a week') return q < 5 ? 1 : 2;
+  if (f === '4+ times a week') return q < 4 ? 1 : 2;
 
-  alco_freq = alco_freq.toLowerCase();
-  const alco_freq_map: { [key: string]: number } = {
-    "never": 0,
-    "monthly or less": 1,
-    "2-4 times a month": 2,
-    "2-3 times a week": 3,
-    "4+ times a week": 4,
-  };
-
-  const alco_freq_num = alco_freq_map[alco_freq];
-  if (alco_freq_num === 0) return 0;
-  if (alco_freq_num === 1 && alco_quant < 14) return 1;
-  if (alco_freq_num > 1 && alco_freq_num < 4 && alco_quant < 5) return 1;
-  if (alco_freq_num > 3 && alco_quant < 4) return 1;
-
-  if (alco_freq_num === 1 && alco_quant >= 14) return 2;
-  if (alco_freq_num > 1 && alco_freq_num < 4 && alco_quant >= 5) return 2;
-  if (alco_freq_num > 3 && alco_quant >= 4) return 2;
-
+  // Fallback: be conservative
   return 2;
 }
+
 
 export function calculateExercise(daysData: { "days per week": number } | "unsure", time: { "hours": number, "minutes": number } | "unsure" | undefined): number {
   let [days, hours, minutes] = [0, 0, 0];
@@ -322,26 +305,28 @@ export function calculateExercise(daysData: { "days per week": number } | "unsur
   return score;
 }
 
-export function calculateFruitVeg(veg_freq: string, veg_serve_str: string, fruit_serve_str: string): number {
-
-  const fruit_serve_parsed = fruit_serve_str && fruit_serve_str.substring(0, 1) || "D";
-  const veg_serve = parseInt(stripQIfPresent(veg_serve_str));
-  const fruit_serve = fruit_serve_parsed === "D" ? 0 : parseInt(fruit_serve_parsed);
-
-  if (veg_freq === "Every day") {
-    if (veg_serve < 3) {
-      return 0;
-    }
-    if (veg_serve > 4) {
-      return 1;
-    }
-    if ((veg_serve === 4 || veg_serve === 3) && fruit_serve > 1) {
-      return 1;
-    }
+export function calculateFruitVeg(
+  _veg_freq: string, // ignore frequency per spec
+  veg_serve_str: string,
+  fruit_serve_str: string
+): number {
+  const veg_serve = parseInt(stripQIfPresent(veg_serve_str), 10);
+  // fruit_serve_str may be like "2 serves", "6 or more", or "Don't know"
+  const fs = (fruit_serve_str ?? '').trim();
+  let fruit_serve = 0;
+  if (/^\d+/.test(fs)) {
+    fruit_serve = parseInt(fs, 10);
+  } else if (/6\s*or\s*more/i.test(fs)) {
+    fruit_serve = 6;
+  } else {
+    // Don't know / missing ⇒ treat as 0 per conservative read of your rule
+    fruit_serve = 0;
   }
 
+  if ((veg_serve === 3 || veg_serve === 4) && fruit_serve >= 2) return 1;
   return 0;
 }
+
 
 export function calculateFishIntake(fish_freq: string): number {
   if (["2-3 times per week", "4 or more times per week"].includes(fish_freq)) return 1;
