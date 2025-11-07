@@ -8,18 +8,20 @@ const sleepQuestionOptions = {
     4: "Very Severe"
 }
 
-const sleepUnsatisfiedConditions = [{
-    question: 16,
-    answer: "Moderately Satisfied",
-},
-{
-    question: 16,
-    answer: "Dissatisfied",
-},
-{
-    question: 16,
-    answer: "Very Dissatisfied",
-}]
+const sleepUnsatisfiedConditions = [
+    {
+        question: 16,
+        answer: "Moderately Satisfied",
+    },
+    {
+        question: 16,
+        answer: "Dissatisfied",
+    },
+    {
+        question: 16,
+        answer: "Very Dissatisfied",
+    }
+]
 
 export const SleepQuestions = [
     new SectionIntroScreen(13.1,
@@ -35,13 +37,13 @@ For each question, please select the option that best describes your answer.`),
         true),
     new MultipleChoiceQuestion(17, "How noticeable to others do you think your sleep problem is in terms of impairing the quality of your life?",
         ["Not at all Noticeable", "A Little", "Somewhat", "Much", "Very Much Noticeable"], true,
-        sleepUnsatisfiedConditions
+        undefined
     ),
     new MultipleChoiceQuestion(18, "How worried/distressed are you about your current sleep problem?",
         ["Not at all Worried", "A Little", "Somewhat", "Much", "Very Much Worried"], true,
-        sleepUnsatisfiedConditions
+        undefined
     ),
     new MultipleChoiceQuestion(19, "To what extent do you consider your sleep problem to interfere with your daily functioning (e.g., daytime fatigue, mood, ability to function at work/daily chores, concentration, memory, mood etc.) currently?",
         ["Not at all Interfering", "A Little", "Somewhat", "Much", "Very Much Interfering"], true,
-        sleepUnsatisfiedConditions),
+        undefined),
 ];

@@ -16,7 +16,7 @@ export const HealthQuestions = [
         ["mmol/L", "mg/dL"], true, {
         "mmol/L": {
             min: 0.3,       // Low extreme (~12 mg/dL)
-            max: 3.0,       // High extreme (~116 mg/dL)
+            max: 10.0,       // High extreme (~116 mg/dL)
             defaultValue: 1.3, // Typical “desirable” (~50 mg/dL)
             step: 0.1
         },

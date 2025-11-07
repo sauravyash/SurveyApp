@@ -4,7 +4,7 @@ import { ContextOptions } from "./ContextOptions";
 export class NumberQuestion extends BaseQuestionObject {
     private minValue: number;
     private maxValue: number;
-    private defaultValue: any;
+    private defaultValue?: number;
     private units: string[];
     private scientific_unit: boolean;
     private step: number = 1;
@@ -18,7 +18,7 @@ export class NumberQuestion extends BaseQuestionObject {
         scientific_unit: boolean = false,
         minValue: number = 0,
         maxValue: number = 1000,
-        defaultValue: any = 0,
+        defaultValue = 0,
         scoring: boolean = true,
         conditions: { question: number, answer: any, modifier?: string }[] = [],
         optional: boolean = false,

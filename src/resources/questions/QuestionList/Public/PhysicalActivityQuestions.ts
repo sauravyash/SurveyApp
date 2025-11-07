@@ -5,7 +5,7 @@ import { NumberQuestionV2 } from "../../QuestionTypes/NumberQuestion";
 const hourMinsBounds = {
     hours: {
         min: 0,
-        max: 24,
+        max: 23,
         defaultValue: 0,
         step: 1
     },
@@ -31,7 +31,7 @@ export const PhysicalActivityQuestions = [
     new NumberQuestionV2(56,
         "During the last 7 days, on how many days did you do vigorous physical activities like heavy lifting, digging, aerobics, or fast bicycling?",
         ["days per week"],
-        false, daysBounds, false, undefined, true,
+        false, daysBounds, false, undefined, false,
         `Think about all the vigorous activities that you did in the last 7 days. Vigorous physical activities refer to activities that take hard physical effort and make you breathe much harder than normal. Think only about those activities that you did for at least 10 minutes at a time.`
     ),
     new NumberQuestionV2(57,
@@ -45,7 +45,7 @@ export const PhysicalActivityQuestions = [
     new NumberQuestionV2(58, 
         "During the last 7 days, on how many days did you do moderate physical activities like carrying light loads, bicycling at a regular pace, or doubles tennis? Do not include walking.",
         ["days per week"], 
-        false, daysBounds, false, undefined, true,
+        false, daysBounds, false, undefined, false,
         "Think about all the moderate activities that you did in the last 7 days. Moderate activities refer to activities that take moderate physical effort and make you breathe somewhat harder than normal. Think only about those physical activities that you did for at least 10 minutes at a time."),
     new NumberQuestionV2(59, "How much time did you usually spend doing moderate physical activities on one of those days?",
         ["hours / minutes"], true, hourMinsBounds, true,
@@ -58,7 +58,7 @@ export const PhysicalActivityQuestions = [
         ], true),
     new NumberQuestionV2(60, "During the last 7 days, on how many days did you walk for at least 10 minutes at a time?",
         ["days per week"], 
-        false, daysBounds, false, undefined, true, 
+        false, daysBounds, false, undefined, false, 
         "Think about the time you spent walking in the last 7 days. This includes at work and at home, walking to travel from place to place, and any other walking that you have done solely for recreation, sport, exercise, or leisure."),
     new NumberQuestionV2(61, "How much time did you usually spend walking on one of those days?",
         ["hours / minutes"], true, hourMinsBounds, true,
@@ -80,3 +80,7 @@ const contextOptions: ContextOptions = {
 (PhysicalActivityQuestions[1] as NumberQuestionV2).setContextOptions(contextOptions);
 (PhysicalActivityQuestions[3] as NumberQuestionV2).setContextOptions(contextOptions);
 (PhysicalActivityQuestions[5] as NumberQuestionV2).setContextOptions(contextOptions);
+
+(PhysicalActivityQuestions[1] as NumberQuestionV2).setDisplayNoneCheckbox(true);
+(PhysicalActivityQuestions[3] as NumberQuestionV2).setDisplayNoneCheckbox(true);
+(PhysicalActivityQuestions[5] as NumberQuestionV2).setDisplayNoneCheckbox(true);

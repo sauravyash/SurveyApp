@@ -233,6 +233,8 @@ const NumberQuestionSection2 = (props: {
     <ContextSection options={question.getContextOptions()}>{question.getAttributes().context}</ContextSection>
   )
 
+  console.log(question.getQuestionNumber());
+  
   return (
     <NumberUnitsWrapper key={question.getQuestionNumber()}>
       {

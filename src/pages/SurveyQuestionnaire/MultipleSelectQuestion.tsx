@@ -167,9 +167,27 @@ const MCSelector = (props: MCSelectorProps) => {
         items={question.getOptions().map((answer, index) => ({ answer, index }))}
         selectedKeys={selected}
         onSelectionChange={(keys: Selection) => {
-          console.log(keys);
-          
-          setSelected(keys)
+          const selectedKeys = keys as Set<string>
+          const lastSelectedKey = (keys as unknown as { anchorKey: string }).anchorKey
+          // console.log(keys);
+          for (const key of selectedKeys) {
+            if (String(key).toLocaleLowerCase().includes("none")) {
+              const keylist = [...selectedKeys.values()]
+              for (const k of keylist) {
+                if (lastSelectedKey == key) {
+                  if (k !== key) {
+                    selectedKeys.delete(k);
+                  }
+                } else {
+                  if (k === key) {
+                    selectedKeys.delete(k);
+                  }
+                }
+
+              }
+            }
+          }
+          setSelected(selectedKeys)
         }}
       >
         {(item) => (

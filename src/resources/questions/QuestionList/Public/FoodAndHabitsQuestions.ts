@@ -157,3 +157,11 @@ FoodAndHabitsQuestions.filter(q =>
 ).forEach(q => 
     (q as NumberQuestionV2).setDisplayNoneCheckbox("Rarely/Never")
 );
+
+FoodAndHabitsQuestions.filter(q => 
+  (q.getQuestionNumber() >= 86 && q.getQuestionNumber() <= 87)
+).forEach(q => {
+    (q as NumberQuestionV2).setContextOptions({
+        location: "below-question"
+    })
+})

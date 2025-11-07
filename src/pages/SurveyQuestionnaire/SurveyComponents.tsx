@@ -29,7 +29,7 @@ const ContextSection = (props: { options?: ContextOptions, children: any}) => {
     <span className="my-4 content" style={{
       color: props.options?.textColour || "#000",
       fontSize: props.options?.textSize || "1rem",
-      fontStyle: props.options?.fontStyle || "italic"
+      fontStyle: props.options?.fontStyle || "normal"
     }}><Markdown>{props.children}</Markdown></span>
   )
 }
